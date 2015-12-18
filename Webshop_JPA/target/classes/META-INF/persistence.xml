@@ -10,9 +10,9 @@
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 		<properties>
 
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/Webshop_JPA" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/WebshopDatabase_JPA" />
 			<property name="javax.persistence.jdbc.user" value="root" />
-			<property name="javax.persistence.jdbc.password" value="secret1" />
+			<property name="javax.persistence.jdbc.password" value="root" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
 			
 			<!-- Possible values: none, drop-and-create, create, drop
