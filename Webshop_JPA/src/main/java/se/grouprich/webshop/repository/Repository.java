@@ -3,7 +3,7 @@ package se.grouprich.webshop.repository;
 import java.util.Map;
 
 import se.grouprich.webshop.exception.RepositoryException;
-
+@Deprecated
 public interface Repository<K, T>
 {
 	T create(T value);
