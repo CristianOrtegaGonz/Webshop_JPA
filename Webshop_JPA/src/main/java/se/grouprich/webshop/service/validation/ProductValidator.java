@@ -10,7 +10,7 @@ public final class ProductValidator implements DuplicateValidator
 	
 	public ProductValidator()
 	{
-		productRepository = new FileRepository<>(Product.class);
+//		productRepository = new FileRepository<>(Product.class);
 	}
 	
 	@Override

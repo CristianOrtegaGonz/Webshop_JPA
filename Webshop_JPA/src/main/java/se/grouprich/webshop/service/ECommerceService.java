@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import se.grouprich.webshop.exception.UserRegistrationException;
-import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.RepositoryException;
+import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.idgenerator.IdGenerator;
-import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
-import se.grouprich.webshop.model.ShoppingCart;
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.Repository;
 import se.grouprich.webshop.service.validation.DuplicateValidator;
 import se.grouprich.webshop.service.validation.EmailValidator;
@@ -84,10 +82,10 @@ public final class ECommerceService
 		return emailValidator;
 	}
 
-	public ShoppingCart createShoppingCart()
-	{
-		return new ShoppingCart();
-	}
+//	public OrderRow createShoppingCart()
+//	{
+//		return new OrderRow();
+//	}
 
 	public User createUser(String email, String password, String firstName, String lastName, String role) throws UserRegistrationException
 	{
@@ -103,8 +101,8 @@ public final class ECommerceService
 		{
 			throw new UserRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
-		String id = idGenerator.getGeneratedId();
-		User user = new User(id, email, password, firstName, lastName, role);
+//		String id = idGenerator.getGeneratedId();
+		User user = new User(email, password, firstName, lastName, role);
 		return userRepository.create(user);
 	}
 
@@ -114,30 +112,30 @@ public final class ECommerceService
 		{
 			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
 		}
-		String id = idGenerator.getGeneratedId();
-		Product product = new Product(id, productName, price, stockQuantity);
+//		String id = idGenerator.getGeneratedId();
+		Product product = new Product(productName, price, stockQuantity);
 		return productRepository.create(product);
 	}
 
-	public Order checkOut(User user, ShoppingCart shoppingCart) throws OrderException
-	{
-		if (shoppingCart.getProducts().isEmpty())
-		{
-			throw new OrderException("Shopping cart is empty");
-		}
-		String id = null;
-		return new Order(id, user, shoppingCart);
-	}
+//	public Order checkOut(User user, OrderRow orderRow) throws OrderException
+//	{
+//		if (orderRow.getProducts().isEmpty())
+//		{
+//			throw new OrderException("Shopping cart is empty");
+//		}
+//		String id = null;
+//		return new Order(user, orderRow);
+//	}
 
 	public Order createOrder(Order order) throws PaymentException
 	{
-		if (order.getShoppingCart().getTotalPrice() > 50000.00)
+		if (order.getTotalPrice() > 50000.00)
 		{
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
 		}
-		order.pay();
+//		order.pay();
 		String id = idGenerator.getGeneratedId();
-		order.setId(id);
+//		order.setId(id);
 		return orderRepository.create(order);
 	}
 
@@ -217,44 +215,44 @@ public final class ECommerceService
 		return ordersByUser;
 	}
 
-	public void addProductInShoppingCart(ShoppingCart shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
-	{
-		if (productRepository.readAll().containsKey(productId))
-		{
-			Product product = productRepository.read(productId);
-			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= product.getOrderQuantity() + orderQuantity)
-			{
-				product.addOrderQuantity(orderQuantity);
-			}
-			else if (product.getStockQuantity() >= orderQuantity)
-			{
-				shoppingCart.addProductInShoppingCart(product, orderQuantity);
-			}
-			else
-			{
-				throw new OrderException("Stock quantity is: " + product.getStockQuantity());
-			}
-		}
-		else
-		{
-			throw new OrderException("Product with id: " + productId + "doesn't exists");
-		}
-	}
+//	public void addProduct(OrderRow shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
+//	{
+//		if (productRepository.readAll().containsKey(productId))
+//		{
+//			Product product = productRepository.read(productId);
+//			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= product.getOrderQuantity() + orderQuantity)
+//			{
+//				product.addOrderQuantity(orderQuantity);
+//			}
+//			else if (product.getStockQuantity() >= orderQuantity)
+//			{
+//				shoppingCart.addProduct(product, orderQuantity);
+//			}
+//			else
+//			{
+//				throw new OrderException("Stock quantity is: " + product.getStockQuantity());
+//			}
+//		}
+//		else
+//		{
+//			throw new OrderException("Product with id: " + productId + "doesn't exists");
+//		}
+//	}
 
-	public void changeOrderQuantity(ShoppingCart shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
-	{
-		if (productRepository.readAll().containsKey(productId))
-		{
-			Product product = productRepository.read(productId);
-			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= orderQuantity)
-			{
-				product.setOrderQuantity(orderQuantity);
-				shoppingCart.calculateTotalPrice();
-			}
-			else
-			{
-				throw new OrderException("Stock quantity is: " + product.getStockQuantity());
-			}
-		}
-	}
+//	public void changeOrderQuantity(OrderRow shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
+//	{
+//		if (productRepository.readAll().containsKey(productId))
+//		{
+//			Product product = productRepository.read(productId);
+//			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= orderQuantity)
+//			{
+//				product.setOrderQuantity(orderQuantity);
+//				shoppingCart.calculateTotalPrice();
+//			}
+//			else
+//			{
+//				throw new OrderException("Stock quantity is: " + product.getStockQuantity());
+//			}
+//		}
+//	}
 }

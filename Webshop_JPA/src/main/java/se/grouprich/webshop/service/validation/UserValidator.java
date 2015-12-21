@@ -10,7 +10,8 @@ public final class UserValidator implements PasswordValidator, DuplicateValidato
 
 	public UserValidator()
 	{
-		userRepository = new FileRepository<>(User.class);
+//		kommenterar bort tills vi skapar nya Repository klasser
+//		userRepository = new FileRepository<>(User.class);
 	}
 
 	public boolean isValidPassword(final String password)

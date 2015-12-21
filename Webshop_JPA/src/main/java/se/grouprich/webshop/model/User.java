@@ -2,39 +2,33 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
-import se.grouprich.webshop.exception.UserRegistrationException;
-import se.grouprich.webshop.idgenerator.Identifiable;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
-public final class User implements Serializable, Identifiable<String>
+import se.grouprich.webshop.exception.UserRegistrationException;
+
+@Entity
+public class User extends AbstractEntity implements Serializable
 {
+	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
-	private String userId;
 	private String email;
 	private String password;
-	private final String firstName;
-	private final String lastName;
-	private final String role;
+	private String firstName;
+	private String lastName;
+	private String role;
 
-	public User(String userId, String email, String password, String firstName, String lastName, String role) throws UserRegistrationException
+	protected User()
 	{
-		this.userId = userId;
+	}
+
+	public User(String email, String password, String firstName, String lastName, String role) throws UserRegistrationException
+	{
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = role;
-	}
-	
-	@Override
-	public String getId()
-	{
-		return userId;
-	}
-
-	@Override
-	public void setId(final String userId)
-	{
-		this.userId = userId;
 	}
 
 	public String getEmail()
@@ -51,7 +45,7 @@ public final class User implements Serializable, Identifiable<String>
 	{
 		return role;
 	}
-	
+
 	public void setEmail(final String email)
 	{
 		this.email = email;

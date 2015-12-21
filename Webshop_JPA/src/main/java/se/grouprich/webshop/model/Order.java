@@ -1,61 +1,77 @@
 package se.grouprich.webshop.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import se.grouprich.webshop.exception.PaymentException;
-import se.grouprich.webshop.idgenerator.Identifiable;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
-public final class Order implements Serializable, Identifiable<String>
+@Entity
+public class Order extends AbstractEntity implements Serializable
 {
+	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
-	private String orderId;
-	private final ShoppingCart shoppingCart;
-	private User customer;
+	private User user;
+	private List<OrderRow> orderRows;
+	private double totalPrice;
 	private boolean isPayed;
 
-	public Order(String orderId, User customer, ShoppingCart shoppingCart)
+	public Order()
 	{
-		this.orderId = orderId;
-		this.customer = customer;
-		this.shoppingCart = shoppingCart;
+	}
+
+	public Order(User user)
+	{
+		this.user = user;
+		orderRows = new ArrayList<>();
 		isPayed = false;
 	}
-	
-	@Override
-	public String getId()
-	{
-		return orderId;
-	}
 
-	@Override
-	public void setId(final String orderId)
-	{
-		this.orderId = orderId;
-	}
-
-	public ShoppingCart getShoppingCart()
-	{
-		return shoppingCart;
-	}
-	
 	public User getUser()
 	{
-		return customer;
+		return user;
+	}
+
+	public List<OrderRow> getOrderRows()
+	{
+		return orderRows;
+	}
+
+	public double getTotalPrice()
+	{
+		return totalPrice;
 	}
 
 	public boolean isPayed()
 	{
 		return isPayed;
 	}
-	
-	public void pay() throws PaymentException
+
+	public void addOrderRow(OrderRow orderRow)
 	{
-		isPayed = true;
-		for (Product product : shoppingCart.getProducts())
-		{
-			product.setStockQuantity(product.getStockQuantity() - product.getOrderQuantity());
-		}
+		orderRows.add(orderRow);
 	}
+
+	public void calculateTotalPrice()
+	{
+		double totalPrice = 0;
+		for (OrderRow orderRow : orderRows)
+		{
+			totalPrice += orderRow.getPricePerOrderRow();
+		}
+		this.totalPrice = totalPrice;
+	}
+
+	// public void pay() throws PaymentException
+	// {
+	// isPayed = true;
+	// for (Product product : orderRows.getProducts())
+	// {
+	// product.setStockQuantity(product.getStockQuantity() -
+	// product.getOrderQuantity());
+	// }
+	// }
 
 	@Override
 	public boolean equals(Object other)
@@ -68,7 +84,7 @@ public final class Order implements Serializable, Identifiable<String>
 		if (other instanceof Order)
 		{
 			Order otherOrder = (Order) other;
-			return orderId == otherOrder.orderId && shoppingCart.equals(otherOrder.shoppingCart);
+			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows);
 		}
 		return false;
 	}
@@ -77,8 +93,8 @@ public final class Order implements Serializable, Identifiable<String>
 	public int hashCode()
 	{
 		int result = 1;
-		result += orderId.hashCode() * 37;
-		result += shoppingCart.hashCode() * 37;
+		result += user.hashCode() * 37;
+		result += orderRows.hashCode() * 37;
 
 		return result;
 	}
@@ -86,6 +102,6 @@ public final class Order implements Serializable, Identifiable<String>
 	@Override
 	public String toString()
 	{
-		return "Order [orderId=" + orderId + ", shoppingCart=" + shoppingCart + ", customer=" + customer + ", isPayed=" + isPayed + "]";
+		return "Order [user=" + user + ", orderRows=" + orderRows + ", isPayed=" + isPayed + "]";
 	}
 }

@@ -2,37 +2,30 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
-import se.grouprich.webshop.exception.OrderException;
-import se.grouprich.webshop.exception.ProductRegistrationException;
-import se.grouprich.webshop.idgenerator.Identifiable;
+import javax.persistence.Entity;
+import javax.persistence.Transient;
 
-public final class Product implements Serializable, Identifiable<String>
+import se.grouprich.webshop.exception.ProductRegistrationException;
+
+@Entity
+public class Product extends AbstractEntity implements Serializable
 {
+	@Transient
 	private static final long serialVersionUID = 5072511887999675702L;
-	private String productId;
 	private String productName;
 	private double price;
 	private int stockQuantity;
-	private int orderQuantity;
+	// private int orderQuantity;
 
-	public Product(String productId, String productName, double price, int stockQuantity) throws ProductRegistrationException
+	protected Product()
 	{
-		this.productId = productId;
+	}
+
+	public Product(String productName, double price, int stockQuantity) throws ProductRegistrationException
+	{
 		this.productName = productName;
 		this.price = price;
 		this.stockQuantity = stockQuantity;
-	}
-
-	@Override
-	public String getId()
-	{
-		return productId;
-	}
-
-	@Override
-	public void setId(final String productId)
-	{
-		this.productId = productId;
 	}
 
 	public String getProductName()
@@ -55,20 +48,22 @@ public final class Product implements Serializable, Identifiable<String>
 		this.stockQuantity = stockQuantity;
 	}
 
-	public void setOrderQuantity(final int orderQuantity) throws OrderException
-	{
-		this.orderQuantity = orderQuantity;
-	}
-
-	public void addOrderQuantity(final int orderQuantity) throws OrderException
-	{
-		this.orderQuantity += orderQuantity;
-	}
-
-	public int getOrderQuantity()
-	{
-		return orderQuantity;
-	}
+	// public void setOrderQuantity(final int orderQuantity) throws
+	// OrderException
+	// {
+	// this.orderQuantity = orderQuantity;
+	// }
+	//
+	// public void addOrderQuantity(final int orderQuantity) throws
+	// OrderException
+	// {
+	// this.orderQuantity += orderQuantity;
+	// }
+	//
+	// public int getOrderQuantity()
+	// {
+	// return orderQuantity;
+	// }
 
 	public void setPrice(final double price)
 	{
@@ -86,7 +81,7 @@ public final class Product implements Serializable, Identifiable<String>
 		if (other instanceof Product)
 		{
 			Product otherProduct = (Product) other;
-			return productId.equals(otherProduct.productId) && productName.equals(otherProduct.productName) && price == otherProduct.price;
+			return productName.equals(otherProduct.productName) && price == otherProduct.price;
 		}
 		return false;
 	}
@@ -95,7 +90,6 @@ public final class Product implements Serializable, Identifiable<String>
 	public int hashCode()
 	{
 		int result = 1;
-		result += productId.hashCode() * 37;
 		result += productName.hashCode() * 37;
 		result += price * 37;
 
@@ -105,7 +99,6 @@ public final class Product implements Serializable, Identifiable<String>
 	@Override
 	public String toString()
 	{
-		return productName + "(" + productId + ") ----"
-				+ " Price: " + price + " kr ---- Order quantity: " + orderQuantity + " Stock quantity: " + stockQuantity;
+		return "Product [productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + "]";
 	}
 }
