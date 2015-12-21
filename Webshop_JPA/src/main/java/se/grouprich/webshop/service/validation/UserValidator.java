@@ -1,16 +1,16 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.model.Customer;
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.FileRepository;
 import se.grouprich.webshop.repository.Repository;
 
-public final class CustomerValidator implements PasswordValidator, DuplicateValidator, EmailValidator
+public final class UserValidator implements PasswordValidator, DuplicateValidator, EmailValidator
 {
-	private Repository<String, Customer> customerRepository;
+	private Repository<String, User> userRepository;
 
-	public CustomerValidator()
+	public UserValidator()
 	{
-		customerRepository = new FileRepository<>(Customer.class);
+		userRepository = new FileRepository<>(User.class);
 	}
 
 	public boolean isValidPassword(final String password)
@@ -56,7 +56,7 @@ public final class CustomerValidator implements PasswordValidator, DuplicateVali
 	@Override
 	public boolean alreadyExists(final String email)
 	{
-		for (Customer customer : customerRepository.readAll().values())
+		for (User customer : userRepository.readAll().values())
 		{
 			if (customer.getEmail().equals(email))
 			{

@@ -2,37 +2,39 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
-import se.grouprich.webshop.exception.CustomerRegistrationException;
+import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.idgenerator.Identifiable;
 
-public final class Customer implements Serializable, Identifiable<String>
+public final class User implements Serializable, Identifiable<String>
 {
 	private static final long serialVersionUID = 8550124813033398565L;
-	private String customerId;
+	private String userId;
 	private String email;
 	private String password;
 	private final String firstName;
 	private final String lastName;
+	private final String role;
 
-	public Customer(String customerId, String email, String password, String firstName, String lastName) throws CustomerRegistrationException
+	public User(String userId, String email, String password, String firstName, String lastName, String role) throws UserRegistrationException
 	{
-		this.customerId = customerId;
+		this.userId = userId;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.role = role;
 	}
 	
 	@Override
 	public String getId()
 	{
-		return customerId;
+		return userId;
 	}
 
 	@Override
-	public void setId(final String customerId)
+	public void setId(final String userId)
 	{
-		this.customerId = customerId;
+		this.userId = userId;
 	}
 
 	public String getEmail()
@@ -45,6 +47,11 @@ public final class Customer implements Serializable, Identifiable<String>
 		return password;
 	}
 
+	public String getRole()
+	{
+		return role;
+	}
+	
 	public void setEmail(final String email)
 	{
 		this.email = email;
@@ -68,10 +75,10 @@ public final class Customer implements Serializable, Identifiable<String>
 			return true;
 		}
 
-		if (other instanceof Customer)
+		if (other instanceof User)
 		{
-			Customer otherCustomer = (Customer) other;
-			return email.equals(otherCustomer.email) && password.equals(otherCustomer.password);
+			User otherUser = (User) other;
+			return email.equals(otherUser.email) && password.equals(otherUser.password) && role.equals(otherUser.role);
 		}
 		return false;
 	}
@@ -82,6 +89,7 @@ public final class Customer implements Serializable, Identifiable<String>
 		int result = 1;
 		result += email.hashCode() * 37;
 		result += password.hashCode() * 37;
+		result += role.hashCode() * 37;
 
 		return result;
 	}
@@ -89,6 +97,6 @@ public final class Customer implements Serializable, Identifiable<String>
 	@Override
 	public String toString()
 	{
-		return "[Name] " + getName() + " [E-mail] " + email;
+		return "[Name] " + getName() + ", [E-mail] " + email + ", [Role] " + role;
 	}
 }

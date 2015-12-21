@@ -1,20 +1,20 @@
 package se.grouprich.webshop.main;
 
-import se.grouprich.webshop.exception.CustomerRegistrationException;
+import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.RepositoryException;
 import se.grouprich.webshop.idgenerator.ECommerceIdGenerator;
 import se.grouprich.webshop.idgenerator.IdGenerator;
-import se.grouprich.webshop.model.Customer;
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.ShoppingCart;
 import se.grouprich.webshop.repository.FileRepository;
 import se.grouprich.webshop.repository.Repository;
 import se.grouprich.webshop.service.ECommerceService;
-import se.grouprich.webshop.service.validation.CustomerValidator;
+import se.grouprich.webshop.service.validation.UserValidator;
 import se.grouprich.webshop.service.validation.DuplicateValidator;
 import se.grouprich.webshop.service.validation.EmailValidator;
 import se.grouprich.webshop.service.validation.PasswordValidator;
@@ -23,30 +23,30 @@ import se.grouprich.webshop.service.validation.ProductValidator;
 public final class Main
 {
 	public static final void main(String[] args)
-			throws CustomerRegistrationException, ProductRegistrationException, RepositoryException, OrderException, PaymentException
+			throws UserRegistrationException, ProductRegistrationException, RepositoryException, OrderException, PaymentException
 	{
 		Repository<String, Product> fileProductRepository = new FileRepository<Product>(Product.class);
-		Repository<String, Customer>  fileCustomerRepository = new FileRepository<Customer>(Customer.class);
+		Repository<String, User>  fileCustomerRepository = new FileRepository<User>(User.class);
 		Repository<String, Order> fileOrderRepository = new FileRepository<Order>(Order.class);
 		IdGenerator<String> idGenerator = new ECommerceIdGenerator();
-		PasswordValidator passwordValidator = new CustomerValidator();
-		DuplicateValidator customerDuplicateValidator = new CustomerValidator();
+		PasswordValidator passwordValidator = new UserValidator();
+		DuplicateValidator customerDuplicateValidator = new UserValidator();
 		DuplicateValidator productDuplicateValidator = new ProductValidator();
-		EmailValidator emailValidator = new CustomerValidator();
+		EmailValidator emailValidator = new UserValidator();
 	
 		ECommerceService eCommerceService = new ECommerceService(fileOrderRepository, fileCustomerRepository,
 				fileProductRepository, idGenerator, passwordValidator, customerDuplicateValidator, productDuplicateValidator, emailValidator);
 
-		Customer customer1 = eCommerceService.createCustomer("Aaa12&", "Arbieto12*", "Haydee", "DeAlvarado");
-		eCommerceService.createCustomer("qqqq@mail.com", "Q#qq32", "hahaha", "hohoho");
+		User customer1 = eCommerceService.createUser("Aaa12&", "Arbieto12*", "Haydee", "DeAlvarado", "Customer");
+		eCommerceService.createUser("qqqq@mail.com", "Q#qq32", "hahaha", "hohoho", "Customer");
 
 		customer1.setEmail("arbeito@mail.se");
 		passwordValidator.isValidPassword("Aaa12&");
-		eCommerceService.updateCustomer(customer1.getId(), customer1);
+		eCommerceService.updateUser(customer1.getId(), customer1);
 		
 		customer1.setEmail("arbeito@mail.se");
 		
-		eCommerceService.updateCustomer(customer1.getId(), customer1);
+		eCommerceService.updateUser(customer1.getId(), customer1);
 
 		Product product1 = eCommerceService.createProduct("Shampoo", 20.00, 6);
 		Product product2 = eCommerceService.createProduct("Treatment", 20.00, 10);
@@ -105,16 +105,16 @@ public final class Main
 		System.out.println();
 		System.out.println("Before delete customer\n-----------------------");
 
-		for (Customer customer : fileCustomerRepository.readAll().values())
+		for (User customer : fileCustomerRepository.readAll().values())
 		{
 			System.out.println(customer);
 		}
 
-		eCommerceService.deleteCustomer(customer1.getId());
+		eCommerceService.deleteUser(customer1.getId());
 
 		System.out.println();
 		System.out.println("After delete customer\n-----------------------");
-		for (Customer customer : fileCustomerRepository.readAll().values())
+		for (User customer : fileCustomerRepository.readAll().values())
 		{
 			System.out.println(customer);
 		}

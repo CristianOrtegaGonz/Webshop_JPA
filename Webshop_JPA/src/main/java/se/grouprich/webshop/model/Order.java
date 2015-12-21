@@ -10,10 +10,10 @@ public final class Order implements Serializable, Identifiable<String>
 	private static final long serialVersionUID = 3380539865925002167L;
 	private String orderId;
 	private final ShoppingCart shoppingCart;
-	private Customer customer;
+	private User customer;
 	private boolean isPayed;
 
-	public Order(String orderId, Customer customer, ShoppingCart shoppingCart)
+	public Order(String orderId, User customer, ShoppingCart shoppingCart)
 	{
 		this.orderId = orderId;
 		this.customer = customer;
@@ -38,7 +38,7 @@ public final class Order implements Serializable, Identifiable<String>
 		return shoppingCart;
 	}
 	
-	public Customer getCustomer()
+	public User getUser()
 	{
 		return customer;
 	}
