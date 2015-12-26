@@ -39,14 +39,23 @@ public final class OrderRow implements Serializable
             return quantity;
         }
 
-        public void setQuantity(int quantity) {
-            this.quantity = quantity;
+        public void decreaseQuantity(int quantity) {
+            this.quantity = this.quantity - quantity;
         }
+
+		public void increaseQuantity(int quantity) {
+			this.quantity = this.quantity + quantity;
+	}
     }
 
+	public double calculateOrderRowPrice(OrderRow orderRow)
+	{
+		orderRowPrice = 0.0;
+			orderRowPrice += (orderRow.getItem().getPrice() * orderRow.getQuantity());
+		return orderRowPrice;
+	}
 
-
-	public double orderRowPrice()
+	public double getOrderRowPrice()
 	{
 		return orderRowPrice;
 	}
