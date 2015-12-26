@@ -13,8 +13,6 @@ public final class OrderRow implements Serializable
 	private int quantity;
 	private double orderRowPrice;
 
-
-
         public OrderRow(Product product, int quantity)
         {
             this.product = product;
@@ -39,20 +37,17 @@ public final class OrderRow implements Serializable
             return quantity;
         }
 
-        public void decreaseQuantity(int quantity) {
-            this.quantity = this.quantity - quantity;
+        public void decreaseQuantity() {
+            this.quantity = this.quantity - 1;
         }
 
-		public void increaseQuantity(int quantity) {
-			this.quantity = this.quantity + quantity;
+		public void increaseQuantity() {
+			this.quantity = this.quantity + 1;
 	}
-    }
 
-	public double calculateOrderRowPrice(OrderRow orderRow)
+	public void calculateOrderRowPrice(OrderRow orderRow)
 	{
-		orderRowPrice = 0.0;
-			orderRowPrice += (orderRow.getItem().getPrice() * orderRow.getQuantity());
-		return orderRowPrice;
+		orderRowPrice += (orderRow.getItem().getPrice() * orderRow.getQuantity());
 	}
 
 	public double getOrderRowPrice()
