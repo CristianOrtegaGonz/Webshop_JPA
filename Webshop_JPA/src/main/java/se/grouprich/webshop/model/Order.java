@@ -7,6 +7,7 @@ import java.util.List;
 import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.idgenerator.Identifiable;
+import sun.plugin2.main.client.ProcessUI;
 
 public final class Order implements Serializable, Identifiable<String>
 {
@@ -22,7 +23,6 @@ public final class Order implements Serializable, Identifiable<String>
 		this.orderId = orderId;
 		this.shopper = shopper;
 		this.orderRows = orderRows;
-		caluculateOrderPrice();
 		isPayed = false;
 	}
 
@@ -30,24 +30,8 @@ public final class Order implements Serializable, Identifiable<String>
         return orderTotal;
     }
 
-    public void addToOrder(Product product, int quantity) {
-        orderRows.add(new OrderRow(product, quantity));
-    }
-
-    public void addToOrder(Product product) {
-        orderRows.add(new OrderRow(product));
-    }
-
-    public void addToOrder(List<OrderRow> orderRows) {
-        this.orderRows = orderRows;
-    }
-
     public void setOrderTotal(double orderTotal) {
         this.orderTotal = orderTotal;
-    }
-
-    public String getShopperUserName() {
-        return shopper.getUsername();
     }
 
     public User getOrderShopper() {
@@ -58,37 +42,54 @@ public final class Order implements Serializable, Identifiable<String>
         return new ArrayList<>(orderRows);
     }
 
-	public double calculateTotalPrice()
+
+
+	public void calculateTotalPrice()
 	{
-		totalPrice = 0;
-		for (Product product : products)
+		for (OrderRow orderrow : orderRows)
 		{
-			totalPrice += (product.getPrice() * product.getOrderQuantity());
+			orderTotal += (orderrow.getItem().getPrice() * orderrow.getQuantity());
 		}
-		return totalPrice;
 	}
 
-	public void addProductInShoppingCart(final Product product, final int orderQuantity) throws OrderException
-	{
-		products.add(product);
-		product.setOrderQuantity(orderQuantity);
-		calculateTotalPrice();
-	}
 
-	public void deleteOneProduct(final Product product) throws OrderException
-	{
-		if (!products.contains(product))
-		{
-			throw new OrderException("Product doesn't exsists.");
+	public void addToOrder(final Product product, final int quantity) throws OrderException {
+      orderRows.add(new OrderRow(product, quantity));
+      calculateTotalPrice();
+    }
+
+    public void addToOrder(final Product product) throws OrderException {
+        orderRows.add(new OrderRow(product));
+		calculateOrderPrice();
+    }
+
+    public void addToOrder(final List<OrderRow> orderRows) throws OrderException {
+		orderRows.addAll(orderRows);
+		calculateOrderPrice();
+    }
+
+	private void deleteProduct (final Product product) throws OrderException {
+		for (int i = 0; i < orderRows.size(); i ++) {
+			if (orderRows.get(i).getItem().equals(product)) {
+				if (orderRows.get(i).getQuantity() == 1) {
+					orderRows.remove(i);
+					calculateOrderPrice();
+				}
+
+				if (orderRows.get(i).getQuantity() > 1) {
+					orderRows.get(i).decreaseQuantity();
+					calculateOrderPrice();
+				}
+			}
 		}
-		products.remove(product);
-		calculateTotalPrice();
+		throw new OrderException("Product doesn't exsists.");
+
 	}
 
-	public void emptyShoppingCart(final List<Product> products)
+	public void emptyShoppingCart(final List<OrderRow> orderRows)
 	{
-		products.removeAll(products);
-		calculateTotalPrice();
+		orderRows.removeAll(orderRows);
+		orderTotal = 0.0;
 	}
 
 	public void calculateOrderPrice(){
@@ -98,7 +99,7 @@ public final class Order implements Serializable, Identifiable<String>
         }
         this.orderTotal = total;
     }
-	 */
+
 	@Override
 	public String getId()
 	{
@@ -112,9 +113,9 @@ public final class Order implements Serializable, Identifiable<String>
 	}
 
 	
-	public User getShopperUserName()
+	public User getShopper()
 	{
-		return shopper.getUsername();
+		return shopper;
 	}
 
 	public boolean isPayed()

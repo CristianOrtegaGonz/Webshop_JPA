@@ -15,6 +15,9 @@ public final class Product implements Serializable, Identifiable<String>
 	private int stockQuantity;
 	private int orderQuantity;
 
+	/*Vad är orderQuantity till för? Menar ni det antal produkter en order har? I så fall kan vi väl ta bort den här
+	* och ha den som ligger på order... */
+
 	public Product(String productId, String productName, double price, int stockQuantity) throws ProductRegistrationException
 	{
 		this.productId = productId;
@@ -22,6 +25,11 @@ public final class Product implements Serializable, Identifiable<String>
 		this.price = price;
 		this.stockQuantity = stockQuantity;
 	}
+
+	/* Lite osäker på varför ha med stockquantity när man skapar en produkt. Man vill ju kunna skapa en produkt som ännu ej finns i lager t ex.
+	Sen är det frågan om det hör hemma i denna modellklass som beskriver produkten. Vi har ju ännu inga krav på att hantera lager menar jag.
+	Vill bara förstå, hoppas att mina kommentarer tas på rätt sätt!
+	 */
 
 	@Override
 	public String getId()

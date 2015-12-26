@@ -4,11 +4,11 @@ import se.grouprich.webshop.model.Customer;
 import se.grouprich.webshop.repository.FileRepository;
 import se.grouprich.webshop.repository.Repository;
 
-public final class CustomerValidator implements PasswordValidator, DuplicateValidator, EmailValidator
+public final class UserValidator implements PasswordValidator, DuplicateValidator, EmailValidator
 {
 	private Repository<String, Customer> customerRepository;
 
-	public CustomerValidator()
+	public UserValidator()
 	{
 		customerRepository = new FileRepository<>(Customer.class);
 	}

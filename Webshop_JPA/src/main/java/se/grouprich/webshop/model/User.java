@@ -2,21 +2,21 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
-import se.grouprich.webshop.exception.CustomerRegistrationException;
+import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.idgenerator.Identifiable;
 
-public final class Customer implements Serializable, Identifiable<String>
+public final class User implements Serializable, Identifiable<String>
 {
 	private static final long serialVersionUID = 8550124813033398565L;
-	private String customerId;
+	private String userId;
 	private String email;
 	private String password;
 	private final String firstName;
 	private final String lastName;
 
-	public Customer(String customerId, String email, String password, String firstName, String lastName) throws CustomerRegistrationException
+	public User(String userId, String email, String password, String firstName, String lastName) throws UserRegistrationException
 	{
-		this.customerId = customerId;
+		this.userId = userId;
 		this.email = email;
 		this.password = password;
 		this.firstName = firstName;
@@ -26,13 +26,13 @@ public final class Customer implements Serializable, Identifiable<String>
 	@Override
 	public String getId()
 	{
-		return customerId;
+		return userId;
 	}
 
 	@Override
 	public void setId(final String customerId)
 	{
-		this.customerId = customerId;
+		this.userId = customerId;
 	}
 
 	public String getEmail()
@@ -68,10 +68,10 @@ public final class Customer implements Serializable, Identifiable<String>
 			return true;
 		}
 
-		if (other instanceof Customer)
+		if (other instanceof User)
 		{
-			Customer otherCustomer = (Customer) other;
-			return email.equals(otherCustomer.email) && password.equals(otherCustomer.password);
+			User otherUser = (User) other;
+			return email.equals(otherUser.email) && password.equals(otherUser.password);
 		}
 		return false;
 	}
