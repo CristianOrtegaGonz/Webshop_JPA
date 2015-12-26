@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import se.grouprich.webshop.exception.CustomerRegistrationException;
+import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.RepositoryException;
 import se.grouprich.webshop.idgenerator.IdGenerator;
-import se.grouprich.webshop.model.Customer;
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
-import se.grouprich.webshop.model.ShoppingCart;
+import se.grouprich.webshop.model.OrderRow;
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.Repository;
 import se.grouprich.webshop.service.validation.DuplicateValidator;
 import se.grouprich.webshop.service.validation.EmailValidator;
@@ -22,24 +23,24 @@ import se.grouprich.webshop.service.validation.PasswordValidator;
 public final class ECommerceService
 {
 	private final Repository<String, Order> orderRepository;
-	private final Repository<String, Customer> customerRepository;
+	private final Repository<String, User> userRepository;
 	private final Repository<String, Product> productRepository;
 	private final IdGenerator<String> idGenerator;
 	private final PasswordValidator passwordValidator;
-	private final DuplicateValidator customerDuplicateValidator;
+	private final DuplicateValidator userDuplicateValidator;
 	private final DuplicateValidator productDuplicateValidator;
 	private final EmailValidator emailValidator;
 
-	public ECommerceService(Repository<String, Order> orderRepository, Repository<String, Customer> customerRepository, Repository<String, Product> productRepository,
-			IdGenerator<String> idGenerator, PasswordValidator passwordValidator, DuplicateValidator customerDuplicateValidator,
+	public ECommerceService(Repository<String, Order> orderRepository, Repository<String, User> userRepository, Repository<String, Product> productRepository,
+			IdGenerator<String> idGenerator, PasswordValidator passwordValidator, DuplicateValidator userDuplicateValidator,
 			DuplicateValidator productDuplicateValidator, EmailValidator emailValidator)
 	{
 		this.orderRepository = orderRepository;
-		this.customerRepository = customerRepository;
+		this.userRepository = userRepository;
 		this.productRepository = productRepository;
 		this.idGenerator = idGenerator;
 		this.passwordValidator = passwordValidator;
-		this.customerDuplicateValidator = customerDuplicateValidator;
+		this.userDuplicateValidator = userDuplicateValidator;
 		this.productDuplicateValidator = productDuplicateValidator;
 		this.emailValidator = emailValidator;
 	}
@@ -49,9 +50,9 @@ public final class ECommerceService
 		return orderRepository;
 	}
 
-	public Repository<String, Customer> getCustomerRepository()
+	public Repository<String, User> getCustomerRepository()
 	{
-		return customerRepository;
+		return userRepository;
 	}
 
 	public Repository<String, Product> getProductRepository()
@@ -69,9 +70,9 @@ public final class ECommerceService
 		return passwordValidator;
 	}
 
-	public DuplicateValidator getCustomerDuplicateValidator()
+	public DuplicateValidator getUserDuplicateValidator()
 	{
-		return customerDuplicateValidator;
+		return userDuplicateValidator;
 	}
 
 	public DuplicateValidator getProductDuplicateValidator()
@@ -84,28 +85,23 @@ public final class ECommerceService
 		return emailValidator;
 	}
 
-	public ShoppingCart createShoppingCart()
+	public User createUser(String email, String password, String firstName, String lastName) throws UserRegistrationException
 	{
-		return new ShoppingCart();
-	}
-
-	public Customer createCustomer(String email, String password, String firstName, String lastName) throws CustomerRegistrationException
-	{
-		if (customerDuplicateValidator.alreadyExists(email))
+		if (userDuplicateValidator.alreadyExists(email))
 		{
-			throw new CustomerRegistrationException("Customer with E-mail: " + email + " already exists");
+			throw new UserRegistrationException("Customer with E-mail: " + email + " already exists");
 		}
 		if (!emailValidator.isLengthWithinRange(email))
 		{
-			throw new CustomerRegistrationException("Email address that is longer than 30 characters is not allowed");
+			throw new UserRegistrationException("Email address that is longer than 30 characters is not allowed");
 		}
 		if (!passwordValidator.isValidPassword(password))
 		{
-			throw new CustomerRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
+			throw new UserRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
 		String id = idGenerator.getGeneratedId();
-		Customer customer = new Customer(id, email, password, firstName, lastName);
-		return customerRepository.create(customer);
+		User user = new User(id, email, password, firstName, lastName);
+		return userRepository.create(user);
 	}
 
 	public Product createProduct(String productName, double price, int stockQuantity) throws ProductRegistrationException, RepositoryException
@@ -118,32 +114,32 @@ public final class ECommerceService
 		Product product = new Product(id, productName, price, stockQuantity);
 		return productRepository.create(product);
 	}
-
-	public Order checkOut(Customer customer, ShoppingCart shoppingCart) throws OrderException
+	 /* Är denna endast till för att kolla om ordern är tom? */
+	public Order checkOut(Order order) throws OrderException
 	{
-		if (shoppingCart.getProducts().isEmpty())
+		if (order.getOrderRows().isEmpty())
 		{
 			throw new OrderException("Shopping cart is empty");
 		}
 		String id = null;
-		return new Order(id, customer, shoppingCart);
+		return new Order(id, order.getOrderShopper(), order.getOrderRows());
 	}
 
 	public Order createOrder(Order order) throws PaymentException
 	{
-		if (order.getShoppingCart().getTotalPrice() > 50000.00)
+		if (order.getOrderTotal() > 50000.00)
 		{
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
 		}
-		order.pay();
+		/*order.pay();*/
 		String id = idGenerator.getGeneratedId();
 		order.setId(id);
 		return orderRepository.create(order);
 	}
 
-	public Customer deleteCustomer(String customerId) throws RepositoryException
+	public User deleteUser(String userId) throws RepositoryException
 	{
-		return customerRepository.delete(customerId);
+		return userRepository.delete(userId);
 	}
 
 	public Order deleteOrder(String orderId) throws RepositoryException
@@ -156,10 +152,10 @@ public final class ECommerceService
 		return productRepository.delete(productId);
 	}
 
-	public Customer updateCustomer(String customerId, Customer customer) throws RepositoryException
+	public User updateUser(String userId, User user) throws RepositoryException
 	{
 		//TODO: validera vilka har rättigheter att göra det
-		return customerRepository.update(customerId, customer);
+		return userRepository.update(userId, user);
 	}
 
 	public Order updateOrder(String orderId, Order order) throws RepositoryException
@@ -174,9 +170,9 @@ public final class ECommerceService
 		return productRepository.update(productId, product);
 	}
 
-	public Customer fetchCustomer(String customerId) throws RepositoryException
+	public User fetchCustomer(String userId) throws RepositoryException
 	{
-		return customerRepository.read(customerId);
+		return userRepository.read(userId);
 	}
 
 	public Order fetchOrder(String orderId) throws RepositoryException
@@ -189,9 +185,9 @@ public final class ECommerceService
 		return productRepository.read(productId);
 	}
 
-	public Map<String, Customer> fetchAllCustomers()
+	public Map<String, User> fetchAllCustomers()
 	{
-		return customerRepository.readAll();
+		return userRepository.readAll();
 	}
 
 	public Map<String, Order> fetchAllOrders()
@@ -204,31 +200,31 @@ public final class ECommerceService
 		return productRepository.readAll();
 	}
 
-	public List<Order> fetchOrdersByCustomer(Customer customer)
+	public List<Order> fetchOrdersByCustomer(User user)
 	{
-		List<Order> ordersByCustomer = new ArrayList<>();
+		List<Order> ordersByUser = new ArrayList<>();
 		for (Order order : (orderRepository.readAll()).values())
 		{
-			if (order.getCustomer().equals(customer))
+			if (order.getOrderShopper().equals(user))
 			{
-				ordersByCustomer.add(order);
+				ordersByUser.add(order);
 			}
 		}
-		return ordersByCustomer;
+		return ordersByUser;
 	}
 
-	public void addProductInShoppingCart(ShoppingCart shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
+	public void addProductInShoppingCart(Order order, String productId, int orderQuantity) throws RepositoryException, OrderException
 	{
 		if (productRepository.readAll().containsKey(productId))
 		{
 			Product product = productRepository.read(productId);
-			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= product.getOrderQuantity() + orderQuantity)
+			if (order.getOrderRows().contains(product) && product.getStockQuantity() >= product.getOrderQuantity() + orderQuantity)
 			{
 				product.addOrderQuantity(orderQuantity);
 			}
 			else if (product.getStockQuantity() >= orderQuantity)
 			{
-				shoppingCart.addProductInShoppingCart(product, orderQuantity);
+				order.addToOrder(product, orderQuantity);
 			}
 			else
 			{
@@ -241,15 +237,16 @@ public final class ECommerceService
 		}
 	}
 
-	public void changeOrderQuantity(ShoppingCart shoppingCart, String productId, int orderQuantity) throws RepositoryException, OrderException
+	public void changeOrderQuantity(Order order, String productId, int orderQuantity) throws RepositoryException, OrderException
 	{
 		if (productRepository.readAll().containsKey(productId))
 		{
 			Product product = productRepository.read(productId);
-			if (shoppingCart.getProducts().contains(product) && product.getStockQuantity() >= orderQuantity)
+
+			if (order.getOrderRows().contains(product) && (product.getStockQuantity() >= orderQuantity))
 			{
 				product.setOrderQuantity(orderQuantity);
-				shoppingCart.calculateTotalPrice();
+				order.calculateTotalPrice();
 			}
 			else
 			{
