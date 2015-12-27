@@ -26,6 +26,7 @@ public class Order extends AbstractEntity implements Serializable
 		this.user = user;
 		orderRows = new ArrayList<>();
 		isPayed = false;
+		calculateTotalPrice();
 	}
 
 	public User getUser()
@@ -51,6 +52,7 @@ public class Order extends AbstractEntity implements Serializable
 	public void addOrderRow(OrderRow orderRow)
 	{
 		orderRows.add(orderRow);
+		calculateTotalPrice();
 	}
 
 	public void calculateTotalPrice()
@@ -58,7 +60,7 @@ public class Order extends AbstractEntity implements Serializable
 		double totalPrice = 0;
 		for (OrderRow orderRow : orderRows)
 		{
-			totalPrice += orderRow.getPricePerOrderRow();
+			totalPrice += orderRow.getProduct().getPrice() * orderRow.getQuantity();
 		}
 		this.totalPrice = totalPrice;
 	}

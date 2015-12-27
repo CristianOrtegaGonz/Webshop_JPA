@@ -12,7 +12,6 @@ public class OrderRow extends AbstractEntity implements Serializable
 	private static final long serialVersionUID = 3865658878665558979L;
 	private Product product;
 	private int quantity;
-	private double pricePerOrderRow;
 
 	public OrderRow()
 	{
@@ -22,14 +21,12 @@ public class OrderRow extends AbstractEntity implements Serializable
 	{
 		this.product = product;
 		quantity = 1;
-		pricePerOrderRow = product.getPrice();
 	}
 
 	public OrderRow(Product product, int quantity)
 	{
 		this.product = product;
 		this.quantity = quantity;
-		pricePerOrderRow = product.getPrice() * quantity;
 	}
 
 	public Product getProduct()
@@ -42,49 +39,27 @@ public class OrderRow extends AbstractEntity implements Serializable
 		return quantity;
 	}
 
-	public double getPricePerOrderRow()
+	public void decreaseQuantity()
 	{
-		return pricePerOrderRow;
+		this.quantity = this.quantity - 1;
 	}
 
-	public void setTotalPrice(final double pricePerOrderRow)
+	public void increaseQuantity()
 	{
-		this.pricePerOrderRow = pricePerOrderRow;
+		this.quantity = this.quantity + 1;
 	}
 
-	// public double calculateTotalPrice()
-	// {
-	// totalPrice = 0;
-	// for (Product product : products)
-	// {
-	// totalPrice += (product.getPrice() * product.getOrderQuantity());
-	// }
-	// return totalPrice;
-	// }
-	//
-	// public void addProduct(final Product product, final int orderQuantity)
-	// throws OrderException
-	// {
-	// products.add(product);
-	// product.setOrderQuantity(orderQuantity);
-	// calculateTotalPrice();
-	// }
+	/*
+	Jag förstår inte värdet av att implementera equals och haschcode här. När spelar det roll om en orderrad är lik en annan?
+	10 000 users ska ju kunna ha exakt samma orderrad och det är ju inte relevant. Det vi inte vill är att samma user har flera
+	lika ordrar eller att det finns flera lika users eller flera lika products. Däremot vill vi ju inte ha flera ordrerrader
+	som är samma på en en order. T ex vill vi ju bara ha en rad med: 1 dator quantity 1 och om user lägger till en till dator vill
+	vi ju bara att quantity ska öka till 2. Fortfarande bara en rad, men det kollar vi lättast i addToOrder tror jag. Är ni med på
+	hur jag menar?
 
-	// public void deleteOneProduct(final Product product) throws OrderException
-	// {
-	// if (!products.contains(product))
-	// {
-	// throw new OrderException("Product doesn't exsists.");
-	// }
-	// products.remove(product);
-	// calculateTotalPrice();
-	// }
-	//
-	// public void emptyShoppingCart(final List<Product> products)
-	// {
-	// products.removeAll(products);
-	// calculateTotalPrice();
-	// }
+	Samma med toString() tror jag i alla fall. En orderrad vet ju inte vilken order den tillhör, så det är nog aldrig relevant
+	att skriva ut en orderrad. Om man vill skriva ut en ordeerrad i en order så måste vi vet vilkeen order och det vet vi i
+	orderklassen..
 
 	@Override
 	public boolean equals(Object other)
@@ -97,7 +72,7 @@ public class OrderRow extends AbstractEntity implements Serializable
 		if (other instanceof OrderRow)
 		{
 			OrderRow otherOrderRow = (OrderRow) other;
-			return product.equals(otherOrderRow.product) && quantity == otherOrderRow.quantity && pricePerOrderRow == otherOrderRow.pricePerOrderRow;
+			return product.equals(otherOrderRow.product) && quantity == otherOrderRow.quantity;
 		}
 		return false;
 	}
@@ -108,13 +83,13 @@ public class OrderRow extends AbstractEntity implements Serializable
 		int result = 1;
 		result += product.hashCode() * 37;
 		result += quantity * 37;
-		result += pricePerOrderRow * 37;
 		return result;
 	}
 
 	@Override
 	public String toString()
 	{
-		return "OrderRow [product=" + product + ", quantity=" + quantity + ", totalPrice=" + pricePerOrderRow + "]";
+		return "OrderRow [product=" + product + ", quantity=" + quantity + "]";
 	}
+	*/
 }
