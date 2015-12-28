@@ -15,17 +15,19 @@ public class Product extends AbstractEntity implements Serializable
 	private String productName;
 	private double price;
 	private int stockQuantity;
+	private String status;
 	// private int orderQuantity;
 
 	protected Product()
 	{
 	}
 
-	public Product(String productName, double price, int stockQuantity) throws ProductRegistrationException
+	public Product(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException
 	{
 		this.productName = productName;
 		this.price = price;
 		this.stockQuantity = stockQuantity;
+		this.status = status;
 	}
 
 	public String getProductName()
@@ -42,7 +44,17 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		return price;
 	}
+	
+	public String getStatus()
+	{
+		return status;
+	}
 
+	public void setProductName(String productName)
+	{
+		this.productName = productName;
+	}
+	
 	public void setStockQuantity(final int stockQuantity)
 	{
 		this.stockQuantity = stockQuantity;
@@ -69,7 +81,12 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		this.price = price;
 	}
-
+	
+	public void setStatus(String status)
+	{
+		this.status = status;
+	}
+	
 	@Override
 	public boolean equals(Object other)
 	{

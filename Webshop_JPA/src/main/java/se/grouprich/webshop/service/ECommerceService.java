@@ -106,14 +106,14 @@ public final class ECommerceService
 		return userRepository.create(user);
 	}
 
-	public Product createProduct(String productName, double price, int stockQuantity) throws ProductRegistrationException, RepositoryException
+	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, RepositoryException
 	{
 		if (productDuplicateValidator.alreadyExists(productName))
 		{
 			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
 		}
 //		String id = idGenerator.getGeneratedId();
-		Product product = new Product(productName, price, stockQuantity);
+		Product product = new Product(productName, price, stockQuantity, status);
 		return productRepository.create(product);
 	}
 
