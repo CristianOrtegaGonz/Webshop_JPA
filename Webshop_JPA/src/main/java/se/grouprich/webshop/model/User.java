@@ -17,6 +17,7 @@ public class User extends AbstractEntity implements Serializable
 	private String firstName;
 	private String lastName;
 	private String role;
+	private String status;
 
 	protected User()
 	{
@@ -29,6 +30,8 @@ public class User extends AbstractEntity implements Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = role;
+		// Fick idén från den här sidan om user status. http://developers.socialcast.com/admin/managing-users/user-status/
+		status = "Pending Activation";
 	}
 
 	public String getEmail()
@@ -45,6 +48,16 @@ public class User extends AbstractEntity implements Serializable
 	{
 		return role;
 	}
+	
+	public String getStatus()
+	{
+		return status;
+	}
+	
+	public String getName()
+	{
+		return firstName + " " + lastName;
+	}
 
 	public void setEmail(final String email)
 	{
@@ -56,10 +69,10 @@ public class User extends AbstractEntity implements Serializable
 		this.password = password;
 	}
 
-	public String getName()
+	public void setStatus(String status)
 	{
-		return firstName + " " + lastName;
-	}
+		this.status = status;
+	}	
 
 	@Override
 	public boolean equals(Object other)
@@ -72,7 +85,7 @@ public class User extends AbstractEntity implements Serializable
 		if (other instanceof User)
 		{
 			User otherUser = (User) other;
-			return email.equals(otherUser.email) && password.equals(otherUser.password) && role.equals(otherUser.role);
+			return email.equals(otherUser.email) && password.equals(otherUser.password) && role.equals(otherUser.role) && status.equals(otherUser.status);
 		}
 		return false;
 	}
@@ -84,6 +97,7 @@ public class User extends AbstractEntity implements Serializable
 		result += email.hashCode() * 37;
 		result += password.hashCode() * 37;
 		result += role.hashCode() * 37;
+		result += status.hashCode() * 37;
 
 		return result;
 	}
@@ -91,6 +105,6 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "[Name] " + getName() + ", [E-mail] " + email + ", [Role] " + role;
+		return "User [email=" + email + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status + "]";
 	}
 }
