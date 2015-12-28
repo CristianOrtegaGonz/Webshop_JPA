@@ -59,7 +59,7 @@ public final class UserValidator implements PasswordValidator, DuplicateValidato
 	{
 		for (User customer : userRepository.readAll().values())
 		{
-			if (customer.getEmail().equals(email))
+			if (customer.getUsername().equals(email))
 			{
 				return true;
 			}

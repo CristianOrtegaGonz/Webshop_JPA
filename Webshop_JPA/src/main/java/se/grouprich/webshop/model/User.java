@@ -12,7 +12,7 @@ public class User extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
-	private String email;
+	private String username;
 	private String password;
 	private String firstName;
 	private String lastName;
@@ -23,9 +23,9 @@ public class User extends AbstractEntity implements Serializable
 	{
 	}
 
-	public User(String email, String password, String firstName, String lastName, String role) throws UserRegistrationException
+	public User(String username, String password, String firstName, String lastName, String role) throws UserRegistrationException
 	{
-		this.email = email;
+		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -34,9 +34,9 @@ public class User extends AbstractEntity implements Serializable
 		status = "Pending Activation";
 	}
 
-	public String getEmail()
+	public String getUsername()
 	{
-		return email;
+		return username;
 	}
 
 	public String getPassword()
@@ -61,7 +61,7 @@ public class User extends AbstractEntity implements Serializable
 
 	public void setEmail(final String email)
 	{
-		this.email = email;
+		this.username = email;
 	}
 
 	public void setPassword(final String password)
@@ -85,7 +85,7 @@ public class User extends AbstractEntity implements Serializable
 		if (other instanceof User)
 		{
 			User otherUser = (User) other;
-			return email.equals(otherUser.email) && password.equals(otherUser.password) && role.equals(otherUser.role) && status.equals(otherUser.status);
+			return username.equals(otherUser.username) && password.equals(otherUser.password) && role.equals(otherUser.role) && status.equals(otherUser.status);
 		}
 		return false;
 	}
@@ -94,7 +94,7 @@ public class User extends AbstractEntity implements Serializable
 	public int hashCode()
 	{
 		int result = 1;
-		result += email.hashCode() * 37;
+		result += username.hashCode() * 37;
 		result += password.hashCode() * 37;
 		result += role.hashCode() * 37;
 		result += status.hashCode() * 37;
@@ -105,6 +105,6 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [email=" + email + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status + "]";
+		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status + "]";
 	}
 }
