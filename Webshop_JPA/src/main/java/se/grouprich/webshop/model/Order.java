@@ -15,17 +15,17 @@ public class Order extends AbstractEntity implements Serializable
 	private User user;
 	private List<OrderRow> orderRows;
 	private double totalPrice;
-	private boolean isPayed;
+	private String status;
 
 	public Order()
 	{
 	}
 
-	public Order(User user)
+	public Order(User user, String status)
 	{
 		this.user = user;
 		orderRows = new ArrayList<>();
-		isPayed = false;
+		status = "Placed";
 		calculateTotalPrice();
 	}
 
@@ -44,9 +44,14 @@ public class Order extends AbstractEntity implements Serializable
 		return totalPrice;
 	}
 
-	public boolean isPayed()
+	public String getStatus()
 	{
-		return isPayed;
+		return status;
+	}
+
+	public void setStatus(String status)
+	{
+		this.status = status;
 	}
 
 	public void addOrderRow(OrderRow orderRow)
@@ -65,16 +70,6 @@ public class Order extends AbstractEntity implements Serializable
 		this.totalPrice = totalPrice;
 	}
 
-	// public void pay() throws PaymentException
-	// {
-	// isPayed = true;
-	// for (Product product : orderRows.getProducts())
-	// {
-	// product.setStockQuantity(product.getStockQuantity() -
-	// product.getOrderQuantity());
-	// }
-	// }
-
 	@Override
 	public boolean equals(Object other)
 	{
@@ -86,7 +81,8 @@ public class Order extends AbstractEntity implements Serializable
 		if (other instanceof Order)
 		{
 			Order otherOrder = (Order) other;
-			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows);
+			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows) && totalPrice == otherOrder.totalPrice
+					&& status.equals(otherOrder.status);
 		}
 		return false;
 	}
@@ -97,6 +93,8 @@ public class Order extends AbstractEntity implements Serializable
 		int result = 1;
 		result += user.hashCode() * 37;
 		result += orderRows.hashCode() * 37;
+		result += totalPrice * 37;
+		result += status.hashCode() * 37;
 
 		return result;
 	}
@@ -104,6 +102,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [user=" + user + ", orderRows=" + orderRows + ", isPayed=" + isPayed + "]";
+		return "Order [user=" + user + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
 	}
 }
