@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 @Entity
@@ -12,9 +14,14 @@ public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
+	@Column(nullable = false)
 	private User user;
+	@Column(nullable = false)
+	@OneToMany
 	private List<OrderRow> orderRows;
+	@Column(nullable = false)
 	private double totalPrice;
+	@Column(nullable = false)
 	private String status;
 
 	public Order()
