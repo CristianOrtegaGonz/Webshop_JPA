@@ -2,19 +2,28 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.ProductRegistrationException;
 
 @Entity
+@NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
+		@NamedQuery(name = "Product.FetchProductsByProductName", query = "SELECT p FROM Product p WHERE p.productName = :productName") })
 public class Product extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 5072511887999675702L;
+	@Column(nullable = false)
 	private String productName;
+	@Column(nullable = false)
 	private double price;
+	@Column(nullable = false)
 	private int stockQuantity;
+	@Column(nullable = false)
 	private String status;
 	// private int orderQuantity;
 
@@ -44,7 +53,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		return price;
 	}
-	
+
 	public String getStatus()
 	{
 		return status;
@@ -54,7 +63,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		this.productName = productName;
 	}
-	
+
 	public void setStockQuantity(final int stockQuantity)
 	{
 		this.stockQuantity = stockQuantity;
@@ -81,12 +90,12 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		this.price = price;
 	}
-	
+
 	public void setStatus(String status)
 	{
 		this.status = status;
 	}
-	
+
 	@Override
 	public boolean equals(Object other)
 	{
@@ -116,6 +125,6 @@ public class Product extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Product [productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + "]";
+		return "Product [productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
 	}
 }

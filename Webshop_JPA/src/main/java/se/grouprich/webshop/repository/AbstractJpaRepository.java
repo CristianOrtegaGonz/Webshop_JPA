@@ -21,6 +21,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		this.entityClass = entityClass;
 	}
 
+	@Override
 	public E findById(Long id)
 	{
 		EntityManager manager = factory.createEntityManager();
@@ -38,7 +39,8 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}
 	}
 
-	public List<E> fetchAll(String queryName, Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
+	@Override
+	public List<E> fetchMany(String queryName, Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
 	{
 		EntityManager manager = factory.createEntityManager();
 		try
@@ -56,6 +58,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}
 	}
 
+	@Override
 	public E saveOrUpdate(E entity)
 	{
 		return entity.getId() == null ? execute(manager -> {

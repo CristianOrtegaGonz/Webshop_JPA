@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-@Entity
+//@Entity
 public class OrderRow extends AbstractEntity implements Serializable
 {
 	@Transient

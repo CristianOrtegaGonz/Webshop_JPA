@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
-@Entity
+//@Entity
 public class Order extends AbstractEntity implements Serializable
 {
 	@Transient

@@ -7,7 +7,7 @@ import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.UserRegistrationException;
 
-@Entity
+//@Entity
 public class User extends AbstractEntity implements Serializable
 {
 	@Transient

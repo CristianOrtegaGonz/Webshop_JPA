@@ -1,27 +1,24 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.model.Product;
-import se.grouprich.webshop.repository.FileRepository;
-import se.grouprich.webshop.repository.Repository;
+import javax.persistence.EntityManagerFactory;
+
+import se.grouprich.webshop.repository.JpaProductRepository;
 
 public final class ProductValidator implements DuplicateValidator
 {
-	private Repository<String, Product> productRepository;
-	
-	public ProductValidator()
+	private JpaProductRepository productRepository;
+
+	public ProductValidator(EntityManagerFactory factory)
 	{
-//		productRepository = new FileRepository<>(Product.class);
+		productRepository = new JpaProductRepository(factory);
 	}
-	
+
 	@Override
 	public boolean alreadyExists(final String productName)
 	{
-		for (Product product : productRepository.readAll().values())
+		if (productRepository.fetchProductsByProductName(productName) != null)
 		{
-			if (product.getProductName().equals(productName))
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}

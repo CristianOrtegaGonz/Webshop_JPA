@@ -6,6 +6,6 @@ import se.grouprich.webshop.model.Product;
 
 public interface ProductRepository extends CrudRepository<Product>
 {
+	List<Product> fetchAll();
 	List<Product> fetchProductsByProductName(String productName);
-	Product changeStatus(String status);
 }
