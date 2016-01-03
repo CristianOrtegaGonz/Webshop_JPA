@@ -20,7 +20,7 @@ public class Product extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private String productName;
 	@Column(nullable = false)
-	private double price;
+	private Double price;
 	@Column(nullable = false)
 	private int stockQuantity;
 	@Column(nullable = false)
@@ -31,7 +31,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Product(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException
+	public Product(String productName, Double price, int stockQuantity, String status) throws ProductRegistrationException
 	{
 		this.productName = productName;
 		this.price = price;
@@ -49,7 +49,7 @@ public class Product extends AbstractEntity implements Serializable
 		return stockQuantity;
 	}
 
-	public double getPrice()
+	public Double getPrice()
 	{
 		return price;
 	}
@@ -86,7 +86,7 @@ public class Product extends AbstractEntity implements Serializable
 	// return orderQuantity;
 	// }
 
-	public void setPrice(final double price)
+	public void setPrice(final Double price)
 	{
 		this.price = price;
 	}
@@ -107,7 +107,7 @@ public class Product extends AbstractEntity implements Serializable
 		if (other instanceof Product)
 		{
 			Product otherProduct = (Product) other;
-			return productName.equals(otherProduct.productName) && price == otherProduct.price;
+			return productName.equals(otherProduct.productName) && price.equals(otherProduct.price);
 		}
 		return false;
 	}
@@ -117,7 +117,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		int result = 1;
 		result += productName.hashCode() * 37;
-		result += price * 37;
+		result += price.hashCode() * 37;
 
 		return result;
 	}

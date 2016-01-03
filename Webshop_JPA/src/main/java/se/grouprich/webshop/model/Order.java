@@ -4,23 +4,40 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
-//@Entity
+@Entity
+@Table(name = "`Order`")
+@NamedQueries(value = { @NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o"),
+		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.user u WHERE u.id = :id"),
+		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
+		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o WHERE o.totalPrice >= :totalPrice") })
 public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
-	@Column(nullable = false)
+	
+	@JoinColumn(nullable = false)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private User user;
+	
 	@Column(nullable = false)
-	@OneToMany
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	private List<OrderRow> orderRows;
-	@Column(nullable = false)
-	private double totalPrice;
+	
+	@Column(nullable = false, precision = 10, scale = 2)
+	private Double totalPrice;
+	
 	@Column(nullable = false)
 	private String status;
 
@@ -28,7 +45,7 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(User user, String status)
+	public Order(User user)
 	{
 		this.user = user;
 		orderRows = new ArrayList<>();
@@ -46,7 +63,7 @@ public class Order extends AbstractEntity implements Serializable
 		return orderRows;
 	}
 
-	public double getTotalPrice()
+	public Double getTotalPrice()
 	{
 		return totalPrice;
 	}
@@ -61,15 +78,16 @@ public class Order extends AbstractEntity implements Serializable
 		this.status = status;
 	}
 
-	public void addOrderRow(OrderRow orderRow)
+	public Order addOrderRow(OrderRow orderRow)
 	{
 		orderRows.add(orderRow);
 		calculateTotalPrice();
+		return this;
 	}
 
 	public void calculateTotalPrice()
 	{
-		double totalPrice = 0;
+		Double totalPrice = 0.0;
 		for (OrderRow orderRow : orderRows)
 		{
 			totalPrice += orderRow.getProduct().getPrice() * orderRow.getQuantity();
@@ -88,7 +106,7 @@ public class Order extends AbstractEntity implements Serializable
 		if (other instanceof Order)
 		{
 			Order otherOrder = (Order) other;
-			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows) && totalPrice == otherOrder.totalPrice
+			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows) && totalPrice.equals(otherOrder.totalPrice)
 					&& status.equals(otherOrder.status);
 		}
 		return false;
@@ -100,7 +118,7 @@ public class Order extends AbstractEntity implements Serializable
 		int result = 1;
 		result += user.hashCode() * 37;
 		result += orderRows.hashCode() * 37;
-		result += totalPrice * 37;
+		result += totalPrice.hashCode() * 37;
 		result += status.hashCode() * 37;
 
 		return result;
@@ -109,6 +127,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [user=" + user + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
+		return "Order [user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
 	}
 }

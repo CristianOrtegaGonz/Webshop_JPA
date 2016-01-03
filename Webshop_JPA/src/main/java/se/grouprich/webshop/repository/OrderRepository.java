@@ -10,6 +10,5 @@ public interface OrderRepository extends CrudRepository<Order>
 	List<Order> fetchAll();
 	List<Order> fetchOrdersByUser(User user);
 	List<Order> fetchOrdersByStatus(String status);
-	List<Order> fetchOrdersByMinimumValue(double minumumValue);
-	Order changeStatus(String status);
+	List<Order> fetchOrdersByMinimumValue(double minimumValue);
 }

@@ -16,7 +16,8 @@ public final class JpaProductRepository extends AbstractJpaRepository<Product> i
 	}
 
 	@Override
-	public List<Product> fetchAll(){
+	public List<Product> fetchAll()
+	{
 		return fetchMany("Product.FetchAll", identity());
 	}
 

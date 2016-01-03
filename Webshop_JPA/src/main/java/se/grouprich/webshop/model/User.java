@@ -2,34 +2,41 @@ package se.grouprich.webshop.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.UserRegistrationException;
 
-//@Entity
+@Entity
 public class User extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
+	@Column
 	private String username;
+	@Column
 	private String password;
+	@Column
 	private String firstName;
+	@Column
 	private String lastName;
+	@Column
 	private String role;
+	@Column
 	private String status;
 
 	protected User()
 	{
 	}
 
-	public User(String username, String password, String firstName, String lastName, String role) throws UserRegistrationException
+	public User(String username, String password, String firstName, String lastName) throws UserRegistrationException
 	{
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.role = role;
+		this.role = "Customer";
 		// Fick idén från den här sidan om user status. http://developers.socialcast.com/admin/managing-users/user-status/
 		status = "Pending Activation";
 	}
@@ -67,6 +74,11 @@ public class User extends AbstractEntity implements Serializable
 	public void setPassword(final String password)
 	{
 		this.password = password;
+	}
+	
+	public void setRole(String role)
+	{
+		this.role = role;
 	}
 
 	public void setStatus(String status)

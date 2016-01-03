@@ -1,6 +1,5 @@
 package se.grouprich.webshop.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +11,7 @@ import se.grouprich.webshop.idgenerator.IdGenerator;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
+import se.grouprich.webshop.repository.JpaOrderRepository;
 import se.grouprich.webshop.repository.JpaProductRepository;
 import se.grouprich.webshop.repository.Repository;
 import se.grouprich.webshop.service.validation.DuplicateValidator;
@@ -21,7 +21,7 @@ import se.grouprich.webshop.service.validation.PasswordValidator;
 public final class ECommerceService
 {
 	private final JpaProductRepository productRepository;
-	private final Repository<String, Order> orderRepository;
+	private final JpaOrderRepository orderRepository;
 	private final Repository<String, User> userRepository;
 	private final IdGenerator<String> idGenerator;
 	private final PasswordValidator passwordValidator;
@@ -29,7 +29,7 @@ public final class ECommerceService
 	private final DuplicateValidator productDuplicateValidator;
 	private final EmailValidator emailValidator;
 
-	public ECommerceService(Repository<String, Order> orderRepository,
+	public ECommerceService(JpaOrderRepository orderRepository,
 			Repository<String, User> userRepository,
 			IdGenerator<String> idGenerator,
 			JpaProductRepository productRepository, PasswordValidator passwordValidator, DuplicateValidator userDuplicateValidator,
@@ -45,11 +45,6 @@ public final class ECommerceService
 		this.emailValidator = emailValidator;
 	}
 
-	// public Repository<String, Order> getOrderRepository()
-	// {
-	// return orderRepository;
-	// }
-	//
 	// public Repository<String, User> getUserRepository()
 	// {
 	// return userRepository;
@@ -63,6 +58,11 @@ public final class ECommerceService
 	public JpaProductRepository getProductRepository()
 	{
 		return productRepository;
+	}
+
+	public JpaOrderRepository getOrderRepository()
+	{
+		return orderRepository;
 	}
 
 	public PasswordValidator getPasswordValidator()
@@ -85,12 +85,54 @@ public final class ECommerceService
 		return emailValidator;
 	}
 
-	// public OrderRow createShoppingCart()
-	// {
-	// return new OrderRow();
-	// }
+	public Product fetchProductById(Long id) throws RepositoryException
+	{
+		return productRepository.findById(id);
+	}
 
-	public User createUser(String username, String password, String firstName, String lastName, String role) throws UserRegistrationException
+	public List<Product> fetchAllProducts()
+	{
+		return productRepository.fetchAll();
+	}
+
+	public List<Product> fetchProductsByProductName(String productName)
+	{
+		return productRepository.fetchProductsByProductName(productName);
+	}
+	
+	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, RepositoryException
+	{
+		if (productDuplicateValidator.alreadyExists(productName))
+		{
+			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
+		}
+		Product product = new Product(productName, price, stockQuantity, status);
+		return productRepository.saveOrUpdate(product);
+	}
+	
+	public Product updateProduct(Product product) throws RepositoryException
+	{
+		// TODO: validera vilka har rättigheter att göra det
+		return productRepository.saveOrUpdate(product);
+	}
+	
+	public Product changeProductStatus(Product product, String status)
+	{
+		product.setStatus(status);
+		return productRepository.saveOrUpdate(product);
+	}
+
+	public User fetchUserById(String id) throws RepositoryException
+	{
+		return userRepository.read(id);
+	}
+
+	public Order fetchOrderById(Long id) throws RepositoryException
+	{
+		return orderRepository.findById(id);
+	}
+
+	public User createUser(String username, String password, String firstName, String lastName) throws UserRegistrationException
 	{
 		if (userDuplicateValidator.alreadyExists(username))
 		{
@@ -105,18 +147,8 @@ public final class ECommerceService
 			throw new UserRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
 		// String id = idGenerator.getGeneratedId();
-		User user = new User(username, password, firstName, lastName, role);
+		User user = new User(username, password, firstName, lastName);
 		return userRepository.create(user);
-	}
-
-	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, RepositoryException
-	{
-		if (productDuplicateValidator.alreadyExists(productName))
-		{
-			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
-		}
-		Product product = new Product(productName, price, stockQuantity, status);
-		return productRepository.saveOrUpdate(product);
 	}
 
 	// public Order checkOut(User user, OrderRow orderRow) throws OrderException
@@ -135,10 +167,7 @@ public final class ECommerceService
 		{
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
 		}
-		// order.pay();
-//		String id = idGenerator.getGeneratedId();
-		// order.setId(id);
-		return orderRepository.create(order);
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public User updateUser(String userId, User user) throws RepositoryException
@@ -147,31 +176,10 @@ public final class ECommerceService
 		return userRepository.update(userId, user);
 	}
 
-	public Order updateOrder(String orderId, Order order) throws RepositoryException
+	public Order updateOrder(Order order) throws RepositoryException
 	{
 		// TODO: validera vilka har rättigheter att göra det
-		return orderRepository.update(orderId, order);
-	}
-
-	public Product updateProduct(Product product) throws RepositoryException
-	{
-		// TODO: validera vilka har rättigheter att göra det
-		return productRepository.saveOrUpdate(product);
-	}
-
-	public User fetchUser(String userId) throws RepositoryException
-	{
-		return userRepository.read(userId);
-	}
-
-	public Order fetchOrder(String orderId) throws RepositoryException
-	{
-		return orderRepository.read(orderId);
-	}
-
-	public Product fetchProductById(Long productId) throws RepositoryException
-	{
-		return productRepository.findById(productId);
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public Map<String, User> fetchAllUser()
@@ -179,33 +187,14 @@ public final class ECommerceService
 		return userRepository.readAll();
 	}
 
-	public Map<String, Order> fetchAllOrders()
+	public List<Order> fetchAllOrders()
 	{
-		return orderRepository.readAll();
-	}
-
-	public List<Product> fetchAllProducts()
-	{
-		return productRepository.fetchAll();
+		return orderRepository.fetchAll();
 	}
 
 	public List<Order> fetchOrdersByUser(User user)
 	{
-		List<Order> ordersByUser = new ArrayList<>();
-		for (Order order : (orderRepository.readAll()).values())
-		{
-			if (order.getUser().equals(user))
-			{
-				ordersByUser.add(order);
-			}
-		}
-		return ordersByUser;
-	}
-
-	public Product changeProductStatus(Product product, String status)
-	{
-		product.setStatus(status);
-		return productRepository.saveOrUpdate(product);
+		return orderRepository.fetchOrdersByUser(user);
 	}
 
 	// public void addProduct(OrderRow shoppingCart, String productId, int
