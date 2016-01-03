@@ -4,26 +4,36 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.UserRegistrationException;
 
 @Entity
+@NamedQueries(value = { @NamedQuery(name = "User.FetchAll", query = "SELECT u FROM User u"),
+		@NamedQuery(name = "User.FetchUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username") })
 public class User extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
-	@Column
+
+	@Column(nullable = false)
 	private String username;
-	@Column
+
+	@Column(nullable = false)
 	private String password;
-	@Column
+
+	@Column(nullable = false)
 	private String firstName;
-	@Column
+
+	@Column(nullable = false)
 	private String lastName;
-	@Column
+
+	@Column(nullable = false)
 	private String role;
-	@Column
+
+	@Column(nullable = false)
 	private String status;
 
 	protected User()
@@ -37,7 +47,8 @@ public class User extends AbstractEntity implements Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = "Customer";
-		// Fick idén från den här sidan om user status. http://developers.socialcast.com/admin/managing-users/user-status/
+		// Fick idén från den här sidan om user status.
+		// http://developers.socialcast.com/admin/managing-users/user-status/
 		status = "Pending Activation";
 	}
 
@@ -55,12 +66,12 @@ public class User extends AbstractEntity implements Serializable
 	{
 		return role;
 	}
-	
+
 	public String getStatus()
 	{
 		return status;
 	}
-	
+
 	public String getName()
 	{
 		return firstName + " " + lastName;
@@ -75,7 +86,7 @@ public class User extends AbstractEntity implements Serializable
 	{
 		this.password = password;
 	}
-	
+
 	public void setRole(String role)
 	{
 		this.role = role;
@@ -84,7 +95,7 @@ public class User extends AbstractEntity implements Serializable
 	public void setStatus(String status)
 	{
 		this.status = status;
-	}	
+	}
 
 	@Override
 	public boolean equals(Object other)
@@ -117,6 +128,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status + "]";
+		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status
+				+ "]";
 	}
 }

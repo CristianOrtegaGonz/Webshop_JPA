@@ -9,7 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.User;
 
-public class JpaOrderRepository extends AbstractJpaRepository<Order> implements OrderRepository
+public final class JpaOrderRepository extends AbstractJpaRepository<Order> implements OrderRepository
 {
 
 	public JpaOrderRepository(EntityManagerFactory factory)
