@@ -8,5 +8,5 @@ public interface ProductRepository extends CrudRepository<Product>
 {
 	List<Product> fetchAll();
 	List<Product> searchProductsByProductName(String productName);
-	Product fetchProductByProductName(String productName);
+	List<Product> fetchProductsByProductName(String productName);
 }

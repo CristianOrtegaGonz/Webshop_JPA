@@ -22,9 +22,8 @@ public final class JpaUserRepository extends AbstractJpaRepository<User> impleme
 	}
 
 	@Override
-	public User fetchUserByUsername(String username)
+	public List<User> fetchUsersByUsername(String username)
 	{
-		List<User> fetchedUsers = fetchMany("User.FetchUserByUsername", queryFunction -> queryFunction.setParameter("username", username));
-		return fetchedUsers.get(0);
+		return fetchMany("User.FetchUserByUsername", queryFunction -> queryFunction.setParameter("username", username));	
 	}
 }

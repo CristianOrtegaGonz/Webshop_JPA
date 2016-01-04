@@ -13,7 +13,7 @@ public class ProductValidator
 	
 	public boolean alreadyExists(final String productName)
 	{
-		if (productRepository.fetchProductByProductName(productName) != null)
+		if (!productRepository.fetchProductsByProductName(productName).isEmpty())
 		{
 			return true;
 		}

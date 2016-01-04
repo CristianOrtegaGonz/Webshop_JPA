@@ -93,7 +93,7 @@ public final class ECommerceService
 		return productRepository.searchProductsByProductName(productName);
 	}
 
-	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, RepositoryException
+	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException
 	{
 		if (productValidator.alreadyExists(productName))
 		{
@@ -102,28 +102,16 @@ public final class ECommerceService
 		Product product = new Product(productName, price, stockQuantity, status);
 		return productRepository.saveOrUpdate(product);
 	}
-
-	public Product updateProduct(Product product) throws RepositoryException
-	{
-		// TODO: validera vilka har rättigheter att göra det
-		return productRepository.saveOrUpdate(product);
-	}
-
-	public Product changeProductStatus(Product product, String status)
-	{
-		product.setStatus(status);
-		return productRepository.saveOrUpdate(product);
-	}
-
+	
 	public User createUser(String username, String password, String firstName, String lastName) throws UserRegistrationException
 	{
 		if (userValidator.alreadyExists(username))
 		{
-			throw new UserRegistrationException("User with E-mail: " + username + " already exists");
+			throw new UserRegistrationException("User with username: " + username + " already exists");
 		}
 		if (!userValidator.isLengthWithinRange(username))
 		{
-			throw new UserRegistrationException("Email address that is longer than 30 characters is not allowed");
+			throw new UserRegistrationException("Username that is longer than 30 characters is not allowed");
 		}
 		if (!userValidator.isValidPassword(password))
 		{
@@ -140,6 +128,18 @@ public final class ECommerceService
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
 		}
 		return orderRepository.saveOrUpdate(order);
+	}
+
+	public Product updateProduct(Product product) throws RepositoryException
+	{
+		// TODO: validera vilka har rättigheter att göra det
+		return productRepository.saveOrUpdate(product);
+	}
+
+	public Product changeProductStatus(Product product, String status)
+	{
+		product.setStatus(status);
+		return productRepository.saveOrUpdate(product);
 	}
 
 	public User updateUser(User user) throws RepositoryException

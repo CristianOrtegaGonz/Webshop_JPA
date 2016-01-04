@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
@@ -22,9 +23,8 @@ public final class Main
 {
 	private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PersistenceUnit");
 
-	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException
+	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException
 	{
-
 		JpaProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");
 		Product product2 = new Product("notebook", 10.99, 5, "Ordered");
@@ -32,22 +32,6 @@ public final class Main
 		productRepository.saveOrUpdate(product1);
 		productRepository.saveOrUpdate(product2);
 		productRepository.saveOrUpdate(product3);
-
-		List<Product> allProducts = productRepository.fetchAll();
-		System.out.println(allProducts);
-
-		List<Product> searchedProducts = productRepository.searchProductsByProductName("note");
-		System.out.println();
-		System.out.println("Searched products:");
-		System.out.println(searchedProducts);
-
-		Product productFoundById = productRepository.findById(2L);
-		System.out.println();
-		System.out.println(productFoundById);
-
-		product2.setStatus("In Stock");
-		Product productUpdated = productRepository.saveOrUpdate(product2);
-		System.out.println(productUpdated);
 
 		JpaOrderRepository orderRepository = new JpaOrderRepository(factory);
 		User user = new User("Eskimooo", "55I!", "Eski", "Mooo");
@@ -91,10 +75,10 @@ public final class Main
 		System.out.println("All users:");
 		System.out.println(allUsers);
 
-		User userFetchedByUsername = userRepository.fetchUserByUsername("Eskimooo");
+		List<User> fetchedUsersByUsername = userRepository.fetchUsersByUsername("Eskimooo");
 		System.out.println();
 		System.out.println("User fetched by username:");
-		System.out.println(userFetchedByUsername);
+		System.out.println(fetchedUsersByUsername);
 
 		User userFoundById = userRepository.findById(4L);
 		System.out.println();
@@ -119,12 +103,33 @@ public final class Main
 		
 		Product productFetchedById = eCommerceService.fetchProductById(3L);
 		System.out.println();
-		System.out.println("Product Fetched By ID");
+		System.out.println("Product Fetched By ID:");
 		System.out.println(productFetchedById);
 		
 		User userFetchedById = eCommerceService.fetchUserById(5L);
 		System.out.println();
-		System.out.println("User Fetched By ID");
+		System.out.println("User Fetched By ID:");
 		System.out.println(userFetchedById);
+		
+		Order createdOrder = eCommerceService.createOrder(order);
+		System.out.println();
+		System.out.println("Created Order:");
+		System.out.println(createdOrder);
+		
+		productRepository.saveOrUpdate(product1);
+		List<Product> fetchedProductsByProductName = productRepository.fetchProductsByProductName("pen");
+		System.out.println(fetchedProductsByProductName);
+		boolean alreadyExists = productValidator.alreadyExists("Tea cupyuuuuh1§	t");
+		System.out.println(alreadyExists);
+		Product product4 = eCommerceService.createProduct("Tea cup", 30.99, 10, "In Stock");
+		System.out.println();
+		System.out.println("Created Product:");
+		System.out.println(product4);
+		
+		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
+		user2.setRole("Admin");
+		System.out.println();
+		System.out.println("Created User:");
+		System.out.println(user2);
 	}
 }

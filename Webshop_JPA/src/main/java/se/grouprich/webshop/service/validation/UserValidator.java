@@ -53,7 +53,7 @@ public final class UserValidator
 
 	public boolean alreadyExists(final String username)
 	{
-		if (userRepository.fetchUserByUsername(username) != null)
+		if (!userRepository.fetchUsersByUsername(username).isEmpty())
 		{
 			return true;
 		}
