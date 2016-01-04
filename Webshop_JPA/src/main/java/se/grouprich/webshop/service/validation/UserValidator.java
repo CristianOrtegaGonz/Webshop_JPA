@@ -1,12 +1,12 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.repository.JpaUserRepository;
+import se.grouprich.webshop.repository.UserRepository;
 
 public final class UserValidator
 {
-	private final JpaUserRepository userRepository;
+	private final UserRepository userRepository;
 
-	public UserValidator(JpaUserRepository userRepository)
+	public UserValidator(UserRepository userRepository)
 	{
 		this.userRepository = userRepository;
 	}

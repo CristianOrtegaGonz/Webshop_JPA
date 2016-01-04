@@ -9,21 +9,21 @@ import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
-import se.grouprich.webshop.repository.JpaOrderRepository;
-import se.grouprich.webshop.repository.JpaProductRepository;
-import se.grouprich.webshop.repository.JpaUserRepository;
+import se.grouprich.webshop.repository.OrderRepository;
+import se.grouprich.webshop.repository.ProductRepository;
+import se.grouprich.webshop.repository.UserRepository;
 import se.grouprich.webshop.service.validation.ProductValidator;
 import se.grouprich.webshop.service.validation.UserValidator;
 
 public final class ECommerceService
 {
-	private final JpaProductRepository productRepository;
-	private final JpaOrderRepository orderRepository;
-	private final JpaUserRepository userRepository;
+	private final ProductRepository productRepository;
+	private final OrderRepository orderRepository;
+	private final UserRepository userRepository;
 	private final ProductValidator productValidator;
 	private final UserValidator userValidator;
 
-	public ECommerceService(JpaOrderRepository orderRepository, JpaUserRepository userRepository, JpaProductRepository productRepository,
+	public ECommerceService(OrderRepository orderRepository, UserRepository userRepository, ProductRepository productRepository,
 			ProductValidator productValidator, UserValidator userValidator)
 	{
 		this.orderRepository = orderRepository;
@@ -33,17 +33,17 @@ public final class ECommerceService
 		this.userValidator = userValidator;
 	}
 
-	public JpaProductRepository getProductRepository()
+	public ProductRepository getProductRepository()
 	{
 		return productRepository;
 	}
 
-	public JpaUserRepository getUserRepository()
+	public UserRepository getUserRepository()
 	{
 		return userRepository;
 	}
 
-	public JpaOrderRepository getOrderRepository()
+	public OrderRepository getOrderRepository()
 	{
 		return orderRepository;
 	}

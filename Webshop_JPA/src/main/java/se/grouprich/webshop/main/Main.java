@@ -15,6 +15,8 @@ import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.JpaOrderRepository;
 import se.grouprich.webshop.repository.JpaProductRepository;
 import se.grouprich.webshop.repository.JpaUserRepository;
+import se.grouprich.webshop.repository.OrderRepository;
+import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.service.ECommerceService;
 import se.grouprich.webshop.service.validation.ProductValidator;
 import se.grouprich.webshop.service.validation.UserValidator;
@@ -25,7 +27,7 @@ public final class Main
 
 	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException
 	{
-		JpaProductRepository productRepository = new JpaProductRepository(factory);
+		ProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");
 		Product product2 = new Product("notebook", 10.99, 5, "Ordered");
 		Product product3 = new Product("notepad", 10.25, 10, "In Stock");
@@ -33,7 +35,7 @@ public final class Main
 		productRepository.saveOrUpdate(product2);
 		productRepository.saveOrUpdate(product3);
 
-		JpaOrderRepository orderRepository = new JpaOrderRepository(factory);
+		OrderRepository orderRepository = new JpaOrderRepository(factory);
 		User user = new User("Eskimooo", "55I!", "Eski", "Mooo");
 		Order order = new Order(user);
 		OrderRow orderRow = new OrderRow(product1, 2);

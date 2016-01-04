@@ -1,12 +1,12 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.repository.JpaProductRepository;
+import se.grouprich.webshop.repository.ProductRepository;
 
 public class ProductValidator
 {
-	private final JpaProductRepository productRepository;
+	private final ProductRepository productRepository;
 
-	public ProductValidator(JpaProductRepository productRepository)
+	public ProductValidator(ProductRepository productRepository)
 	{
 		this.productRepository = productRepository;
 	}
