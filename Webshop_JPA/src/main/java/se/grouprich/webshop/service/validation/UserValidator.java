@@ -1,17 +1,14 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.model.User;
-import se.grouprich.webshop.repository.FileRepository;
-import se.grouprich.webshop.repository.Repository;
+import se.grouprich.webshop.repository.JpaUserRepository;
 
-public final class UserValidator implements PasswordValidator, DuplicateValidator, EmailValidator
+public final class UserValidator
 {
-	private Repository<String, User> userRepository;
+	private final JpaUserRepository userRepository;
 
-	public UserValidator()
+	public UserValidator(JpaUserRepository userRepository)
 	{
-//		kommenterar bort tills vi skapar nya Repository klasser
-//		userRepository = new FileRepository<>(User.class);
+		this.userRepository = userRepository;
 	}
 
 	public boolean isValidPassword(final String password)
@@ -54,25 +51,20 @@ public final class UserValidator implements PasswordValidator, DuplicateValidato
 		return (digits && versal && specialCharacter);
 	}
 
-	@Override
-	public boolean alreadyExists(final String email)
+	public boolean alreadyExists(final String username)
 	{
-		for (User customer : userRepository.readAll().values())
+		if (userRepository.fetchUserByUsername(username) != null)
 		{
-			if (customer.getUsername().equals(email))
-			{
-				return true;
-			}
+			return true;
 		}
 		return false;
 	}
 
-	@Override
-	public boolean isLengthWithinRange(final String email)
+	public boolean isLengthWithinRange(final String username)
 	{
-		if (email != null && !email.trim().isEmpty())
+		if (username != null && !username.trim().isEmpty())
 		{
-			if (email.length() <= 30)
+			if (username.length() <= 30)
 			{
 				return true;
 			}

@@ -12,31 +12,25 @@ import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.JpaOrderRepository;
 import se.grouprich.webshop.repository.JpaProductRepository;
 import se.grouprich.webshop.repository.JpaUserRepository;
-import se.grouprich.webshop.service.validation.DuplicateValidator;
-import se.grouprich.webshop.service.validation.EmailValidator;
-import se.grouprich.webshop.service.validation.PasswordValidator;
+import se.grouprich.webshop.service.validation.ProductValidator;
+import se.grouprich.webshop.service.validation.UserValidator;
 
 public final class ECommerceService
 {
 	private final JpaProductRepository productRepository;
 	private final JpaOrderRepository orderRepository;
 	private final JpaUserRepository userRepository;
-	private final PasswordValidator passwordValidator;
-	private final DuplicateValidator userDuplicateValidator;
-	private final DuplicateValidator productDuplicateValidator;
-	private final EmailValidator emailValidator;
+	private final ProductValidator productValidator;
+	private final UserValidator userValidator;
 
 	public ECommerceService(JpaOrderRepository orderRepository, JpaUserRepository userRepository, JpaProductRepository productRepository,
-			PasswordValidator passwordValidator, DuplicateValidator userDuplicateValidator, DuplicateValidator productDuplicateValidator,
-			EmailValidator emailValidator)
+			ProductValidator productValidator, UserValidator userValidator)
 	{
 		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
 		this.productRepository = productRepository;
-		this.passwordValidator = passwordValidator;
-		this.userDuplicateValidator = userDuplicateValidator;
-		this.productDuplicateValidator = productDuplicateValidator;
-		this.emailValidator = emailValidator;
+		this.productValidator = productValidator;
+		this.userValidator = userValidator;
 	}
 
 	public JpaProductRepository getProductRepository()
@@ -54,41 +48,31 @@ public final class ECommerceService
 		return orderRepository;
 	}
 
-	public PasswordValidator getPasswordValidator()
+	public ProductValidator getProductValidator()
 	{
-		return passwordValidator;
+		return productValidator;
 	}
 
-	public DuplicateValidator getUserDuplicateValidator()
+	public UserValidator getUserValidator()
 	{
-		return userDuplicateValidator;
+		return userValidator;
 	}
 
-	public DuplicateValidator getProductDuplicateValidator()
-	{
-		return productDuplicateValidator;
-	}
-
-	public EmailValidator getEmailValidator()
-	{
-		return emailValidator;
-	}
-
-	public Product fetchProductById(Long id) throws RepositoryException
+	public Product fetchProductById(Long id)
 	{
 		return productRepository.findById(id);
 	}
 
-	public User fetchUserById(Long id) throws RepositoryException
+	public User fetchUserById(Long id)
 	{
 		return userRepository.findById(id);
 	}
 
-	public Order fetchOrderById(Long id) throws RepositoryException
+	public Order fetchOrderById(Long id)
 	{
 		return orderRepository.findById(id);
 	}
-	
+
 	public List<Product> fetchAllProducts()
 	{
 		return productRepository.fetchAll();
@@ -106,12 +90,12 @@ public final class ECommerceService
 
 	public List<Product> fetchProductsByProductName(String productName)
 	{
-		return productRepository.fetchProductsByProductName(productName);
+		return productRepository.searchProductsByProductName(productName);
 	}
 
 	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, RepositoryException
 	{
-		if (productDuplicateValidator.alreadyExists(productName))
+		if (productValidator.alreadyExists(productName))
 		{
 			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
 		}
@@ -133,19 +117,18 @@ public final class ECommerceService
 
 	public User createUser(String username, String password, String firstName, String lastName) throws UserRegistrationException
 	{
-		if (userDuplicateValidator.alreadyExists(username))
+		if (userValidator.alreadyExists(username))
 		{
 			throw new UserRegistrationException("User with E-mail: " + username + " already exists");
 		}
-		if (!emailValidator.isLengthWithinRange(username))
+		if (!userValidator.isLengthWithinRange(username))
 		{
 			throw new UserRegistrationException("Email address that is longer than 30 characters is not allowed");
 		}
-		if (!passwordValidator.isValidPassword(password))
+		if (!userValidator.isValidPassword(password))
 		{
 			throw new UserRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
-		// String id = idGenerator.getGeneratedId();
 		User user = new User(username, password, firstName, lastName);
 		return userRepository.saveOrUpdate(user);
 	}

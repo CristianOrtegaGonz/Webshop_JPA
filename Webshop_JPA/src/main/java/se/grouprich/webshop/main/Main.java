@@ -14,6 +14,9 @@ import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.JpaOrderRepository;
 import se.grouprich.webshop.repository.JpaProductRepository;
 import se.grouprich.webshop.repository.JpaUserRepository;
+import se.grouprich.webshop.service.ECommerceService;
+import se.grouprich.webshop.service.validation.ProductValidator;
+import se.grouprich.webshop.service.validation.UserValidator;
 
 public final class Main
 {
@@ -21,28 +24,31 @@ public final class Main
 
 	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException
 	{
+
 		JpaProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");
 		Product product2 = new Product("notebook", 10.99, 5, "Ordered");
+		Product product3 = new Product("notepad", 10.25, 10, "In Stock");
 		productRepository.saveOrUpdate(product1);
 		productRepository.saveOrUpdate(product2);
-		
+		productRepository.saveOrUpdate(product3);
+
 		List<Product> allProducts = productRepository.fetchAll();
 		System.out.println(allProducts);
-		
-		List<Product> fetchedProducts = productRepository.fetchProductsByProductName("pen");
-		for (Product fetchedProduct : fetchedProducts)
-		{
-			System.out.println(fetchedProduct);
-		}
-		
+
+		List<Product> searchedProducts = productRepository.searchProductsByProductName("note");
+		System.out.println();
+		System.out.println("Searched products:");
+		System.out.println(searchedProducts);
+
 		Product productFoundById = productRepository.findById(2L);
+		System.out.println();
 		System.out.println(productFoundById);
-		
+
 		product2.setStatus("In Stock");
 		Product productUpdated = productRepository.saveOrUpdate(product2);
 		System.out.println(productUpdated);
-		
+
 		JpaOrderRepository orderRepository = new JpaOrderRepository(factory);
 		User user = new User("Eskimooo", "55I!", "Eski", "Mooo");
 		Order order = new Order(user);
@@ -52,53 +58,73 @@ public final class Main
 		order.addOrderRow(orderRow).addOrderRow(orderRow2);
 		System.out.println(orderRow);
 		orderRepository.saveOrUpdate(order);
-		
+
 		List<Order> allOrders = orderRepository.fetchAll();
 		System.out.println();
 		System.out.println("All Orders:");
 		System.out.println(allOrders);
-		
+
 		List<Order> ordersByMinimumValue = orderRepository.fetchOrdersByMinimumValue(50.00);
 		System.out.println();
 		System.out.println("Orders By Minimum Value:");
 		System.out.println(ordersByMinimumValue);
-		
+
 		List<Order> ordersByStatus = orderRepository.fetchOrdersByStatus("Placed");
 		System.out.println();
 		System.out.println("Orders By Status:");
 		System.out.println(ordersByStatus);
-		
+
 		Order orderFoundById = orderRepository.findById(3L);
 		System.out.println();
 		System.out.println("Order Found By ID:");
 		System.out.println(orderFoundById);
-		
+
 		order.addOrderRow(orderRow3);
 		orderRepository.saveOrUpdate(order);
 		System.out.println();
 		System.out.println("After update:");
 		System.out.println(order);
-		
+
 		JpaUserRepository userRepository = new JpaUserRepository(factory);
 		List<User> allUsers = userRepository.fetchAll();
 		System.out.println();
 		System.out.println("All users:");
 		System.out.println(allUsers);
-		
+
 		User userFetchedByUsername = userRepository.fetchUserByUsername("Eskimooo");
 		System.out.println();
 		System.out.println("User fetched by username:");
 		System.out.println(userFetchedByUsername);
-		
+
 		User userFoundById = userRepository.findById(4L);
 		System.out.println();
 		System.out.println("User found by id:");
 		System.out.println(userFoundById);
-		
+
 		user.setStatus("Activated");
 		userRepository.saveOrUpdate(user);
 		System.out.println();
 		System.out.println("After update:");
 		System.out.println(user);
+
+		ProductValidator productValidator = new ProductValidator(productRepository);
+		UserValidator userValidator = new UserValidator(userRepository);
+		ECommerceService eCommerceService = new ECommerceService(orderRepository, userRepository, productRepository, productValidator,
+				userValidator);
+		
+		Order orderFetchedById = eCommerceService.fetchOrderById(4L);
+		System.out.println();
+		System.out.println("Order Fetched By ID:");
+		System.out.println(orderFetchedById);
+		
+		Product productFetchedById = eCommerceService.fetchProductById(3L);
+		System.out.println();
+		System.out.println("Product Fetched By ID");
+		System.out.println(productFetchedById);
+		
+		User userFetchedById = eCommerceService.fetchUserById(5L);
+		System.out.println();
+		System.out.println("User Fetched By ID");
+		System.out.println(userFetchedById);
 	}
 }

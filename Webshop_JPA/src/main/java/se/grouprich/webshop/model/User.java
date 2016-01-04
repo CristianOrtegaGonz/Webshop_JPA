@@ -18,7 +18,7 @@ public class User extends AbstractEntity implements Serializable
 	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String username;
 
 	@Column(nullable = false)
