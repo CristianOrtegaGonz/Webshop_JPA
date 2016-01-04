@@ -46,7 +46,7 @@ public class User extends AbstractEntity implements Serializable
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.role = "Customer";
+		this.role = "customer";
 		// Fick idén från den här sidan om user status.
 		// http://developers.socialcast.com/admin/managing-users/user-status/
 		status = "Pending Activation";
@@ -88,8 +88,8 @@ public class User extends AbstractEntity implements Serializable
 	}
 
 	public void setRole(String role)
-	{
-		this.role = role;
+	{	
+		this.role = role.toLowerCase();
 	}
 
 	public void setStatus(String status)

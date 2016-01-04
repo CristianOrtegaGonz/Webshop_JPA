@@ -5,8 +5,11 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import com.mysql.jdbc.jdbc2.optional.SuspendableXAConnection;
+
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
+import se.grouprich.webshop.exception.UserValidationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
@@ -25,7 +28,7 @@ public final class Main
 {
 	private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PersistenceUnit");
 
-	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException
+	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException, UserValidationException
 	{
 		ProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");
@@ -121,7 +124,7 @@ public final class Main
 		productRepository.saveOrUpdate(product1);
 		List<Product> fetchedProductsByProductName = productRepository.fetchProductsByProductName("pen");
 		System.out.println(fetchedProductsByProductName);
-		boolean alreadyExists = productValidator.alreadyExists("Tea cupyuuuuh1§	t");
+		boolean alreadyExists = productValidator.alreadyExists("Tea cup");
 		System.out.println(alreadyExists);
 		Product product4 = eCommerceService.createProduct("Tea cup", 30.99, 10, "In Stock");
 		System.out.println();
@@ -130,8 +133,27 @@ public final class Main
 		
 		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
 		user2.setRole("Admin");
+		user2.setStatus("ACTIVATED");
 		System.out.println();
 		System.out.println("Created User:");
 		System.out.println(user2);
+		
+		createdOrder.setStatus("Shipped");
+		Order updatedOrder = eCommerceService.updateOrder(createdOrder, user2);
+		System.out.println();
+		System.out.println("Updated Order:");
+		System.out.println(updatedOrder);
+		
+		product4.setProductName("Ittala tea cup");
+		Product updatedProduct = eCommerceService.updateProduct(product4, user2);
+		System.out.println();
+		System.out.println("Updated Product:");
+		System.out.println(updatedProduct);
+		
+		user2.setPassword("55Y?kk");
+		User updatedUser = eCommerceService.updateUser(user2, "12&OI4");
+		System.out.println();
+		System.out.println("Updated User:");
+		System.out.println(updatedUser);
 	}
 }

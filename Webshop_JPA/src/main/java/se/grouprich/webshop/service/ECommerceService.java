@@ -5,6 +5,7 @@ import java.util.List;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.RepositoryException;
+import se.grouprich.webshop.exception.UserValidationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
@@ -102,7 +103,7 @@ public final class ECommerceService
 		Product product = new Product(productName, price, stockQuantity, status);
 		return productRepository.saveOrUpdate(product);
 	}
-	
+
 	public User createUser(String username, String password, String firstName, String lastName) throws UserRegistrationException
 	{
 		if (userValidator.alreadyExists(username))
@@ -130,28 +131,47 @@ public final class ECommerceService
 		return orderRepository.saveOrUpdate(order);
 	}
 
-	public Product updateProduct(Product product) throws RepositoryException
+	public Product updateProduct(Product product, User user) throws UserValidationException
 	{
-		// TODO: validera vilka har rättigheter att göra det
-		return productRepository.saveOrUpdate(product);
+		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
+		{
+			return productRepository.saveOrUpdate(product);
+		}
+		else
+		{
+			throw new UserValidationException("Only an activated admin user has right to update products");
+		}
+	}
+
+	public User updateUser(User user, String oldPassword) throws UserValidationException
+	{
+		User oldUser = userRepository.findById(user.getId());
+		if (oldUser.getPassword().equals(oldPassword))
+		{
+			return userRepository.saveOrUpdate(user);
+		}
+		else
+		{
+			throw new UserValidationException("Password does not match the confirm password");
+		}
+	}
+
+	public Order updateOrder(Order order, User user) throws UserValidationException
+	{
+		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
+		{
+			return orderRepository.saveOrUpdate(order);
+		}
+		else
+		{
+			throw new UserValidationException("Only an activated admin user has right to update orders");
+		}
 	}
 
 	public Product changeProductStatus(Product product, String status)
 	{
 		product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
-	}
-
-	public User updateUser(User user) throws RepositoryException
-	{
-		// TODO: validera vilka har rättigheter att göra det
-		return userRepository.saveOrUpdate(user);
-	}
-
-	public Order updateOrder(Order order) throws RepositoryException
-	{
-		// TODO: validera vilka har rättigheter att göra det
-		return orderRepository.saveOrUpdate(order);
 	}
 
 	public List<Order> fetchOrdersByUser(User user)
