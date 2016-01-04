@@ -17,12 +17,16 @@ public class Product extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 5072511887999675702L;
+
 	@Column(nullable = false)
 	private String productName;
+
 	@Column(nullable = false)
 	private Double price;
+
 	@Column(nullable = false)
 	private int stockQuantity;
+
 	@Column(nullable = false)
 	private String status;
 	// private int orderQuantity;

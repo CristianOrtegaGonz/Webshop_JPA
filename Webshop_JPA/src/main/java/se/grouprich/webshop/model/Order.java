@@ -1,6 +1,8 @@
 package se.grouprich.webshop.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,18 +28,18 @@ public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
-	
+
 	@JoinColumn(nullable = false)
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private User user;
-	
+
 	@Column(nullable = false)
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
 	private List<OrderRow> orderRows;
-	
-	@Column(nullable = false, precision = 10, scale = 2)
+
+	@Column(nullable = false)
 	private Double totalPrice;
-	
+
 	@Column(nullable = false)
 	private String status;
 
@@ -80,7 +82,15 @@ public class Order extends AbstractEntity implements Serializable
 
 	public Order addOrderRow(OrderRow orderRow)
 	{
-		orderRows.add(orderRow);
+		OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
+		if (orderRowWithExistingProduct != null)
+		{
+			addQuantity(orderRowWithExistingProduct, orderRow.getQuantity());
+		}
+		else
+		{
+			orderRows.add(orderRow);
+		}
 		calculateTotalPrice();
 		return this;
 	}
@@ -92,7 +102,26 @@ public class Order extends AbstractEntity implements Serializable
 		{
 			totalPrice += orderRow.getProduct().getPrice() * orderRow.getQuantity();
 		}
-		this.totalPrice = totalPrice;
+		BigDecimal bd = new BigDecimal(totalPrice);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		this.totalPrice = bd.doubleValue();
+	}
+
+	public void addQuantity(OrderRow orderRow, int quantity)
+	{
+		orderRow.setQuantity(orderRow.getQuantity() + quantity);
+	}
+
+	public OrderRow searchProductInOrderRows(OrderRow orderRow)
+	{
+		for (OrderRow orderRowInOrderRows : orderRows)
+		{
+			if (orderRowInOrderRows.getProduct().getId().equals(orderRow.getProduct().getId()))
+			{
+				return orderRowInOrderRows;
+			}
+		}
+		return null;
 	}
 
 	@Override

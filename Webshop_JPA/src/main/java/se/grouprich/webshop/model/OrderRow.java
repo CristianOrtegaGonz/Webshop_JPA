@@ -14,9 +14,11 @@ public class OrderRow extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3865658878665558979L;
+
 	@JoinColumn(nullable = false)
 	@OneToOne(cascade = { CascadeType.MERGE })
 	private Product product;
+
 	@Column(nullable = false)
 	private int quantity;
 
@@ -46,6 +48,11 @@ public class OrderRow extends AbstractEntity implements Serializable
 		return quantity;
 	}
 
+	public void setQuantity(int quantity)
+	{
+		this.quantity = quantity;
+	}
+
 	public void decreaseQuantity()
 	{
 		this.quantity = this.quantity - 1;
@@ -54,6 +61,34 @@ public class OrderRow extends AbstractEntity implements Serializable
 	public void increaseQuantity()
 	{
 		this.quantity = this.quantity + 1;
+	}
+
+	// Vi har List<OrderRow> i Order klassen och ArrayList använder equals() för
+	// t.ex. sin metod contains() så jag tycker att det är bra att ha
+	// equals() och hashCode() i denna klassen.
+	@Override
+	public boolean equals(Object other)
+	{
+		if (this == other)
+		{
+			return true;
+		}
+
+		if (other instanceof OrderRow)
+		{
+			OrderRow otherOrderRow = (OrderRow) other;
+			return product.equals(otherOrderRow.product) && quantity == otherOrderRow.quantity;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int result = 1;
+		result += product.hashCode() * 37;
+		result += quantity * 37;
+		return result;
 	}
 
 	@Override
@@ -77,15 +112,5 @@ public class OrderRow extends AbstractEntity implements Serializable
 	 * order den tillhör, så det är nog aldrig relevant att skriva ut en
 	 * orderrad. Om man vill skriva ut en ordeerrad i en order så måste vi vet
 	 * vilkeen order och det vet vi i orderklassen..
-	 * 
-	 * @Override public boolean equals(Object other) { if (this == other) {
-	 * return true; }
-	 * 
-	 * if (other instanceof OrderRow) { OrderRow otherOrderRow = (OrderRow)
-	 * other; return product.equals(otherOrderRow.product) && quantity ==
-	 * otherOrderRow.quantity; } return false; }
-	 * 
-	 * @Override public int hashCode() { int result = 1; result +=
-	 * product.hashCode() * 37; result += quantity * 37; return result; }
 	 */
 }

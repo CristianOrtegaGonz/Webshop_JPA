@@ -22,8 +22,8 @@ public final class Main
 	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException
 	{
 		JpaProductRepository productRepository = new JpaProductRepository(factory);
-		Product product1 = new Product("pen", 10.00, 5, "In Stock");
-		Product product2 = new Product("notebook", 10.00, 5, "Ordered");
+		Product product1 = new Product("pen", 10.33, 5, "In Stock");
+		Product product2 = new Product("notebook", 10.99, 5, "Ordered");
 		productRepository.saveOrUpdate(product1);
 		productRepository.saveOrUpdate(product2);
 		

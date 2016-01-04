@@ -108,7 +108,8 @@ public class User extends AbstractEntity implements Serializable
 		if (other instanceof User)
 		{
 			User otherUser = (User) other;
-			return username.equals(otherUser.username) && password.equals(otherUser.password) && role.equals(otherUser.role) && status.equals(otherUser.status);
+			return username.equals(otherUser.username) && password.equals(otherUser.password) && role.equals(otherUser.role)
+					&& status.equals(otherUser.status);
 		}
 		return false;
 	}
@@ -128,7 +129,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role + ", status=" + status
-				+ "]";
+		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", role=" + role + ", status=" + status + "]";
 	}
 }
