@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.ProductRegistrationException;
+import se.grouprich.webshop.model.status.ProductStatus;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
@@ -29,14 +32,16 @@ public class Product extends AbstractEntity implements Serializable
 	private int stockQuantity;
 
 	@Column(nullable = false)
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private ProductStatus status;
+	
 	// private int orderQuantity;
 
 	protected Product()
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity, String status) throws ProductRegistrationException
+	public Product(String productName, Double price, int stockQuantity, ProductStatus status) throws ProductRegistrationException
 	{
 		this.productName = productName;
 		this.price = price;
@@ -57,11 +62,6 @@ public class Product extends AbstractEntity implements Serializable
 	public Double getPrice()
 	{
 		return price;
-	}
-
-	public String getStatus()
-	{
-		return status;
 	}
 
 	public void setProductName(String productName)
@@ -94,11 +94,6 @@ public class Product extends AbstractEntity implements Serializable
 	public void setPrice(final Double price)
 	{
 		this.price = price;
-	}
-
-	public void setStatus(String status)
-	{
-		this.status = status;
 	}
 
 	@Override

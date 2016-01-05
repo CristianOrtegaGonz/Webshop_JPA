@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.UserRegistrationException;
+import se.grouprich.webshop.model.status.UserStatus;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "User.FetchAll", query = "SELECT u FROM User u"),
@@ -34,7 +37,8 @@ public class User extends AbstractEntity implements Serializable
 	private String role;
 
 	@Column(nullable = false)
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private UserStatus status;
 
 	protected User()
 	{
@@ -47,9 +51,7 @@ public class User extends AbstractEntity implements Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = "customer";
-		// Fick idén från den här sidan om user status.
-		// http://developers.socialcast.com/admin/managing-users/user-status/
-		status = "Pending Activation";
+		status = status.ACTIVE; 
 	}
 
 	public String getUsername()
@@ -67,11 +69,6 @@ public class User extends AbstractEntity implements Serializable
 		return role;
 	}
 
-	public String getStatus()
-	{
-		return status;
-	}
-
 	public String getName()
 	{
 		return firstName + " " + lastName;
@@ -85,11 +82,6 @@ public class User extends AbstractEntity implements Serializable
 	public void setRole(String role)
 	{
 		this.role = role.toLowerCase();
-	}
-
-	public void setStatus(String status)
-	{
-		this.status = status;
 	}
 	
 	public void changePassword(final String oldPassword, final String newPassword)

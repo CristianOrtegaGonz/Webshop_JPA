@@ -10,6 +10,7 @@ import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.OrderStatus;
+import se.grouprich.webshop.model.status.ProductStatus;
 import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
@@ -89,7 +90,7 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User user, String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, PermissionException
+	public Product createProduct(User user, String productName, double price, int stockQuantity, ProductStatus status) throws ProductRegistrationException, PermissionException
 	{
 		if (!userValidator.isActivatedAdmin(user))
 		{
@@ -187,14 +188,13 @@ public final class ECommerceService
 		return userRepository.fetchUsersByUsername(username).get(0);
 	}
 
-	// String status ska ändras till ProductStatus status
-	public Product changeProductStatus(User user, Product product, String status) throws PermissionException
+	public Product changeProductStatus(User user, Product product, ProductStatus status) throws PermissionException
 	{
 		if (!userValidator.isActivatedAdmin(user))
 		{
 			throw new PermissionException("No permission to change product status");
 		}
-		product.setStatus(status);
+		//product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
 	}
 
