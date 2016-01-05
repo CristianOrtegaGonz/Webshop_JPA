@@ -8,7 +8,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
-import se.grouprich.webshop.exception.ProductRegistrationException;
+import se.grouprich.webshop.exception.StorageException;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
@@ -36,7 +36,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity, String status) throws ProductRegistrationException
+	public Product(String productName, Double price, int stockQuantity, String status) throws StorageException
 	{
 		this.productName = productName;
 		this.price = price;

@@ -2,10 +2,10 @@ package se.grouprich.webshop.service;
 
 import java.util.List;
 
-import se.grouprich.webshop.exception.PaymentException;
+import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PermissionException;
-import se.grouprich.webshop.exception.ProductRegistrationException;
-import se.grouprich.webshop.exception.UserRegistrationException;
+import se.grouprich.webshop.exception.StorageException;
+import se.grouprich.webshop.exception.ValidationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
@@ -89,7 +89,7 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User user, String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, PermissionException
+	public Product createProduct(User user, String productName, double price, int stockQuantity, String status) throws StorageException, PermissionException
 	{
 		if (!userValidator.isActivatedAdmin(user))
 		{
@@ -97,31 +97,31 @@ public final class ECommerceService
 		}
 		if (productValidator.alreadyExists(productName))
 		{
-			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
+			throw new StorageException("Product with name: " + productName + " already exists");
 		}
 		Product product = new Product(productName, price, stockQuantity, status);
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User createUser(String username, String password, String firstName, String lastName) throws UserRegistrationException
+	public User createUser(String username, String password, String firstName, String lastName) throws StorageException, ValidationException
 	{
 		if (userValidator.alreadyExists(username))
 		{
-			throw new UserRegistrationException("User with username: " + username + " already exists");
+			throw new StorageException("User with username: " + username + " already exists");
 		}
 		if (!userValidator.isLengthWithinRange(username))
 		{
-			throw new UserRegistrationException("Username that is longer than 30 characters is not allowed");
+			throw new ValidationException("Username that is longer than 30 characters is not allowed");
 		}
 		if (!userValidator.isValidPassword(password))
 		{
-			throw new UserRegistrationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
+			throw new ValidationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
 		User user = new User(username, password, firstName, lastName);
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order createOrder(User user, Order order) throws PaymentException, PermissionException
+	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
 		if (!userValidator.isActivatedAdmin(user))
 		{
@@ -129,7 +129,7 @@ public final class ECommerceService
 		}
 		if (order.getTotalPrice() > 50000.00)
 		{
-			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
+			throw new OrderException("We can not accept the total price exceeding SEK 50,000");
 		}
 		if (userRepository.findById(order.getUser().getId()) == null)
 		{

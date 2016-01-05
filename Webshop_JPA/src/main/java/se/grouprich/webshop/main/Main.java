@@ -5,10 +5,9 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.PermissionException;
-import se.grouprich.webshop.exception.ProductRegistrationException;
-import se.grouprich.webshop.exception.UserRegistrationException;
+import se.grouprich.webshop.exception.StorageException;
+import se.grouprich.webshop.exception.ValidationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
 import se.grouprich.webshop.model.Product;
@@ -26,7 +25,7 @@ public final class Main
 {
 	private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PersistenceUnit");
 
-	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException, PermissionException
+	public static final void main(String[] args) throws StorageException, ValidationException, PermissionException
 	{
 		ProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");

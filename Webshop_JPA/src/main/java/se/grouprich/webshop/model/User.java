@@ -8,7 +8,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
-import se.grouprich.webshop.exception.UserRegistrationException;
+import se.grouprich.webshop.exception.ValidationException;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "User.FetchAll", query = "SELECT u FROM User u"),
@@ -40,7 +40,7 @@ public class User extends AbstractEntity implements Serializable
 	{
 	}
 
-	public User(String username, String password, String firstName, String lastName) throws UserRegistrationException
+	public User(String username, String password, String firstName, String lastName) throws ValidationException
 	{
 		this.username = username;
 		this.password = password;
