@@ -6,9 +6,9 @@ import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
 
-import se.grouprich.webshop.ecommerceenum.OrderStatus;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.User;
+import se.grouprich.webshop.model.status.OrderStatus;
 
 public final class JpaOrderRepository extends AbstractJpaRepository<Order> implements OrderRepository
 {

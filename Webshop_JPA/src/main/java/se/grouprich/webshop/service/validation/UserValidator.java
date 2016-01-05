@@ -1,5 +1,6 @@
 package se.grouprich.webshop.service.validation;
 
+import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.repository.UserRepository;
 
 public final class UserValidator
@@ -68,6 +69,17 @@ public final class UserValidator
 			{
 				return true;
 			}
+		}
+		return false;
+	}
+
+	public boolean isActivatedAdmin(User user)
+	{
+		// "" av "UserStatus.ACTIVATED" ska tas bort efter enum UserStatus har
+		// skapats.
+		if (user.getRole().equals("admin") && user.getStatus().equals("UserStatus.ACTIVATED"))
+		{
+			return true;
 		}
 		return false;
 	}

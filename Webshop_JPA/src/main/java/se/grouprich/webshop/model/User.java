@@ -82,19 +82,22 @@ public class User extends AbstractEntity implements Serializable
 		this.username = email;
 	}
 
-	public void setPassword(final String password)
-	{
-		this.password = password;
-	}
-
 	public void setRole(String role)
-	{	
+	{
 		this.role = role.toLowerCase();
 	}
 
 	public void setStatus(String status)
 	{
 		this.status = status;
+	}
+	
+	public void changePassword(final String oldPassword, final String newPassword)
+	{
+		if (oldPassword.equals(this.password))
+		{
+			this.password = newPassword;
+		}
 	}
 
 	@Override

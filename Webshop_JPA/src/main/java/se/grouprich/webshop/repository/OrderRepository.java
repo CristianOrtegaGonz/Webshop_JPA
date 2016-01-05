@@ -2,9 +2,9 @@ package se.grouprich.webshop.repository;
 
 import java.util.List;
 
-import se.grouprich.webshop.ecommerceenum.OrderStatus;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.User;
+import se.grouprich.webshop.model.status.OrderStatus;
 
 public interface OrderRepository extends CrudRepository<Order>
 {

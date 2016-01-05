@@ -2,7 +2,6 @@ package se.grouprich.webshop.service;
 
 import java.util.List;
 
-import se.grouprich.webshop.ecommerceenum.OrderStatus;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
@@ -10,6 +9,7 @@ import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
+import se.grouprich.webshop.model.status.OrderStatus;
 import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
@@ -89,8 +89,12 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException
+	public Product createProduct(User user, String productName, double price, int stockQuantity, String status) throws ProductRegistrationException, PermissionException
 	{
+		if (!userValidator.isActivatedAdmin(user))
+		{
+			throw new PermissionException("No permission to create products");
+		}
 		if (productValidator.alreadyExists(productName))
 		{
 			throw new ProductRegistrationException("Product with name: " + productName + " already exists");
@@ -117,8 +121,12 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order createOrder(Order order) throws PaymentException
+	public Order createOrder(User user, Order order) throws PaymentException, PermissionException
 	{
+		if (!userValidator.isActivatedAdmin(user))
+		{
+			throw new PermissionException("No permission to create orders");
+		}
 		if (order.getTotalPrice() > 50000.00)
 		{
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
@@ -135,41 +143,34 @@ public final class ECommerceService
 		}
 	}
 
-	public Product updateProduct(Product product, User user) throws PermissionException
+	public Product updateProduct(User user, Product product) throws PermissionException
 	{
-		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
+		if (!userValidator.isActivatedAdmin(user))
 		{
-			return productRepository.saveOrUpdate(product);
+			throw new PermissionException("No permission to update products");
 		}
-		else
-		{
-			throw new PermissionException("You must be an activated admin user to update products");
-		}
+		return productRepository.saveOrUpdate(product);
 	}
 
-	public User updateUser(User user, String oldPassword) throws PermissionException
+	public User updateUser(User user, User userToUpdate) throws PermissionException
 	{
-		User oldUser = userRepository.findById(user.getId());
-		if (oldUser.getPassword().equals(oldPassword))
+		if (userValidator.isActivatedAdmin(user) || user.getId().equals(userToUpdate))
 		{
 			return userRepository.saveOrUpdate(user);
 		}
 		else
 		{
-			throw new PermissionException("Password does not match the confirm password");
+			throw new PermissionException("No permission to update user");
 		}
 	}
 
-	public Order updateOrder(Order order, User user) throws PermissionException
+	public Order updateOrder(User user, Order order) throws PermissionException
 	{
-		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
+		if (!userValidator.isActivatedAdmin(user))
 		{
-			return orderRepository.saveOrUpdate(order);
+			throw new PermissionException("No permission to update orders");
 		}
-		else
-		{
-			throw new PermissionException("You must be an activated admin user to update orders");
-		}
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public List<Product> searchProductsBasedOnProductName(String keyword)
@@ -177,20 +178,36 @@ public final class ECommerceService
 		return productRepository.searchProductsBasedOnProductName(keyword);
 	}
 
-	public User fetchUserByUsername(String username)
+	public User fetchUserByUsername(User user, String username) throws PermissionException
 	{
+		if (!userValidator.isActivatedAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch user by username");
+		}
 		return userRepository.fetchUsersByUsername(username).get(0);
 	}
 
-	public Product changeProductStatus(Product product, String status)
+	// String status ska ändras till ProductStatus status
+	public Product changeProductStatus(User user, Product product, String status) throws PermissionException
 	{
+		if (!userValidator.isActivatedAdmin(user))
+		{
+			throw new PermissionException("No permission to change product status");
+		}
 		product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public List<Order> fetchOrdersByUser(User user)
+	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
 	{
-		return orderRepository.fetchOrdersByUser(user);
+		if (userValidator.isActivatedAdmin(user) || user.equals(customer))
+		{
+			return orderRepository.fetchOrdersByUser(customer);
+		}
+		else
+		{
+			throw new PermissionException("No permission to fetch orders by user");
+		}
 	}
 
 	// enum OrderStatus används här. Den här metoden ska testas efter
@@ -204,52 +221,4 @@ public final class ECommerceService
 	{
 		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
 	}
-
-	// public void addProduct(OrderRow shoppingCart, String productId, int
-	// orderQuantity) throws RepositoryException, OrderException
-	// {
-	// if (productRepository.readAll().containsKey(productId))
-	// {
-	// Product product = productRepository.read(productId);
-	// if (shoppingCart.getProducts().contains(product) &&
-	// product.getStockQuantity() >= product.getOrderQuantity() + orderQuantity)
-	// {
-	// product.addOrderQuantity(orderQuantity);
-	// }
-	// else if (product.getStockQuantity() >= orderQuantity)
-	// {
-	// shoppingCart.addProduct(product, orderQuantity);
-	// }
-	// else
-	// {
-	// throw new OrderException("Stock quantity is: " +
-	// product.getStockQuantity());
-	// }
-	// }
-	// else
-	// {
-	// throw new OrderException("Product with id: " + productId + "doesn't
-	// exists");
-	// }
-	// }
-
-	// public void changeOrderQuantity(OrderRow shoppingCart, String productId,
-	// int orderQuantity) throws RepositoryException, OrderException
-	// {
-	// if (productRepository.readAll().containsKey(productId))
-	// {
-	// Product product = productRepository.read(productId);
-	// if (shoppingCart.getProducts().contains(product) &&
-	// product.getStockQuantity() >= orderQuantity)
-	// {
-	// product.setOrderQuantity(orderQuantity);
-	// shoppingCart.calculateTotalPrice();
-	// }
-	// else
-	// {
-	// throw new OrderException("Stock quantity is: " +
-	// product.getStockQuantity());
-	// }
-	// }
-	// }
 }
