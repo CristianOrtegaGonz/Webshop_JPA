@@ -170,5 +170,13 @@ public final class Main
 		System.out.println();
 		System.out.println("Orders Fetched By User:");
 		System.out.println(ordersFetchedByUser);
+		
+		List<Order> ordersByminimValue = eCommerceService.fetchOrdersByMinimumValue(100.00);
+		List<Order> allOrdersInDB = eCommerceService.fetchAllOrders();
+		System.out.println();
+		System.out.println("All Orders");
+		System.out.println(allOrdersInDB);
+		System.out.println("Orders by minimum value");
+		System.out.println(ordersByminimValue);
 	}
 }

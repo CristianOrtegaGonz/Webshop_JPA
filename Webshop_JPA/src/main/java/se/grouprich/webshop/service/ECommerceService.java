@@ -191,10 +191,16 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByUser(user);
 	}
 
-	// enum OrderStatus används här. Den här metoden ska testas efter OrderStatus klassen har skapats.
+	// enum OrderStatus används här. Den här metoden ska testas efter
+	// OrderStatus klassen har skapats.
 	public List<Order> fetchOrdersByStatus(OrderStatus orderStatus)
 	{
 		return orderRepository.fetchOrdersByStatus(orderStatus);
+	}
+
+	public List<Order> fetchOrdersByMinimumValue(Double minimumValue)
+	{
+		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
 	}
 
 	// public void addProduct(OrderRow shoppingCart, String productId, int
