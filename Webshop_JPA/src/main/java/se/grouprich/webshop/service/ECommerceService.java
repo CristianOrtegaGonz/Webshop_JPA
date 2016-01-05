@@ -133,7 +133,7 @@ public final class ECommerceService
 		}
 		else
 		{
-			throw new PermissionException("Only an activated admin user has right to update products");
+			throw new PermissionException("You must be an activated admin user to update products");
 		}
 	}
 
@@ -158,7 +158,7 @@ public final class ECommerceService
 		}
 		else
 		{
-			throw new PermissionException("Only an activated admin user has right to update orders");
+			throw new PermissionException("You must be an activated admin user to update orders");
 		}
 	}
 
