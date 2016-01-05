@@ -3,9 +3,9 @@ package se.grouprich.webshop.service;
 import java.util.List;
 
 import se.grouprich.webshop.exception.PaymentException;
+import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
-import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
@@ -122,7 +122,14 @@ public final class ECommerceService
 		{
 			throw new PaymentException("We can not accept the total price exceeding SEK 50,000");
 		}
-		return orderRepository.saveOrUpdate(order);
+		if (userRepository.findById(order.getUser().getId()) == null)
+		{
+			return orderRepository.saveOrUpdate(order);
+		}
+		else
+		{
+			return orderRepository.update(order);
+		}
 	}
 
 	public Product updateProduct(Product product, User user) throws PermissionException

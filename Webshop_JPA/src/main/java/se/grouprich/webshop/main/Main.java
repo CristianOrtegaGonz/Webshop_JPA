@@ -5,11 +5,9 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import com.mysql.jdbc.jdbc2.optional.SuspendableXAConnection;
-
 import se.grouprich.webshop.exception.PaymentException;
-import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.PermissionException;
+import se.grouprich.webshop.exception.ProductRegistrationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
@@ -160,5 +158,22 @@ public final class Main
 		System.out.println();
 		System.out.println("Search result:");
 		System.out.println(searchResult);
+		
+		User fetchedUser = eCommerceService.fetchUserByUsername("Mari");
+		System.out.println();
+		System.out.println("User fetched by username:");
+		System.out.println(fetchedUser);
+		
+		OrderRow orderRow4 = new OrderRow(product4, 6);
+		Order order2 = new Order(user).addOrderRow(orderRow4);
+		Order createdOrder2 = eCommerceService.createOrder(order2);
+		System.out.println();
+		System.out.println("Created order2:");
+		System.out.println(createdOrder2);
+		
+		List<Order> ordersFetchedByUser = eCommerceService.fetchOrdersByUser(user);
+		System.out.println();
+		System.out.println("Orders Fetched By User:");
+		System.out.println(ordersFetchedByUser);
 	}
 }

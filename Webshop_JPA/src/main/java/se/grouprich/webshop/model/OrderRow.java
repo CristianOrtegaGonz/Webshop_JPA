@@ -15,8 +15,8 @@ public class OrderRow extends AbstractEntity implements Serializable
 	@Transient
 	private static final long serialVersionUID = 3865658878665558979L;
 
-	@JoinColumn(nullable = false)
 	@OneToOne(cascade = { CascadeType.MERGE })
+	@JoinColumn(nullable = false)
 	private Product product;
 
 	@Column(nullable = false)
