@@ -56,11 +56,6 @@ public final class Main
 		System.out.println("Orders By Minimum Value:");
 		System.out.println(ordersByMinimumValue);
 
-		List<Order> ordersByStatus = orderRepository.fetchOrdersByStatus("Placed");
-		System.out.println();
-		System.out.println("Orders By Status:");
-		System.out.println(ordersByStatus);
-
 		Order orderFoundById = orderRepository.findById(3L);
 		System.out.println();
 		System.out.println("Order Found By ID:");

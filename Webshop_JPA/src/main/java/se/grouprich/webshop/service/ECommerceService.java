@@ -2,6 +2,7 @@ package se.grouprich.webshop.service;
 
 import java.util.List;
 
+import se.grouprich.webshop.ecommerceenum.OrderStatus;
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
@@ -188,6 +189,12 @@ public final class ECommerceService
 	public List<Order> fetchOrdersByUser(User user)
 	{
 		return orderRepository.fetchOrdersByUser(user);
+	}
+
+	// enum OrderStatus används här. Den här metoden ska testas efter OrderStatus klassen har skapats.
+	public List<Order> fetchOrdersByStatus(OrderStatus orderStatus)
+	{
+		return orderRepository.fetchOrdersByStatus(orderStatus);
 	}
 
 	// public void addProduct(OrderRow shoppingCart, String productId, int

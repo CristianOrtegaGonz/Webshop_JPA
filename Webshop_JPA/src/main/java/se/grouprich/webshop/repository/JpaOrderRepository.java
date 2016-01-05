@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
 
+import se.grouprich.webshop.ecommerceenum.OrderStatus;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.User;
 
@@ -30,7 +31,7 @@ public final class JpaOrderRepository extends AbstractJpaRepository<Order> imple
 	}
 
 	@Override
-	public List<Order> fetchOrdersByStatus(String status)
+	public List<Order> fetchOrdersByStatus(OrderStatus status)
 	{
 		return fetchMany("Order.FetchOrdersByStatus", queryFunction -> queryFunction.setParameter("status", status));
 	}
