@@ -167,6 +167,11 @@ public final class ECommerceService
 		return productRepository.searchProductsBasedOnProductName(keyword);
 	}
 
+	public User fetchUserByUsername(String username)
+	{
+		return userRepository.fetchUsersByUsername(username).get(0);
+	}
+
 	public Product changeProductStatus(Product product, String status)
 	{
 		product.setStatus(status);
