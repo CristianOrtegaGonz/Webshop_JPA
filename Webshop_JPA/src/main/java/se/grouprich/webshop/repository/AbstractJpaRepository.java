@@ -67,7 +67,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}) : execute(manager -> manager.merge(entity));
 	}
 
-	public E update(E entity)
+	public E merge(E entity)
 	{
 		return execute(manager -> manager.merge(entity));	
 	}

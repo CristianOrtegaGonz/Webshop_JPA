@@ -82,7 +82,7 @@ public class Order extends AbstractEntity implements Serializable
 		OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
 		if (orderRowWithExistingProduct != null)
 		{
-			addQuantity(orderRowWithExistingProduct, orderRow.getQuantity());
+			addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
 		}
 		else
 		{
@@ -97,16 +97,24 @@ public class Order extends AbstractEntity implements Serializable
 		Double totalPrice = 0.0;
 		for (OrderRow orderRow : orderRows)
 		{
-			totalPrice += orderRow.getProduct().getPrice() * orderRow.getQuantity();
+			totalPrice += orderRow.getProduct().getPrice() * orderRow.getOrderQuantity();
 		}
 		BigDecimal bd = new BigDecimal(totalPrice);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
 		this.totalPrice = bd.doubleValue();
 	}
 
-	public void addQuantity(OrderRow orderRow, int quantity)
+	private void addQuantity(OrderRow orderRow, int quantity)
 	{
-		orderRow.setQuantity(orderRow.getQuantity() + quantity);
+		orderRow.setOrderQuantity(orderRow.getOrderQuantity() + quantity);
+	}
+
+	public void updateStockQuantity()
+	{
+		for (OrderRow orderRow : orderRows)
+		{
+			orderRow.updateStockQuantity(orderRow.getOrderQuantity());
+		}
 	}
 
 	public OrderRow searchProductInOrderRows(OrderRow orderRow)

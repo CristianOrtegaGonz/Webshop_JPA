@@ -125,11 +125,13 @@ public final class ECommerceService
 		}
 		if (userRepository.findById(order.getUser().getId()) == null)
 		{
+			order.updateStockQuantity();
 			return orderRepository.saveOrUpdate(order);
 		}
 		else
 		{
-			return orderRepository.update(order);
+			order.updateStockQuantity();
+			return orderRepository.merge(order);
 		}
 	}
 

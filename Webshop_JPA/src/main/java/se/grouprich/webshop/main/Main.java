@@ -178,5 +178,10 @@ public final class Main
 		System.out.println(allOrdersInDB);
 		System.out.println("Orders by minimum value");
 		System.out.println(ordersByminimValue);
+		
+		List<Product> allProducts = eCommerceService.fetchAllProducts();
+		System.out.println();
+		System.out.println("All products");
+		System.out.println(allProducts);
 	}
 }
