@@ -22,14 +22,14 @@ public final class JpaProductRepository extends AbstractJpaRepository<Product> i
 	}
 
 	@Override
-	public List<Product> searchProductsByProductName(String productName)
+	public List<Product> searchProductsBasedOnProductName(String keyword)
 	{
-		return fetchMany("Product.SearchProductsByProductName", queryFunction -> queryFunction.setParameter(1, "%" + productName + "%"));
+		return fetchMany("Product.SearchProductsBasedOnProductName", queryFunction -> queryFunction.setParameter(1, "%" + keyword + "%"));
 	}
 
 	@Override
 	public List<Product> fetchProductsByProductName(String productName)
 	{
-		return fetchMany("Product.FetchProductByProductName", queryFunction -> queryFunction.setParameter("productName", productName));
+		return fetchMany("Product.FetchProductsByProductName", queryFunction -> queryFunction.setParameter("productName", productName));
 	}
 }

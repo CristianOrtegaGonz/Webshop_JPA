@@ -9,7 +9,7 @@ import com.mysql.jdbc.jdbc2.optional.SuspendableXAConnection;
 
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
-import se.grouprich.webshop.exception.UserValidationException;
+import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
@@ -28,7 +28,7 @@ public final class Main
 {
 	private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PersistenceUnit");
 
-	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException, UserValidationException
+	public static final void main(String[] args) throws ProductRegistrationException, UserRegistrationException, PaymentException, PermissionException
 	{
 		ProductRepository productRepository = new JpaProductRepository(factory);
 		Product product1 = new Product("pen", 10.33, 5, "In Stock");
@@ -155,5 +155,10 @@ public final class Main
 		System.out.println();
 		System.out.println("Updated User:");
 		System.out.println(updatedUser);
+		
+		List<Product> searchResult = eCommerceService.searchProductsBasedOnProductName("note");
+		System.out.println();
+		System.out.println("Search result:");
+		System.out.println(searchResult);
 	}
 }

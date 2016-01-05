@@ -4,9 +4,8 @@ import java.util.List;
 
 import se.grouprich.webshop.exception.PaymentException;
 import se.grouprich.webshop.exception.ProductRegistrationException;
-import se.grouprich.webshop.exception.RepositoryException;
-import se.grouprich.webshop.exception.UserValidationException;
 import se.grouprich.webshop.exception.UserRegistrationException;
+import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
@@ -89,11 +88,6 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public List<Product> fetchProductsByProductName(String productName)
-	{
-		return productRepository.searchProductsByProductName(productName);
-	}
-
 	public Product createProduct(String productName, double price, int stockQuantity, String status) throws ProductRegistrationException
 	{
 		if (productValidator.alreadyExists(productName))
@@ -131,7 +125,7 @@ public final class ECommerceService
 		return orderRepository.saveOrUpdate(order);
 	}
 
-	public Product updateProduct(Product product, User user) throws UserValidationException
+	public Product updateProduct(Product product, User user) throws PermissionException
 	{
 		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
 		{
@@ -139,11 +133,11 @@ public final class ECommerceService
 		}
 		else
 		{
-			throw new UserValidationException("Only an activated admin user has right to update products");
+			throw new PermissionException("Only an activated admin user has right to update products");
 		}
 	}
 
-	public User updateUser(User user, String oldPassword) throws UserValidationException
+	public User updateUser(User user, String oldPassword) throws PermissionException
 	{
 		User oldUser = userRepository.findById(user.getId());
 		if (oldUser.getPassword().equals(oldPassword))
@@ -152,11 +146,11 @@ public final class ECommerceService
 		}
 		else
 		{
-			throw new UserValidationException("Password does not match the confirm password");
+			throw new PermissionException("Password does not match the confirm password");
 		}
 	}
 
-	public Order updateOrder(Order order, User user) throws UserValidationException
+	public Order updateOrder(Order order, User user) throws PermissionException
 	{
 		if (user.getRole().equals("admin") && user.getStatus().equals("ACTIVATED"))
 		{
@@ -164,8 +158,13 @@ public final class ECommerceService
 		}
 		else
 		{
-			throw new UserValidationException("Only an activated admin user has right to update orders");
+			throw new PermissionException("Only an activated admin user has right to update orders");
 		}
+	}
+
+	public List<Product> searchProductsBasedOnProductName(String keyword)
+	{
+		return productRepository.searchProductsBasedOnProductName(keyword);
 	}
 
 	public Product changeProductStatus(Product product, String status)

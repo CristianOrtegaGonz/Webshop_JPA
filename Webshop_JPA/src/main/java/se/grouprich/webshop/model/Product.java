@@ -12,8 +12,8 @@ import se.grouprich.webshop.exception.ProductRegistrationException;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
-		@NamedQuery(name = "Product.SearchProductsByProductName", query = "SELECT p FROM Product p WHERE p.productName LIKE ?1 ORDER BY p.productName ASC"),
-		@NamedQuery(name = "Product.FetchProductByProductName", query = "SELECT p FROM Product p WHERE p.productName = :productName") })
+		@NamedQuery(name = "Product.SearchProductsBasedOnProductName", query = "SELECT p FROM Product p WHERE p.productName LIKE ?1 ORDER BY p.productName ASC"),
+		@NamedQuery(name = "Product.FetchProductsByProductName", query = "SELECT p FROM Product p WHERE p.productName = :productName") })
 public class Product extends AbstractEntity implements Serializable
 {
 	@Transient
