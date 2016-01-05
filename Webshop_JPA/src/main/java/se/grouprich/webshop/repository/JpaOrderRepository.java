@@ -37,7 +37,7 @@ public final class JpaOrderRepository extends AbstractJpaRepository<Order> imple
 	}
 
 	@Override
-	public List<Order> fetchOrdersByMinimumValue(double minimumValue)
+	public List<Order> fetchOrdersByMinimumValue(Double minimumValue)
 	{
 		return fetchMany("Order.FetchOrdersByMinimumValue", queryFunction -> queryFunction.setParameter("totalPrice", minimumValue));
 	}
