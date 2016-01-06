@@ -1,5 +1,6 @@
 package se.grouprich.webshop.service.validation;
 
+import se.grouprich.webshop.model.Role;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.UserStatus;
 import se.grouprich.webshop.repository.UserRepository;
@@ -77,7 +78,7 @@ public final class UserValidator
 	public boolean isActiveAdmin(User user)
 	{
 		User fetchedUser = userRepository.findById(user.getId());
-		if (fetchedUser.getRole().equals("admin") && isActiveUser(fetchedUser))
+		if (fetchedUser.getRole().equals(Role.ADMIN) && isActiveUser(fetchedUser))
 		{
 			return true;
 		}

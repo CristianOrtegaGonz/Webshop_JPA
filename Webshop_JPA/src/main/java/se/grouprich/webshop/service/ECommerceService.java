@@ -115,41 +115,39 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User user, String productName, double price, int stockQuantity, ProductStatus status) throws StorageException, PermissionException
+	public Product createProduct(User user, Product product) throws StorageException, PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to create products");
 		}
-		if (productValidator.alreadyExists(productName))
+		if (productValidator.alreadyExists(product.getProductName()))
 		{
-			throw new StorageException("Product with name: " + productName + " already exists");
+			throw new StorageException("Product with name: " + product.getProductName() + " already exists");
 		}
-		Product product = new Product(productName, price, stockQuantity, status);
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User createUser(String username, String password, String firstName, String lastName) throws StorageException, ValidationException
+	public User createUser(User user) throws StorageException, ValidationException
 	{
-		if (userValidator.alreadyExists(username))
+		if (userValidator.alreadyExists(user.getUsername()))
 		{
-			throw new StorageException("User with username: " + username + " already exists");
+			throw new StorageException("User with username: " + user.getUsername() + " already exists");
 		}
-		if (!userValidator.isLengthWithinRange(username))
+		if (!userValidator.isLengthWithinRange(user.getUsername()))
 		{
 			throw new ValidationException("Username that is longer than 30 characters is not allowed");
 		}
-		if (!userValidator.isValidPassword(password))
+		if (!userValidator.isValidPassword(user.getPassword()))
 		{
 			throw new ValidationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
-		User user = new User(username, password, firstName, lastName);
 		return userRepository.saveOrUpdate(user);
 	}
 
 	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermissionToAccess(user, order.getUser()))
+		if (!userValidator.hasPermissionToAccess(user, order.getUser()))
 		{
 			throw new PermissionException("No permission to create orders");
 		}
@@ -157,16 +155,8 @@ public final class ECommerceService
 		{
 			throw new OrderException("We can not accept the total price exceeding SEK 50,000");
 		}
-		if (userRepository.findById(order.getUser().getId()) == null)
-		{
-			order.updateStockQuantity();
-			return orderRepository.saveOrUpdate(order);
-		}
-		else
-		{
-			order.updateStockQuantity();
-			return orderRepository.merge(order);
-		}
+		order.updateStockQuantity();
+		return orderRepository.merge(order);
 	}
 
 	public Product updateProduct(User user, Product product) throws PermissionException

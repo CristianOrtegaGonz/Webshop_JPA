@@ -8,6 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import se.grouprich.webshop.exception.OrderException;
+import se.grouprich.webshop.model.status.ProductStatus;
+
 @Entity
 public class OrderRow extends AbstractEntity implements Serializable
 {
@@ -24,14 +27,26 @@ public class OrderRow extends AbstractEntity implements Serializable
 	{
 	}
 
-	public OrderRow(Product product)
+	public OrderRow(Product product) throws OrderException
 	{
+		if (product.getStatus().equals(ProductStatus.OUT_OF_STOCK))
+		{
+			throw new OrderException("Product is out of stock");
+		}
 		this.product = product;
 		orderQuantity = 1;
 	}
 
-	public OrderRow(Product product, Integer orderQuantity)
+	public OrderRow(Product product, Integer orderQuantity) throws OrderException
 	{
+		if (orderQuantity < 1)
+		{
+			throw new IllegalArgumentException("Order quantity must be greater than or equal to 1");
+		}
+		if (product.getStockQuantity() <= orderQuantity)
+		{
+			throw new OrderException("Stock quantity is " + product.getStockQuantity());
+		}
 		this.product = product;
 		this.orderQuantity = orderQuantity;
 	}
@@ -55,8 +70,12 @@ public class OrderRow extends AbstractEntity implements Serializable
 	{
 		int stockQuantity = product.getStockQuantity();
 		product.setStockQuantity(stockQuantity - orderQuantity);
+		if (product.getStockQuantity() == 0)
+		{
+			product.setStatus(ProductStatus.OUT_OF_STOCK);
+		}
 	}
-	
+
 	@Override
 	public boolean equals(Object other)
 	{
@@ -79,6 +98,7 @@ public class OrderRow extends AbstractEntity implements Serializable
 		int result = 1;
 		result += product.hashCode() * 37;
 		result += orderQuantity.hashCode() * 37;
+
 		return result;
 	}
 

@@ -31,12 +31,10 @@ public class Product extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private int stockQuantity;
 
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private ProductStatus status;
 	
-	// private int orderQuantity;
-
 	protected Product()
 	{
 	}

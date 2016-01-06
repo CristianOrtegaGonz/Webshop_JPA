@@ -33,11 +33,12 @@ public class User extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
-	private String role;
-
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private UserStatus status;
 
 	protected User()
@@ -50,7 +51,17 @@ public class User extends AbstractEntity implements Serializable
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.role = "customer";
+		this.role = Role.CUSTOMER;
+		status = UserStatus.PENDING_ACTIVATION; 
+	}
+	
+	public User(String username, String password, String firstName, String lastName, Role role) throws ValidationException
+	{
+		this.username = username;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.role = role;
 		status = UserStatus.PENDING_ACTIVATION; 
 	}
 
@@ -64,7 +75,7 @@ public class User extends AbstractEntity implements Serializable
 		return password;
 	}
 
-	public String getRole()
+	public Role getRole()
 	{
 		return role;
 	}
@@ -79,19 +90,22 @@ public class User extends AbstractEntity implements Serializable
 		return status;
 	}
 
-	public void setEmail(final String email)
+	public User setUsername(final String username)
 	{
-		this.username = email;
+		this.username = username;
+		return this;
 	}
 
-	public void setRole(String role)
+	public User setRole(Role role)
 	{
-		this.role = role.toLowerCase();
+		this.role = role;
+		return this;
 	}
 	
-	public void setStatus(UserStatus status)
+	public User setStatus(UserStatus status)
 	{
 		this.status = status;
+		return this;
 	}
 	
 	public void changePassword(final String oldPassword, final String newPassword)

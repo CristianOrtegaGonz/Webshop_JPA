@@ -49,12 +49,12 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(User user)
+	public Order(User user, OrderRow... orderRows)
 	{
 		this.user = user;
-		orderRows = new ArrayList<>();
+		this.orderRows = new ArrayList<>();
+		addOrderRows(orderRows);
 		status = OrderStatus.PLACED;
-		calculateTotalPrice();
 	}
 
 	public User getUser()
@@ -71,27 +71,30 @@ public class Order extends AbstractEntity implements Serializable
 	{
 		return totalPrice;
 	}
-	
+
 	public OrderStatus getStatus()
 	{
 		return status;
 	}
-	
+
 	public void setStatus(OrderStatus status)
 	{
 		this.status = status;
 	}
 
-	public Order addOrderRow(OrderRow orderRow)
+	public Order addOrderRows(OrderRow... orderRows)
 	{
-		OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
-		if (orderRowWithExistingProduct != null)
+		for (OrderRow orderRow : orderRows)
 		{
-			addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
-		}
-		else
-		{
-			orderRows.add(orderRow);
+			OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
+			if (orderRowWithExistingProduct == null)
+			{
+				this.orderRows.add(orderRow);
+			}
+			else
+			{
+				addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
+			}
 		}
 		calculateTotalPrice();
 		return this;
