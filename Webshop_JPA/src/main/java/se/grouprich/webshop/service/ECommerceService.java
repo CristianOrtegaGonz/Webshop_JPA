@@ -61,33 +61,57 @@ public final class ECommerceService
 		return userValidator;
 	}
 
-	public Product fetchProductById(Long id)
+	public Product fetchProductById(User user, Long id) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch product by ID");
+		}
 		return productRepository.findById(id);
 	}
 
-	public User fetchUserById(Long id)
+	public User fetchUserById(User user, Long id) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user) && !user.getId().equals(id))
+		{
+			throw new PermissionException("No permission to fetch user by ID");
+		}
 		return userRepository.findById(id);
 	}
 
-	public Order fetchOrderById(Long id)
+	public Order fetchOrderById(User user, Long id) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch order by ID");
+		}
 		return orderRepository.findById(id);
 	}
 
-	public List<Product> fetchAllProducts()
+	public List<Product> fetchAllProducts(User user) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch all products");
+		}
 		return productRepository.fetchAll();
 	}
 
-	public List<User> fetchAllUser()
+	public List<User> fetchAllUsers(User user) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch all users");
+		}
 		return userRepository.fetchAll();
 	}
 
-	public List<Order> fetchAllOrders()
+	public List<Order> fetchAllOrders(User user) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to feth all orders");
+		}
 		return orderRepository.fetchAll();
 	}
 
@@ -205,13 +229,21 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByUser(customer);
 	}
 
-	public List<Order> fetchOrdersByStatus(OrderStatus orderStatus)
+	public List<Order> fetchOrdersByStatus(User user, OrderStatus orderStatus) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch orders by status");
+		}
 		return orderRepository.fetchOrdersByStatus(orderStatus);
 	}
 
-	public List<Order> fetchOrdersByMinimumValue(Double minimumValue)
+	public List<Order> fetchOrdersByMinimumValue(User user, Double minimumValue) throws PermissionException
 	{
+		if (!userValidator.isActiveAdmin(user))
+		{
+			throw new PermissionException("No permission to fetch orders by minimum value");
+		}
 		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
 	}
 

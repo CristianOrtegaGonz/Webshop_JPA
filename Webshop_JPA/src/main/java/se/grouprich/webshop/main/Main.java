@@ -97,17 +97,7 @@ public final class Main
 		ECommerceService eCommerceService = new ECommerceService(orderRepository, userRepository, productRepository, productValidator,
 				userValidator);
 		
-		Order orderFetchedById = eCommerceService.fetchOrderById(4L);
-		System.out.println();
-		System.out.println("Order Fetched By ID:");
-		System.out.println(orderFetchedById);
-		
-		Product productFetchedById = eCommerceService.fetchProductById(3L);
-		System.out.println();
-		System.out.println("Product Fetched By ID:");
-		System.out.println(productFetchedById);
-		
-		User userFetchedById = eCommerceService.fetchUserById(5L);
+		User userFetchedById = eCommerceService.fetchUserById(user, 5L);
 		System.out.println();
 		System.out.println("User Fetched By ID:");
 		System.out.println(userFetchedById);
@@ -121,14 +111,6 @@ public final class Main
 		System.out.println();
 		System.out.println("Search result:");
 		System.out.println(searchResult);
-		
-		List<Order> ordersByminimValue = eCommerceService.fetchOrdersByMinimumValue(100.00);
-		List<Order> allOrdersInDB = eCommerceService.fetchAllOrders();
-		System.out.println();
-		System.out.println("All Orders");
-		System.out.println(allOrdersInDB);
-		System.out.println("Orders by minimum value");
-		System.out.println(ordersByminimValue);
 		
 		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
 		User activatedUser = eCommerceService.activateUser(user2);
@@ -144,19 +126,37 @@ public final class Main
 		
 		User user3 = eCommerceService.createUser("Hanauta", "12&OI4", "Hanako", "Manaka");
 		
-		List<Product> allProducts = eCommerceService.fetchAllProducts();
+		List<Product> allProducts = eCommerceService.fetchAllProducts(user2);
 		System.out.println();
 		System.out.println("All products");
 		System.out.println(allProducts);
 		
-		User userToUpdate = eCommerceService.fetchUserByUsername(user2, "Mari");
-		userToUpdate.setStatus(UserStatus.DEACTIVATED);
+		User userToUpdate = eCommerceService.fetchUserByUsername(user3, "Hanauta");
+		userToUpdate.setStatus(UserStatus.ACTIVE);
 		System.out.println();
-		System.out.println("user2 har fortfarande UserStatus.ACTIVE:");
-		System.out.println(user2);
+		System.out.println("Before update user3:");
+		System.out.println(user3);
 		User updatedUser = eCommerceService.updateUser(user2, userToUpdate);
 		System.out.println();
 		System.out.println("Updated user:");
 		System.out.println(updatedUser);
+		
+		List<Order> ordersByminimValue = eCommerceService.fetchOrdersByMinimumValue(user2, 50.00);
+		List<Order> allOrdersInDB = eCommerceService.fetchAllOrders(user2);
+		System.out.println();
+		System.out.println("All Orders");
+		System.out.println(allOrdersInDB);
+		System.out.println("Orders by minimum value");
+		System.out.println(ordersByminimValue);
+		
+		Order orderFetchedById = eCommerceService.fetchOrderById(user2, 4L);
+		System.out.println();
+		System.out.println("Order Fetched By ID:");
+		System.out.println(orderFetchedById);
+		
+		Product productFetchedById = eCommerceService.fetchProductById(user2, 3L);
+		System.out.println();
+		System.out.println("Product Fetched By ID:");
+		System.out.println(productFetchedById);	
 	}
 }
