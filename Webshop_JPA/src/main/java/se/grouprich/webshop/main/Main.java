@@ -117,62 +117,10 @@ public final class Main
 		System.out.println("Created Order:");
 		System.out.println(createdOrder);
 		
-		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
-		user2.setRole("Admin");
-		user2.setStatus(UserStatus.ACTIVE);
-		System.out.println();
-		System.out.println("Created User:");
-		System.out.println(user2);
-		
-		productRepository.saveOrUpdate(product1);
-		List<Product> fetchedProductsByProductName = productRepository.fetchProductsByProductName("pen");
-		System.out.println(fetchedProductsByProductName);
-		boolean alreadyExists = productValidator.alreadyExists("Tea cup");
-		System.out.println(alreadyExists);
-		Product product4 = eCommerceService.createProduct(user2, "Tea cup", 30.99, 10, ProductStatus.IN_STOCK);
-		System.out.println();
-		System.out.println("Created Product:");
-		System.out.println(product4);
-			
-		createdOrder.setStatus(OrderStatus.SHIPPED);
-		Order updatedOrder = eCommerceService.updateOrder(user2, createdOrder);
-		System.out.println();
-		System.out.println("Updated Order:");
-		System.out.println(updatedOrder);
-		
-		product4.setProductName("Ittala tea cup");
-		Product updatedProduct = eCommerceService.updateProduct(user2, product4);
-		System.out.println();
-		System.out.println("Updated Product:");
-		System.out.println(updatedProduct);
-		
-		user2.changePassword("12&OI4", "55Y?kk");
-		User updatedUser = eCommerceService.updateUser(user2, user2);
-		System.out.println();
-		System.out.println("Updated User:");
-		System.out.println(updatedUser);
-		
 		List<Product> searchResult = eCommerceService.searchProductsBasedOnProductName("note");
 		System.out.println();
 		System.out.println("Search result:");
 		System.out.println(searchResult);
-		
-		User fetchedUser = eCommerceService.fetchUserByUsername(user2, "Mari");
-		System.out.println();
-		System.out.println("User fetched by username:");
-		System.out.println(fetchedUser);
-		
-		OrderRow orderRow4 = new OrderRow(product4, 6);
-		Order order2 = new Order(user).addOrderRow(orderRow4);
-		Order createdOrder2 = eCommerceService.createOrder(user2, order2);
-		System.out.println();
-		System.out.println("Created order2:");
-		System.out.println(createdOrder2);
-		
-		List<Order> ordersFetchedByUser = eCommerceService.fetchOrdersByUser(user2, user);
-		System.out.println();
-		System.out.println("Orders Fetched By User:");
-		System.out.println(ordersFetchedByUser);
 		
 		List<Order> ordersByminimValue = eCommerceService.fetchOrdersByMinimumValue(100.00);
 		List<Order> allOrdersInDB = eCommerceService.fetchAllOrders();
@@ -182,9 +130,24 @@ public final class Main
 		System.out.println("Orders by minimum value");
 		System.out.println(ordersByminimValue);
 		
+		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
+		user2.setRole("customer");
+		user2.setStatus(UserStatus.ACTIVE);
+		System.out.println();
+		System.out.println("Created User:");
+		System.out.println(user2);
+		
 		List<Product> allProducts = eCommerceService.fetchAllProducts();
 		System.out.println();
 		System.out.println("All products");
 		System.out.println(allProducts);
+		
+		User userToUpdate = eCommerceService.fetchUserByUsername(user2, "Mari");
+		userToUpdate.setStatus(UserStatus.DEACTIVATED);
+		System.out.println(user2);
+		User updatedUser = eCommerceService.updateUser(user2, userToUpdate);
+		System.out.println();
+		System.out.println("Updated user:");
+		System.out.println(updatedUser);
 	}
 }
