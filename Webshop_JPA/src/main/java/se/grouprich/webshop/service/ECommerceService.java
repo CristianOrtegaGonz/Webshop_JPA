@@ -11,6 +11,7 @@ import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.OrderStatus;
 import se.grouprich.webshop.model.status.ProductStatus;
+import se.grouprich.webshop.model.status.UserStatus;
 import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
@@ -212,5 +213,11 @@ public final class ECommerceService
 	public List<Order> fetchOrdersByMinimumValue(Double minimumValue)
 	{
 		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
+	}
+
+	public User activateUser(User user)
+	{
+		user.setStatus(UserStatus.ACTIVE);
+		return userRepository.saveOrUpdate(user);
 	}
 }

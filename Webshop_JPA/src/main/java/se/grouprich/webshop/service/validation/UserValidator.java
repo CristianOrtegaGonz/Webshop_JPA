@@ -76,7 +76,8 @@ public final class UserValidator
 
 	public boolean isActiveAdmin(User user)
 	{
-		if (user.getRole().equals("admin") && isActiveUser(user))
+		User fetchedUser = userRepository.findById(user.getId());
+		if (fetchedUser.getRole().equals("admin") && isActiveUser(fetchedUser))
 		{
 			return true;
 		}
@@ -85,7 +86,8 @@ public final class UserValidator
 
 	public boolean hasPermissionToAccess(User user1, User user2)
 	{
-		if (areSameUsers(user1, user2) && isActiveUser(user1))
+		User fetchedUser = userRepository.findById(user1.getId());
+		if (areSameUsers(fetchedUser, user2) && isActiveUser(fetchedUser))
 		{
 			return true;
 		}

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -16,7 +15,6 @@ public class OrderRow extends AbstractEntity implements Serializable
 	private static final long serialVersionUID = 3865658878665558979L;
 
 	@OneToOne(cascade = { CascadeType.MERGE })
-	@JoinColumn(nullable = false)
 	private Product product;
 
 	@Column(nullable = false)
@@ -58,7 +56,7 @@ public class OrderRow extends AbstractEntity implements Serializable
 		int stockQuantity = product.getStockQuantity();
 		product.setStockQuantity(stockQuantity - orderQuantity);
 	}
-
+	
 	@Override
 	public boolean equals(Object other)
 	{

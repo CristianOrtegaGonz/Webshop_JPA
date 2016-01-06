@@ -131,11 +131,18 @@ public final class Main
 		System.out.println(ordersByminimValue);
 		
 		User user2 = eCommerceService.createUser("Mari", "12&OI4", "Mariko", "Hashimoto");
-		user2.setRole("customer");
-		user2.setStatus(UserStatus.ACTIVE);
+		User activatedUser = eCommerceService.activateUser(user2);
+		activatedUser.setRole("admin");	
+		User fetchedUser = eCommerceService.fetchUserByUsername(activatedUser, "Mari");
 		System.out.println();
-		System.out.println("Created User:");
-		System.out.println(user2);
+		System.out.println("Fetched User:");
+		System.out.println(fetchedUser);
+		eCommerceService.updateUser(activatedUser, activatedUser);
+		System.out.println();
+		System.out.println("Activated User:");
+		System.out.println(activatedUser);
+		
+		User user3 = eCommerceService.createUser("Hanauta", "12&OI4", "Hanako", "Manaka");
 		
 		List<Product> allProducts = eCommerceService.fetchAllProducts();
 		System.out.println();
@@ -144,6 +151,8 @@ public final class Main
 		
 		User userToUpdate = eCommerceService.fetchUserByUsername(user2, "Mari");
 		userToUpdate.setStatus(UserStatus.DEACTIVATED);
+		System.out.println();
+		System.out.println("user2 har fortfarande UserStatus.ACTIVE:");
 		System.out.println(user2);
 		User updatedUser = eCommerceService.updateUser(user2, userToUpdate);
 		System.out.println();
