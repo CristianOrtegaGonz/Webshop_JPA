@@ -10,6 +10,7 @@ import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.OrderStatus;
+import se.grouprich.webshop.model.status.ProductStatus;
 import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
@@ -89,9 +90,9 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User user, String productName, double price, int stockQuantity, String status) throws StorageException, PermissionException
+	public Product createProduct(User user, String productName, double price, int stockQuantity, ProductStatus status) throws StorageException, PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to create products");
 		}
@@ -123,29 +124,32 @@ public final class ECommerceService
 
 	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (userValidator.isActiveAdmin(user) || userValidator.hasPermissionToAccess(user, order.getUser()))
 		{
-			throw new PermissionException("No permission to create orders");
-		}
-		if (order.getTotalPrice() > 50000.00)
-		{
-			throw new OrderException("We can not accept the total price exceeding SEK 50,000");
-		}
-		if (userRepository.findById(order.getUser().getId()) == null)
-		{
-			order.updateStockQuantity();
-			return orderRepository.saveOrUpdate(order);
+			if (order.getTotalPrice() > 50000.00)
+			{
+				throw new OrderException("We can not accept the total price exceeding SEK 50,000");
+			}
+			if (userRepository.findById(order.getUser().getId()) == null)
+			{
+				order.updateStockQuantity();
+				return orderRepository.saveOrUpdate(order);
+			}
+			else
+			{
+				order.updateStockQuantity();
+				return orderRepository.merge(order);
+			}
 		}
 		else
 		{
-			order.updateStockQuantity();
-			return orderRepository.merge(order);
+			throw new PermissionException("No permission to create orders");
 		}
 	}
 
 	public Product updateProduct(User user, Product product) throws PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to update products");
 		}
@@ -154,9 +158,9 @@ public final class ECommerceService
 
 	public User updateUser(User user, User userToUpdate) throws PermissionException
 	{
-		if (userValidator.isActivatedAdmin(user) || user.getId().equals(userToUpdate))
+		if (userValidator.isActiveAdmin(user) || userValidator.hasPermissionToAccess(user, userToUpdate))
 		{
-			return userRepository.saveOrUpdate(user);
+			return userRepository.saveOrUpdate(userToUpdate);
 		}
 		else
 		{
@@ -166,7 +170,7 @@ public final class ECommerceService
 
 	public Order updateOrder(User user, Order order) throws PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to update orders");
 		}
@@ -180,27 +184,26 @@ public final class ECommerceService
 
 	public User fetchUserByUsername(User user, String username) throws PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to fetch user by username");
 		}
 		return userRepository.fetchUsersByUsername(username).get(0);
 	}
 
-	// String status ska ändras till ProductStatus status
-	public Product changeProductStatus(User user, Product product, String status) throws PermissionException
+	public Product changeProductStatus(User user, Product product, ProductStatus status) throws PermissionException
 	{
-		if (!userValidator.isActivatedAdmin(user))
+		if (!userValidator.isActiveAdmin(user))
 		{
 			throw new PermissionException("No permission to change product status");
 		}
-		product.setStatus(status);
+		// product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
 	}
 
 	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
 	{
-		if (userValidator.isActivatedAdmin(user) || user.equals(customer))
+		if (userValidator.isActiveAdmin(user) || userValidator.hasPermissionToAccess(user, customer))
 		{
 			return orderRepository.fetchOrdersByUser(customer);
 		}
@@ -210,8 +213,6 @@ public final class ECommerceService
 		}
 	}
 
-	// enum OrderStatus används här. Den här metoden ska testas efter
-	// OrderStatus klassen har skapats.
 	public List<Order> fetchOrdersByStatus(OrderStatus orderStatus)
 	{
 		return orderRepository.fetchOrdersByStatus(orderStatus);

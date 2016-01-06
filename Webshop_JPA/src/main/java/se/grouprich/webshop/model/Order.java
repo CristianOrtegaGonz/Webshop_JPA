@@ -9,6 +9,8 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -16,6 +18,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
 @Table(name = "`Order`")
@@ -37,8 +41,9 @@ public class Order extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private Double totalPrice;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private String status;
+	private OrderStatus status;
 
 	public Order()
 	{
@@ -48,7 +53,7 @@ public class Order extends AbstractEntity implements Serializable
 	{
 		this.user = user;
 		orderRows = new ArrayList<>();
-		status = "Placed";
+		status = OrderStatus.PLACED;
 		calculateTotalPrice();
 	}
 
@@ -66,13 +71,13 @@ public class Order extends AbstractEntity implements Serializable
 	{
 		return totalPrice;
 	}
-
-	public String getStatus()
+	
+	public OrderStatus getStatus()
 	{
 		return status;
 	}
-
-	public void setStatus(String status)
+	
+	public void setStatus(OrderStatus status)
 	{
 		this.status = status;
 	}

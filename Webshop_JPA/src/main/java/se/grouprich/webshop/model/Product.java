@@ -4,11 +4,14 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.StorageException;
+import se.grouprich.webshop.model.status.ProductStatus;
 
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
@@ -29,14 +32,16 @@ public class Product extends AbstractEntity implements Serializable
 	private int stockQuantity;
 
 	@Column(nullable = false)
-	private String status;
+	@Enumerated(EnumType.STRING)
+	private ProductStatus status;
+	
 	// private int orderQuantity;
 
 	protected Product()
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity, String status) throws StorageException
+	public Product(String productName, Double price, int stockQuantity, ProductStatus status) throws StorageException
 	{
 		this.productName = productName;
 		this.price = price;
@@ -58,8 +63,8 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		return price;
 	}
-
-	public String getStatus()
+	
+	public ProductStatus getStatus()
 	{
 		return status;
 	}
@@ -74,33 +79,16 @@ public class Product extends AbstractEntity implements Serializable
 		this.stockQuantity = stockQuantity;
 	}
 
-	// public void setOrderQuantity(final int orderQuantity) throws
-	// OrderException
-	// {
-	// this.orderQuantity = orderQuantity;
-	// }
-	//
-	// public void addOrderQuantity(final int orderQuantity) throws
-	// OrderException
-	// {
-	// this.orderQuantity += orderQuantity;
-	// }
-	//
-	// public int getOrderQuantity()
-	// {
-	// return orderQuantity;
-	// }
-
 	public void setPrice(final Double price)
 	{
 		this.price = price;
 	}
 
-	public void setStatus(String status)
+	public void setStatus(ProductStatus status)
 	{
 		this.status = status;
 	}
-
+	
 	@Override
 	public boolean equals(Object other)
 	{
