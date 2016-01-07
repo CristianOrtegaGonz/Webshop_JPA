@@ -1,5 +1,6 @@
 package se.grouprich.webshop.service.validation;
 
+import se.grouprich.webshop.model.Role;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.UserStatus;
 import se.grouprich.webshop.repository.UserRepository;
@@ -74,11 +75,38 @@ public final class UserValidator
 		return false;
 	}
 
-	public boolean isActivatedAdmin(User user)
+	public boolean isActiveAdmin(User user)
 	{
-		UserStatus status = UserStatus.ACTIVE;
-	
-		if (user.getRole().equals("admin") && status.equals("UserStatus.ACTIVATED"))
+		User fetchedUser = userRepository.findById(user.getId());
+		if (fetchedUser.getRole().equals(Role.ADMIN) && isActiveUser(fetchedUser))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	public boolean hasPermission(User user1, User user2)
+	{
+		User fetchedUser = userRepository.findById(user1.getId());
+		if (areSameUsers(fetchedUser, user2) && isActiveUser(fetchedUser))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private boolean areSameUsers(User user1, User user2)
+	{
+		if (user1.getId().equals(user2.getId()))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private boolean isActiveUser(User user)
+	{
+		if (user.getStatus().equals(UserStatus.ACTIVE))
 		{
 			return true;
 		}

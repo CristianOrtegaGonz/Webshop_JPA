@@ -10,7 +10,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
-import se.grouprich.webshop.exception.UserRegistrationException;
 import se.grouprich.webshop.model.status.UserStatus;
 
 @Entity
@@ -33,25 +32,36 @@ public class User extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private String lastName;
 
-	@Column(nullable = false)
-	private String role;
-
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private UserStatus status;
 
 	protected User()
 	{
 	}
 
-	public User(String username, String password, String firstName, String lastName) throws UserRegistrationException
+	public User(String username, String password, String firstName, String lastName)
 	{
 		this.username = username;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.role = "customer";
-		status = status.ACTIVE; 
+		this.role = Role.CUSTOMER;
+		status = UserStatus.PENDING_ACTIVATION; 
+	}
+	
+	public User(String username, String password, String firstName, String lastName, Role role)
+	{
+		this.username = username;
+		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.role = role;
+		status = UserStatus.PENDING_ACTIVATION; 
 	}
 
 	public String getUsername()
@@ -64,7 +74,7 @@ public class User extends AbstractEntity implements Serializable
 		return password;
 	}
 
-	public String getRole()
+	public Role getRole()
 	{
 		return role;
 	}
@@ -73,15 +83,28 @@ public class User extends AbstractEntity implements Serializable
 	{
 		return firstName + " " + lastName;
 	}
-
-	public void setEmail(final String email)
+	
+	public UserStatus getStatus()
 	{
-		this.username = email;
+		return status;
 	}
 
-	public void setRole(String role)
+	public User setUsername(final String username)
 	{
-		this.role = role.toLowerCase();
+		this.username = username;
+		return this;
+	}
+
+	public User setRole(Role role)
+	{
+		this.role = role;
+		return this;
+	}
+	
+	public User setStatus(UserStatus status)
+	{
+		this.status = status;
+		return this;
 	}
 	
 	public void changePassword(final String oldPassword, final String newPassword)
@@ -124,7 +147,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
+		return "User [id=" + getId() + ", username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", role=" + role + ", status=" + status + "]";
 	}
 }

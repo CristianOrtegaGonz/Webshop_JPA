@@ -15,14 +15,14 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 	private final EntityManagerFactory factory;
 	private final Class<E> entityClass;
 
-	protected AbstractJpaRepository(EntityManagerFactory factory, Class<E> entityClass)
+	protected AbstractJpaRepository(final EntityManagerFactory factory, final Class<E> entityClass)
 	{
 		this.factory = factory;
 		this.entityClass = entityClass;
 	}
 
 	@Override
-	public E findById(Long id)
+	public E findById(final Long id)
 	{
 		EntityManager manager = factory.createEntityManager();
 		try
@@ -40,7 +40,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 	}
 
 	@Override
-	public List<E> fetchMany(String queryName, Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
+	public List<E> fetchMany(final String queryName, final Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
 	{
 		EntityManager manager = factory.createEntityManager();
 		try
@@ -59,7 +59,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 	}
 
 	@Override
-	public E saveOrUpdate(E entity)
+	public E saveOrUpdate(final E entity)
 	{
 		return entity.getId() == null ? execute(manager -> {
 			manager.persist(entity);
@@ -67,12 +67,12 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}) : execute(manager -> manager.merge(entity));
 	}
 
-	public E merge(E entity)
+	public E merge(final E entity)
 	{
-		return execute(manager -> manager.merge(entity));	
+		return execute(manager -> manager.merge(entity));
 	}
 
-	protected E execute(Function<EntityManager, E> operation)
+	protected E execute(final Function<EntityManager, E> operation)
 	{
 		EntityManager manager = factory.createEntityManager();
 		try

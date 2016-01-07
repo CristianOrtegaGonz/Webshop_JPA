@@ -8,13 +8,13 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -35,27 +35,31 @@ public class Order extends AbstractEntity implements Serializable
 	@OneToOne(cascade = { CascadeType.PERSIST })
 	private User user;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	// Fråga Anders om fetch = FetchType.EAGER är ett bra sätt att göra
+	// Fråga om @Embedded fungerar med Collection
+	// @Embedded
+	@ElementCollection(fetch=FetchType.EAGER) 
+	// @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch =
+	// FetchType.EAGER)
 	private List<OrderRow> orderRows;
 
 	@Column(nullable = false)
 	private Double totalPrice;
 
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private OrderStatus status;
-	
 
 	public Order()
 	{
 	}
 
-	public Order(User user)
+	public Order(User user, OrderRow... orderRows)
 	{
 		this.user = user;
-		orderRows = new ArrayList<>();
-		status = status.PAYED;
-		calculateTotalPrice();
+		this.orderRows = new ArrayList<>();
+		addOrderRows(orderRows);
+		status = OrderStatus.PLACED;
 	}
 
 	public User getUser()
@@ -73,16 +77,29 @@ public class Order extends AbstractEntity implements Serializable
 		return totalPrice;
 	}
 
-	public Order addOrderRow(OrderRow orderRow)
+	public OrderStatus getStatus()
 	{
-		OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
-		if (orderRowWithExistingProduct != null)
+		return status;
+	}
+
+	public void setStatus(OrderStatus status)
+	{
+		this.status = status;
+	}
+
+	public Order addOrderRows(OrderRow... orderRows)
+	{
+		for (OrderRow orderRow : orderRows)
 		{
-			addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
-		}
-		else
-		{
-			orderRows.add(orderRow);
+			OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
+			if (orderRowWithExistingProduct == null)
+			{
+				this.orderRows.add(orderRow);
+			}
+			else
+			{
+				addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
+			}
 		}
 		calculateTotalPrice();
 		return this;
@@ -157,6 +174,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
+		return "Order [id=" + getId() + ", user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
 	}
 }

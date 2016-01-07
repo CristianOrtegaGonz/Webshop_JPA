@@ -10,7 +10,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
-import se.grouprich.webshop.exception.ProductRegistrationException;
+import se.grouprich.webshop.exception.StorageException;
 import se.grouprich.webshop.model.status.ProductStatus;
 
 @Entity
@@ -31,22 +31,27 @@ public class Product extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private int stockQuantity;
 
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private ProductStatus status;
-	
-	// private int orderQuantity;
 
 	protected Product()
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity, ProductStatus status) throws ProductRegistrationException
+	public Product(String productName, Double price, int stockQuantity) throws StorageException
 	{
 		this.productName = productName;
 		this.price = price;
 		this.stockQuantity = stockQuantity;
-		this.status = status;
+		if (stockQuantity > 0)
+		{
+			status = ProductStatus.IN_STOCK;
+		}
+		else
+		{
+			status = ProductStatus.OUT_OF_STOCK;
+		}
 	}
 
 	public String getProductName()
@@ -64,6 +69,11 @@ public class Product extends AbstractEntity implements Serializable
 		return price;
 	}
 
+	public ProductStatus getStatus()
+	{
+		return status;
+	}
+
 	public void setProductName(String productName)
 	{
 		this.productName = productName;
@@ -74,26 +84,14 @@ public class Product extends AbstractEntity implements Serializable
 		this.stockQuantity = stockQuantity;
 	}
 
-	// public void setOrderQuantity(final int orderQuantity) throws
-	// OrderException
-	// {
-	// this.orderQuantity = orderQuantity;
-	// }
-	//
-	// public void addOrderQuantity(final int orderQuantity) throws
-	// OrderException
-	// {
-	// this.orderQuantity += orderQuantity;
-	// }
-	//
-	// public int getOrderQuantity()
-	// {
-	// return orderQuantity;
-	// }
-
 	public void setPrice(final Double price)
 	{
 		this.price = price;
+	}
+
+	public void setStatus(ProductStatus status)
+	{
+		this.status = status;
 	}
 
 	@Override
@@ -125,6 +123,6 @@ public class Product extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Product [productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
+		return "Product [id=" + getId() + ", productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
 	}
 }

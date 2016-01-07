@@ -4,36 +4,52 @@ import java.io.Serializable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
-@Entity
-public class OrderRow extends AbstractEntity implements Serializable
+import se.grouprich.webshop.exception.OrderException;
+import se.grouprich.webshop.model.status.ProductStatus;
+
+// funkar det?
+@Embeddable
+//@Entity
+public class OrderRow /*extends AbstractEntity*/ implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3865658878665558979L;
 
 	@OneToOne(cascade = { CascadeType.MERGE })
-	@JoinColumn(nullable = false)
 	private Product product;
 
 	@Column(nullable = false)
 	private Integer orderQuantity;
-
+	
 	public OrderRow()
 	{
 	}
 
-	public OrderRow(Product product)
+	public OrderRow(Product product) throws OrderException
 	{
+		if (product.getStatus().equals(ProductStatus.OUT_OF_STOCK))
+		{
+			throw new OrderException("Product is out of stock");
+		}
 		this.product = product;
 		orderQuantity = 1;
 	}
 
-	public OrderRow(Product product, Integer orderQuantity)
+	public OrderRow(Product product, Integer orderQuantity) throws OrderException
 	{
+		if (orderQuantity < 1)
+		{
+			throw new IllegalArgumentException("Order quantity must be greater than or equal to 1");
+		}
+		if (product.getStockQuantity() <= orderQuantity)
+		{
+			throw new OrderException("Stock quantity is " + product.getStockQuantity());
+		}
 		this.product = product;
 		this.orderQuantity = orderQuantity;
 	}
@@ -57,6 +73,10 @@ public class OrderRow extends AbstractEntity implements Serializable
 	{
 		int stockQuantity = product.getStockQuantity();
 		product.setStockQuantity(stockQuantity - orderQuantity);
+		if (product.getStockQuantity() == 0)
+		{
+			product.setStatus(ProductStatus.OUT_OF_STOCK);
+		}
 	}
 
 	@Override
@@ -81,6 +101,7 @@ public class OrderRow extends AbstractEntity implements Serializable
 		int result = 1;
 		result += product.hashCode() * 37;
 		result += orderQuantity.hashCode() * 37;
+
 		return result;
 	}
 
