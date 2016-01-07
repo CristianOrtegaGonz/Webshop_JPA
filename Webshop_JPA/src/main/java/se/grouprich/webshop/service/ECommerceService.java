@@ -5,7 +5,6 @@ import java.util.List;
 import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.StorageException;
-import se.grouprich.webshop.exception.ValidationException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
@@ -60,7 +59,7 @@ public final class ECommerceService
 	{
 		return userValidator;
 	}
-
+//behöver vi validation här? Fråga Anders
 	public Product fetchProductById(User user, Long id) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -87,7 +86,7 @@ public final class ECommerceService
 		}
 		return orderRepository.findById(id);
 	}
-
+// behöver vi validation här? Fråga Anders
 	public List<Product> fetchAllProducts(User user) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -128,7 +127,7 @@ public final class ECommerceService
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User createUser(User user) throws StorageException, ValidationException
+	public User createUser(User user) throws StorageException
 	{
 		if (userValidator.alreadyExists(user.getUsername()))
 		{
@@ -136,18 +135,18 @@ public final class ECommerceService
 		}
 		if (!userValidator.isLengthWithinRange(user.getUsername()))
 		{
-			throw new ValidationException("Username that is longer than 30 characters is not allowed");
+			throw new IllegalArgumentException("Username that is longer than 30 characters is not allowed");
 		}
 		if (!userValidator.isValidPassword(user.getPassword()))
 		{
-			throw new ValidationException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
+			throw new IllegalArgumentException("Password must have at least an uppercase letter, two digits and a special character such as !@#$%^&*(){}[]");
 		}
 		return userRepository.saveOrUpdate(user);
 	}
 
 	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.hasPermissionToAccess(user, order.getUser()))
+		if (!userValidator.hasPermission(user, order.getUser()))
 		{
 			throw new PermissionException("No permission to create orders");
 		}
@@ -170,7 +169,7 @@ public final class ECommerceService
 
 	public User updateUser(User user, User userToUpdate) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermissionToAccess(user, userToUpdate))
+		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermission(user, userToUpdate))
 		{
 			throw new PermissionException("No permission to update user");
 		}
@@ -212,7 +211,7 @@ public final class ECommerceService
 
 	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermissionToAccess(user, customer))
+		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermission(user, customer))
 		{
 			throw new PermissionException("No permission to fetch orders by user");
 		}

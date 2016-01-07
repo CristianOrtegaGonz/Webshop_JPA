@@ -8,13 +8,13 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -35,7 +35,12 @@ public class Order extends AbstractEntity implements Serializable
 	@OneToOne(cascade = { CascadeType.PERSIST })
 	private User user;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
+	// Fråga Anders om fetch = FetchType.EAGER är ett bra sätt att göra
+	// Fråga om @Embedded fungerar med Collection
+	// @Embedded
+	@ElementCollection(fetch=FetchType.EAGER) 
+	// @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch =
+	// FetchType.EAGER)
 	private List<OrderRow> orderRows;
 
 	@Column(nullable = false)
@@ -169,6 +174,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
+		return "Order [id=" + getId() + ", user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
 	}
 }

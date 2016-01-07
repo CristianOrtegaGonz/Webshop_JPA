@@ -10,7 +10,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
-import se.grouprich.webshop.exception.ValidationException;
 import se.grouprich.webshop.model.status.UserStatus;
 
 @Entity
@@ -45,7 +44,7 @@ public class User extends AbstractEntity implements Serializable
 	{
 	}
 
-	public User(String username, String password, String firstName, String lastName) throws ValidationException
+	public User(String username, String password, String firstName, String lastName)
 	{
 		this.username = username;
 		this.password = password;
@@ -55,7 +54,7 @@ public class User extends AbstractEntity implements Serializable
 		status = UserStatus.PENDING_ACTIVATION; 
 	}
 	
-	public User(String username, String password, String firstName, String lastName, Role role) throws ValidationException
+	public User(String username, String password, String firstName, String lastName, Role role)
 	{
 		this.username = username;
 		this.password = password;
@@ -148,7 +147,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
+		return "User [id=" + getId() + ", username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
 				+ ", role=" + role + ", status=" + status + "]";
 	}
 }

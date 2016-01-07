@@ -85,7 +85,7 @@ public final class UserValidator
 		return false;
 	}
 
-	public boolean hasPermissionToAccess(User user1, User user2)
+	public boolean hasPermission(User user1, User user2)
 	{
 		User fetchedUser = userRepository.findById(user1.getId());
 		if (areSameUsers(fetchedUser, user2) && isActiveUser(fetchedUser))

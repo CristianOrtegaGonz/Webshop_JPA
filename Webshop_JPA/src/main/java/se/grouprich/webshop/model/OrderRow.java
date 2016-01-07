@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
@@ -11,8 +12,10 @@ import javax.persistence.Transient;
 import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.model.status.ProductStatus;
 
-@Entity
-public class OrderRow extends AbstractEntity implements Serializable
+// funkar det?
+@Embeddable
+//@Entity
+public class OrderRow /*extends AbstractEntity*/ implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3865658878665558979L;
@@ -22,7 +25,7 @@ public class OrderRow extends AbstractEntity implements Serializable
 
 	@Column(nullable = false)
 	private Integer orderQuantity;
-
+	
 	public OrderRow()
 	{
 	}

@@ -34,17 +34,24 @@ public class Product extends AbstractEntity implements Serializable
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private ProductStatus status;
-	
+
 	protected Product()
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity, ProductStatus status) throws StorageException
+	public Product(String productName, Double price, int stockQuantity) throws StorageException
 	{
 		this.productName = productName;
 		this.price = price;
 		this.stockQuantity = stockQuantity;
-		this.status = status;
+		if (stockQuantity > 0)
+		{
+			status = ProductStatus.IN_STOCK;
+		}
+		else
+		{
+			status = ProductStatus.OUT_OF_STOCK;
+		}
 	}
 
 	public String getProductName()
@@ -61,7 +68,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		return price;
 	}
-	
+
 	public ProductStatus getStatus()
 	{
 		return status;
@@ -86,7 +93,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 		this.status = status;
 	}
-	
+
 	@Override
 	public boolean equals(Object other)
 	{
@@ -116,6 +123,6 @@ public class Product extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Product [productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
+		return "Product [id=" + getId() + ", productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
 	}
 }
