@@ -75,9 +75,9 @@ public final class UserValidator
 		return false;
 	}
 
-	public boolean isActiveAdmin(User user)
+	public boolean isActiveAdmin(User admin)
 	{
-		User fetchedUser = userRepository.findById(user.getId());
+		User fetchedUser = userRepository.findById(admin.getId());
 		if (fetchedUser.getRole().equals(Role.ADMIN) && isActiveUser(fetchedUser))
 		{
 			return true;
@@ -111,5 +111,15 @@ public final class UserValidator
 			return true;
 		}
 		return false;
+	}
+
+	public boolean roleOrUserStatusAreChanged(User user)
+	{
+		User fetchedUser = userRepository.findById(user.getId());
+		if (fetchedUser.getRole().equals(user.getRole()) && fetchedUser.getStatus().equals(user.getStatus()))
+		{
+			return false;
+		}
+		return true;
 	}
 }

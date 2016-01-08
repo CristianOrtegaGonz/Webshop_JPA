@@ -53,7 +53,7 @@ public class User extends AbstractEntity implements Serializable
 		this.role = Role.CUSTOMER;
 		status = UserStatus.PENDING_ACTIVATION; 
 	}
-	
+
 	public User(String username, String password, String firstName, String lastName, Role role)
 	{
 		this.username = username;
@@ -61,7 +61,7 @@ public class User extends AbstractEntity implements Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = role;
-		status = UserStatus.PENDING_ACTIVATION; 
+		status = UserStatus.PENDING_ACTIVATION;
 	}
 
 	public String getUsername()
@@ -83,7 +83,7 @@ public class User extends AbstractEntity implements Serializable
 	{
 		return firstName + " " + lastName;
 	}
-	
+
 	public UserStatus getStatus()
 	{
 		return status;
@@ -100,13 +100,13 @@ public class User extends AbstractEntity implements Serializable
 		this.role = role;
 		return this;
 	}
-	
+
 	public User setStatus(UserStatus status)
 	{
 		this.status = status;
 		return this;
 	}
-	
+
 	public void changePassword(final String oldPassword, final String newPassword)
 	{
 		if (oldPassword.equals(this.password))

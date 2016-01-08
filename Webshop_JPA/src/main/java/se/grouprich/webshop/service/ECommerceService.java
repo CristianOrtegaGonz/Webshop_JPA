@@ -59,7 +59,8 @@ public final class ECommerceService
 	{
 		return userValidator;
 	}
-//behöver vi validation här? Fråga Anders
+
+	// behöver vi validation här? Fråga Anders
 	public Product fetchProductById(User user, Long id) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -78,15 +79,16 @@ public final class ECommerceService
 		return userRepository.findById(id);
 	}
 
-	public Order fetchOrderById(User user, Long id) throws PermissionException
+	public Order fetchOrderById(User admin, Long id) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to fetch order by ID");
 		}
 		return orderRepository.findById(id);
 	}
-// behöver vi validation här? Fråga Anders
+
+	// behöver vi validation här? Fråga Anders
 	public List<Product> fetchAllProducts(User user) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -96,27 +98,27 @@ public final class ECommerceService
 		return productRepository.fetchAll();
 	}
 
-	public List<User> fetchAllUsers(User user) throws PermissionException
+	public List<User> fetchAllUsers(User admin) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to fetch all users");
 		}
 		return userRepository.fetchAll();
 	}
 
-	public List<Order> fetchAllOrders(User user) throws PermissionException
+	public List<Order> fetchAllOrders(User admin) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to feth all orders");
 		}
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User user, Product product) throws StorageException, PermissionException
+	public Product createProduct(User admin, Product product) throws StorageException, PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to create products");
 		}
@@ -144,23 +146,23 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order createOrder(User user, Order order) throws OrderException, PermissionException
+	public Order createOrder(User customer, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.hasPermission(user, order.getCustomer()))
+		if (!userValidator.hasPermission(customer, order.getCustomer()))
 		{
 			throw new PermissionException("No permission to create orders");
 		}
 		if (order.getTotalPrice() > 50000.00)
 		{
-			throw new OrderException("We can not accept the total price exceeding SEK 50,000");
+			throw new OrderException("Total price exceeding SEK 50,000 is not allowed");
 		}
-		order.updateStockQuantity();
+		order.updateStockQuantities();
 		return orderRepository.merge(order);
 	}
 
-	public Product updateProduct(User user, Product product) throws PermissionException
+	public Product updateProduct(User admin, Product product) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to update products");
 		}
@@ -173,12 +175,16 @@ public final class ECommerceService
 		{
 			throw new PermissionException("No permission to update user");
 		}
+		if (userValidator.hasPermission(user, userToUpdate) && userValidator.roleOrUserStatusAreChanged(userToUpdate))
+		{
+			throw new PermissionException("No permission to update role and user status");
+		}
 		return userRepository.saveOrUpdate(userToUpdate);
 	}
 
-	public Order updateOrder(User user, Order order) throws PermissionException
+	public Order updateOrder(User admin, Order order) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to update orders");
 		}
@@ -199,9 +205,9 @@ public final class ECommerceService
 		return userRepository.fetchUsersByUsername(username).get(0);
 	}
 
-	public Product changeProductStatus(User user, Product product, ProductStatus status) throws PermissionException
+	public Product changeProductStatus(User admin, Product product, ProductStatus status) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to change product status");
 		}
@@ -218,18 +224,18 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByUser(customer);
 	}
 
-	public List<Order> fetchOrdersByStatus(User user, OrderStatus orderStatus) throws PermissionException
+	public List<Order> fetchOrdersByStatus(User admin, OrderStatus orderStatus) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to fetch orders by status");
 		}
 		return orderRepository.fetchOrdersByStatus(orderStatus);
 	}
 
-	public List<Order> fetchOrdersByMinimumValue(User user, Double minimumValue) throws PermissionException
+	public List<Order> fetchOrdersByMinimumValue(User admin, Double minimumValue) throws PermissionException
 	{
-		if (!userValidator.isActiveAdmin(user))
+		if (!userValidator.isActiveAdmin(admin))
 		{
 			throw new PermissionException("No permission to fetch orders by minimum value");
 		}
