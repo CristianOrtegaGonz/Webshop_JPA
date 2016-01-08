@@ -38,21 +38,36 @@ public final class Main
 		User admin = eCommerceService.createUser(new User("Eskimooo", "55I!", "Eski", "Mooo", Role.ADMIN));
 		eCommerceService.activateUser(admin);
 		System.out.println("admin is: " + admin);
+		System.out.println();
 		
 		User customer = eCommerceService.createUser(new User("Marimekko", "39P!", "Mari", "Mekko", Role.CUSTOMER));
 		eCommerceService.activateUser(customer);
 		System.out.println("customer is: " + customer);
+		System.out.println();
 		
-		Product product1 = eCommerceService.createProduct(admin, new Product("cat food", 30.00, 10));
-		Product product4 = eCommerceService.createProduct(admin, new Product("cat godis", 20.00, 10));
-		Product product2 = eCommerceService.createProduct(admin, new Product("dog food", 20.00, 3));
+		User customer2 = eCommerceService.createUser(new User("Kinoko", "098U#", "Mash", "Room", Role.CUSTOMER));
+		eCommerceService.activateUser(customer2);
+		System.out.println("customer is: " + customer2);
+		System.out.println();
+		
+		Product product1 = eCommerceService.createProduct(admin, new Product("cat food", 33.65, 10));
+		Product product4 = eCommerceService.createProduct(admin, new Product("cat godis", 25.48, 10));
+		Product product2 = eCommerceService.createProduct(admin, new Product("dog food", 27.83, 3));
 		System.out.println("product1 is: " + product1);
 		System.out.println("product2 is: " + product2);
 		System.out.println("product4 is: " + product4);
+		System.out.println();
+		
 		Order order = eCommerceService.createOrder(customer, new Order(customer, new OrderRow(product1, 2), new OrderRow(product2, 2)));
 		System.out.println("order is: " + order);	
-		Order order1 = eCommerceService.createOrder(customer, new Order(customer, new OrderRow(new Product("cat tunnel", 50.00, 4), 2)));
+		System.out.println();
+		
+		Order order1 = eCommerceService.createOrder(customer, new Order(customer, new OrderRow(new Product("cat tunnel", 49.52, 4), 2)));
 		System.out.println("order1 is: " + order1);
+		System.out.println();
+		
+		Order order2 = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product2, 1)));
+		System.out.println("order2 is: " + order2);
 		System.out.println();
 		
 		Product productFetchedById = eCommerceService.fetchProductById(admin, 2L);
@@ -76,10 +91,10 @@ public final class Main
 		System.out.println();
 		
 		List<Order> orders = eCommerceService.fetchAllOrders(userFetchedById);
-		System.out.println(orders);
+		System.out.println("orders is: " + orders);
+		System.out.println();
 		
 		List<Order> ordersFetchedByUser = eCommerceService.fetchOrdersByUser(customer, customer);
-		System.out.println(ordersFetchedByUser);
-		
+		System.out.println("ordersFetchedByUser is: " + ordersFetchedByUser);		
 	}
 }

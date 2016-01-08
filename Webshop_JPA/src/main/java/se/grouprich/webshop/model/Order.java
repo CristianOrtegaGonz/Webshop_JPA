@@ -24,7 +24,7 @@ import se.grouprich.webshop.model.status.OrderStatus;
 @Entity
 @Table(name = "`Order`")
 @NamedQueries(value = { @NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o"),
-		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.customer u WHERE u.id = :id"),
+		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o WHERE o.customer.id = :id"),
 		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
 		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o WHERE o.totalPrice >= :totalPrice") })
 
@@ -40,9 +40,6 @@ public class Order extends AbstractEntity implements Serializable
 	@ManyToOne(cascade = { CascadeType.PERSIST })
 	private User customer;
 
-	// Fråga Anders om fetch = FetchType.EAGER är ett bra sätt att göra
-	// @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch =
-	// FetchType.EAGER)
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<OrderRow> orderRows;
 
@@ -108,7 +105,7 @@ public class Order extends AbstractEntity implements Serializable
 		return this;
 	}
 
-	public void calculateTotalPrice()
+	private void calculateTotalPrice()
 	{
 		Double totalPrice = 0.0;
 		for (OrderRow orderRow : orderRows)
@@ -125,7 +122,7 @@ public class Order extends AbstractEntity implements Serializable
 		orderRow.setOrderQuantity(orderRow.getOrderQuantity() + quantity);
 	}
 
-	public void updateStockQuantity()
+	public void updateStockQuantities()
 	{
 		for (OrderRow orderRow : orderRows)
 		{
@@ -133,13 +130,13 @@ public class Order extends AbstractEntity implements Serializable
 		}
 	}
 
-	public OrderRow searchProductInOrderRows(OrderRow orderRow)
+	private OrderRow searchProductInOrderRows(OrderRow orderRow)
 	{
-		for (OrderRow orderRowInOrderRows : orderRows)
+		for (OrderRow orderRowInList : orderRows)
 		{
-			if (orderRowInOrderRows.getProduct().getId().equals(orderRow.getProduct().getId()))
+			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()))
 			{
-				return orderRowInOrderRows;
+				return orderRowInList;
 			}
 		}
 		return null;
@@ -177,6 +174,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [id=" + getId() + ", customer=" + customer.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
+		return "\n[" + getId() + ", " + customer.getUsername() + ", " + orderRows + ", " + totalPrice + ", " + status + "]";
 	}
 }
