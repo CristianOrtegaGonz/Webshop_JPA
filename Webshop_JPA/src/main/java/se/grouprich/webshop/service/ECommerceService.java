@@ -146,7 +146,7 @@ public final class ECommerceService
 
 	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.hasPermission(user, order.getUser()))
+		if (!userValidator.hasPermission(user, order.getCustomer()))
 		{
 			throw new PermissionException("No permission to create orders");
 		}

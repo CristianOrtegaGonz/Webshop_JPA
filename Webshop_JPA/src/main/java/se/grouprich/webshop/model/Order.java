@@ -13,9 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -24,23 +24,26 @@ import se.grouprich.webshop.model.status.OrderStatus;
 @Entity
 @Table(name = "`Order`")
 @NamedQueries(value = { @NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o"),
-		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.user u WHERE u.id = :id"),
+		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.customer u WHERE u.id = :id"),
 		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
 		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o WHERE o.totalPrice >= :totalPrice") })
+
+// Behöver vi implementera Serializable? Jag läste att det är "best practice"
+// att ha den enligt den här sidan.
+// https://bvaisakh.wordpress.com/2015/03/04/do-jpa-entities-have-to-be-serializable/
+// Men just nu behöver vi kanske inte den så jag vet inte vad vi ska göra. Vi kan fråga Anders.
 public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
 
-	@OneToOne(cascade = { CascadeType.PERSIST })
-	private User user;
+	@ManyToOne(cascade = { CascadeType.PERSIST })
+	private User customer;
 
 	// Fråga Anders om fetch = FetchType.EAGER är ett bra sätt att göra
-	// Fråga om @Embedded fungerar med Collection
-	// @Embedded
-	@ElementCollection(fetch=FetchType.EAGER) 
 	// @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch =
 	// FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.EAGER)
 	private List<OrderRow> orderRows;
 
 	@Column(nullable = false)
@@ -54,17 +57,17 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(User user, OrderRow... orderRows)
+	public Order(User customer, OrderRow... orderRows)
 	{
-		this.user = user;
+		this.customer = customer;
 		this.orderRows = new ArrayList<>();
 		addOrderRows(orderRows);
 		status = OrderStatus.PLACED;
 	}
 
-	public User getUser()
+	public User getCustomer()
 	{
-		return user;
+		return customer;
 	}
 
 	public List<OrderRow> getOrderRows()
@@ -153,7 +156,7 @@ public class Order extends AbstractEntity implements Serializable
 		if (other instanceof Order)
 		{
 			Order otherOrder = (Order) other;
-			return user.equals(otherOrder.user) && orderRows.equals(otherOrder.orderRows) && totalPrice.equals(otherOrder.totalPrice)
+			return customer.equals(otherOrder.customer) && orderRows.equals(otherOrder.orderRows) && totalPrice.equals(otherOrder.totalPrice)
 					&& status.equals(otherOrder.status);
 		}
 		return false;
@@ -163,7 +166,7 @@ public class Order extends AbstractEntity implements Serializable
 	public int hashCode()
 	{
 		int result = 1;
-		result += user.hashCode() * 37;
+		result += customer.hashCode() * 37;
 		result += orderRows.hashCode() * 37;
 		result += totalPrice.hashCode() * 37;
 		result += status.hashCode() * 37;
@@ -174,6 +177,6 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Order [id=" + getId() + ", user=" + user.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
+		return "Order [id=" + getId() + ", customer=" + customer.getUsername() + ", orderRows=" + orderRows + ", totalPrice=" + totalPrice + ", status=" + status + "]";
 	}
 }
