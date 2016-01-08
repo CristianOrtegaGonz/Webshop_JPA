@@ -59,8 +59,7 @@ public final class ECommerceService
 	{
 		return userValidator;
 	}
-
-	// behöver vi validation här? Fråga Anders
+//behöver vi validation här? Fråga Anders
 	public Product fetchProductById(User user, Long id) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -87,8 +86,7 @@ public final class ECommerceService
 		}
 		return orderRepository.findById(id);
 	}
-
-	// behöver vi validation här? Fråga Anders
+// behöver vi validation här? Fråga Anders
 	public List<Product> fetchAllProducts(User user) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user))
@@ -148,7 +146,7 @@ public final class ECommerceService
 
 	public Order createOrder(User user, Order order) throws OrderException, PermissionException
 	{
-		if (!userValidator.hasPermission(user, order.getUser()))
+		if (!userValidator.hasPermission(user, order.getCustomer()))
 		{
 			throw new PermissionException("No permission to create orders");
 		}
@@ -207,7 +205,7 @@ public final class ECommerceService
 		{
 			throw new PermissionException("No permission to change product status");
 		}
-		// product.setStatus(status);
+		product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
 	}
 
