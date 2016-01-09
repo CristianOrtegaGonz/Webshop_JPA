@@ -51,7 +51,7 @@ public class User extends AbstractEntity implements Serializable
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.role = Role.CUSTOMER;
-		status = UserStatus.PENDING_ACTIVATION; 
+		status = UserStatus.PENDING_ACTIVATION;
 	}
 
 	public User(String username, String password, String firstName, String lastName, Role role)
@@ -147,7 +147,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [id=" + getId() + ", username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", role=" + role + ", status=" + status + "]";
+		return "User [id: " + getId() + ", username: " + username + ", password: " + password + ", firstName: " + firstName + ", lastName: " + lastName
+				+ ", role: " + role + ", status: " + status + "]";
 	}
 }

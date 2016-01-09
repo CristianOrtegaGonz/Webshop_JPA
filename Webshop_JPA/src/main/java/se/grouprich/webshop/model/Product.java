@@ -29,7 +29,7 @@ public class Product extends AbstractEntity implements Serializable
 	private Double price;
 
 	@Column(nullable = false)
-	private int stockQuantity;
+	private Integer stockQuantity;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -59,7 +59,7 @@ public class Product extends AbstractEntity implements Serializable
 		return productName;
 	}
 
-	public int getStockQuantity()
+	public Integer getStockQuantity()
 	{
 		return stockQuantity;
 	}
@@ -79,7 +79,7 @@ public class Product extends AbstractEntity implements Serializable
 		this.productName = productName;
 	}
 
-	public void setStockQuantity(final int stockQuantity)
+	public void setStockQuantity(final Integer stockQuantity)
 	{
 		this.stockQuantity = stockQuantity;
 	}
@@ -123,6 +123,6 @@ public class Product extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "Product [id=" + getId() + ", productName=" + productName + ", price=" + price + ", stockQuantity=" + stockQuantity + ", status=" + status + "]";
+		return "Product [id: " + getId() + ", productName: " + productName + ", price: " + price + ", stockQuantity: " + stockQuantity + ", status: " + status + "]";
 	}
 }

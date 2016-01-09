@@ -6,6 +6,7 @@ import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.StorageException;
 import se.grouprich.webshop.model.Order;
+import se.grouprich.webshop.model.OrderRow;
 import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.OrderStatus;
@@ -156,7 +157,7 @@ public final class ECommerceService
 		{
 			throw new OrderException("Total price exceeding SEK 50,000 is not allowed");
 		}
-		order.updateStockQuantities();
+		order.updateStockQuantities(order.getOrderRows());
 		return orderRepository.merge(order);
 	}
 
@@ -188,6 +189,7 @@ public final class ECommerceService
 		{
 			throw new PermissionException("No permission to update orders");
 		}
+		order.updateStockQuantities(order.getOrderRows());
 		return orderRepository.saveOrUpdate(order);
 	}
 
@@ -246,5 +248,18 @@ public final class ECommerceService
 	{
 		user.setStatus(UserStatus.ACTIVE);
 		return userRepository.saveOrUpdate(user);
+	}
+
+	public Order addOrderRows(User customer, Order order, OrderRow... orderRows) throws PermissionException, OrderException
+	{
+		if (order.getStatus().equals(OrderStatus.PLACED) && userValidator.hasPermission(customer, order.getCustomer()))
+		{
+			order.addOrderRows(orderRows);
+			return order;
+		}
+		else
+		{
+			throw new PermissionException("No permission to add new items");
+		}
 	}
 }

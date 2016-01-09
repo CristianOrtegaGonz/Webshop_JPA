@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -19,6 +20,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import se.grouprich.webshop.exception.OrderException;
 import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
@@ -31,7 +33,8 @@ import se.grouprich.webshop.model.status.OrderStatus;
 // Behöver vi implementera Serializable? Jag läste att det är "best practice"
 // att ha den enligt den här sidan.
 // https://bvaisakh.wordpress.com/2015/03/04/do-jpa-entities-have-to-be-serializable/
-// Men just nu behöver vi kanske inte den så jag vet inte vad vi ska göra. Vi kan fråga Anders.
+// Men just nu behöver vi kanske inte den så jag vet inte vad vi ska göra. Vi
+// kan fråga Anders.
 public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
@@ -50,16 +53,19 @@ public class Order extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private OrderStatus status;
 
+	@Transient
+	private List<OrderRow> addedOrderRows = new ArrayList<>();
+
 	public Order()
 	{
 	}
 
-	public Order(User customer, OrderRow... orderRows)
+	public Order(User customer, OrderRow... orderRows) throws OrderException
 	{
 		this.customer = customer;
 		this.orderRows = new ArrayList<>();
 		addOrderRows(orderRows);
-		status = OrderStatus.PLACED;
+		status = OrderStatus.PLACED;	
 	}
 
 	public User getCustomer()
@@ -87,18 +93,38 @@ public class Order extends AbstractEntity implements Serializable
 		this.status = status;
 	}
 
-	public Order addOrderRows(OrderRow... orderRows)
+	public void setOrderRows(List<OrderRow> orderRows)
 	{
+		this.orderRows = orderRows;
+	}
+
+	public Order addOrderRows(OrderRow... orderRows) throws OrderException
+	{
+		addedOrderRows.addAll(Arrays.asList(orderRows));
 		for (OrderRow orderRow : orderRows)
 		{
-			OrderRow orderRowWithExistingProduct = searchProductInOrderRows(orderRow);
-			if (orderRowWithExistingProduct == null)
+			OrderRow orderRowAlreadyHasProduct = searchProductInOrder(orderRow);
+
+			Integer stockQuantity = orderRow.getProduct().getStockQuantity();
+			Integer addedOrderQuantity = orderRow.getOrderQuantity();
+			if (orderRowAlreadyHasProduct == null && stockQuantity >= addedOrderQuantity)
 			{
 				this.orderRows.add(orderRow);
 			}
+			else if (getId() == null && stockQuantity >= orderRowAlreadyHasProduct.getOrderQuantity() + addedOrderQuantity)
+			{
+				orderRowAlreadyHasProduct.setOrderQuantity(orderRowAlreadyHasProduct.getOrderQuantity() + addedOrderQuantity);
+			}
+			else if (getId() != null && stockQuantity >= addedOrderQuantity)
+			{
+				orderRowAlreadyHasProduct.getProduct().setStockQuantity(stockQuantity + orderRowAlreadyHasProduct.getOrderQuantity());
+				orderRowAlreadyHasProduct.setOrderQuantity(orderRowAlreadyHasProduct.getOrderQuantity() + addedOrderQuantity);
+			}
 			else
 			{
-				addQuantity(orderRowWithExistingProduct, orderRow.getOrderQuantity());
+				throw new OrderException(
+						orderRow.getProduct().getProductName() + ": order quantity is " + (orderRowAlreadyHasProduct.getOrderQuantity() + addedOrderQuantity)
+								+ " but stock quantity is " + stockQuantity);
 			}
 		}
 		calculateTotalPrice();
@@ -117,24 +143,34 @@ public class Order extends AbstractEntity implements Serializable
 		this.totalPrice = bd.doubleValue();
 	}
 
-	private void addQuantity(OrderRow orderRow, int quantity)
+	public void updateStockQuantities(List<OrderRow> orderRows)
 	{
-		orderRow.setOrderQuantity(orderRow.getOrderQuantity() + quantity);
-	}
-
-	public void updateStockQuantities()
-	{
-		for (OrderRow orderRow : orderRows)
+		if (addedOrderRows != null)
 		{
-			orderRow.updateStockQuantity(orderRow.getOrderQuantity());
+			for (OrderRow orderRow : orderRows)
+			{
+				for (OrderRow addedOrderRow : addedOrderRows)
+				{
+					if (orderRow.getProduct().equals(
+							addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
+									addedOrderRow.getProduct().getId()))
+					{
+						orderRow.updateStockQuantity(orderRow.getOrderQuantity());
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
 		}
 	}
 
-	private OrderRow searchProductInOrderRows(OrderRow orderRow)
+	public OrderRow searchProductInOrder(OrderRow orderRow)
 	{
 		for (OrderRow orderRowInList : orderRows)
 		{
-			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()))
+			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()) || orderRowInList.getProduct().equals(orderRow.getProduct()))
 			{
 				return orderRowInList;
 			}
@@ -174,6 +210,7 @@ public class Order extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "\n[" + getId() + ", " + customer.getUsername() + ", " + orderRows + ", " + totalPrice + ", " + status + "]";
+		return "Order [id: " + getId() + ", username: " + customer.getUsername() + ", orderRows: " + orderRows + ", totalPrice: " + totalPrice + ", status: " + status
+				+ "]";
 	}
 }
