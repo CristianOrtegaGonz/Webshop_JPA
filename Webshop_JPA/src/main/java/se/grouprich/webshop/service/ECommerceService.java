@@ -158,6 +158,7 @@ public final class ECommerceService
 			throw new OrderException("Total price exceeding SEK 50,000 is not allowed");
 		}
 		order.updateStockQuantities(order.getOrderRows());
+		order.setStatus(OrderStatus.PLACED);
 		return orderRepository.merge(order);
 	}
 

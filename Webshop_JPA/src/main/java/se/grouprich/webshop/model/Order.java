@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.OrderException;
+import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
@@ -46,7 +47,7 @@ public class Order extends AbstractEntity implements Serializable
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<OrderRow> orderRows;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "DECIMAL(10,2) UNSIGNED")
 	private Double totalPrice;
 
 	@Enumerated(EnumType.STRING)
@@ -60,12 +61,18 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(User customer, OrderRow... orderRows) throws OrderException
+	public Order(User customer, OrderRow... orderRows) throws OrderException, PermissionException
 	{
 		this.customer = customer;
 		this.orderRows = new ArrayList<>();
+		for (OrderRow orderRow : orderRows)
+		{
+			if (orderRow.getProduct().getId() == null)
+			{
+				throw new PermissionException("No permissioin to create product");
+			}
+		}
 		addOrderRows(orderRows);
-		status = OrderStatus.PLACED;	
 	}
 
 	public User getCustomer()
@@ -170,7 +177,8 @@ public class Order extends AbstractEntity implements Serializable
 	{
 		for (OrderRow orderRowInList : orderRows)
 		{
-			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()) || orderRowInList.getProduct().equals(orderRow.getProduct()))
+			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId())
+					|| orderRowInList.getProduct().equals(orderRow.getProduct()))
 			{
 				return orderRowInList;
 			}
