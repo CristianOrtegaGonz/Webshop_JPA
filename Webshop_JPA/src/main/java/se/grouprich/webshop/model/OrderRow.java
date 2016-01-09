@@ -22,7 +22,7 @@ public class OrderRow implements Serializable
 
 	@Column(nullable = false)
 	private Integer orderQuantity;
-	
+
 	public OrderRow()
 	{
 	}
@@ -43,9 +43,9 @@ public class OrderRow implements Serializable
 		{
 			throw new IllegalArgumentException("Order quantity must be greater than or equal to 1");
 		}
-		if (product.getStockQuantity() < orderQuantity)
+		if (orderQuantity > product.getStockQuantity())
 		{
-			throw new OrderException("Order quantity is " + orderQuantity + " but stock quantity is " + product.getStockQuantity());
+			throw new OrderException(product.getProductName() + ": order quantity is " + orderQuantity + " but stock quantity is " + product.getStockQuantity());
 		}
 		this.product = product;
 		this.orderQuantity = orderQuantity;
@@ -61,16 +61,20 @@ public class OrderRow implements Serializable
 		return orderQuantity;
 	}
 
-	public void setOrderQuantity(int orderQuantity)
-	{
+	public void setOrderQuantity(Integer orderQuantity) throws OrderException
+	{	
+		if (orderQuantity > product.getStockQuantity())
+		{
+			throw new OrderException(product.getProductName() + ": order quantity is " + orderQuantity + " but stock quantity is " + product.getStockQuantity());
+		}
 		this.orderQuantity = orderQuantity;
 	}
 
-	public void updateStockQuantity(int orderQuantity)
+	public void updateStockQuantity(Integer orderQuantity)
 	{
-		int stockQuantity = product.getStockQuantity();
+		Integer stockQuantity = product.getStockQuantity();
 		product.setStockQuantity(stockQuantity - orderQuantity);
-		if (product.getStockQuantity() == 0)
+		if (product.getStockQuantity() <= 0)
 		{
 			product.setStatus(ProductStatus.OUT_OF_STOCK);
 		}
@@ -105,6 +109,6 @@ public class OrderRow implements Serializable
 	@Override
 	public String toString()
 	{
-		return product.getProductName() + ", " + orderQuantity;
+		return "OrderRow [product: " + product.getProductName() + ", quantity: " + orderQuantity + "]";
 	}
 }

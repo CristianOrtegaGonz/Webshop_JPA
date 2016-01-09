@@ -147,7 +147,7 @@ public class User extends AbstractEntity implements Serializable
 	@Override
 	public String toString()
 	{
-		return "User [id=" + getId() + ", username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", role=" + role + ", status=" + status + "]";
+		return "User [id: " + getId() + ", username: " + username + ", password: " + password + ", firstName: " + firstName + ", lastName: " + lastName
+				+ ", role: " + role + ", status: " + status + "]";
 	}
 }
