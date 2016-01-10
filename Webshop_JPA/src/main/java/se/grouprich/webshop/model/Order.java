@@ -152,22 +152,19 @@ public class Order extends AbstractEntity implements Serializable
 
 	public void updateStockQuantities(List<OrderRow> orderRows)
 	{
-		if (addedOrderRows != null)
+		for (OrderRow orderRow : orderRows)
 		{
-			for (OrderRow orderRow : orderRows)
+			for (OrderRow addedOrderRow : addedOrderRows)
 			{
-				for (OrderRow addedOrderRow : addedOrderRows)
+				if (orderRow.getProduct().equals(
+						addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
+								addedOrderRow.getProduct().getId()))
 				{
-					if (orderRow.getProduct().equals(
-							addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
-									addedOrderRow.getProduct().getId()))
-					{
-						orderRow.updateStockQuantity(orderRow.getOrderQuantity());
-					}
-					else
-					{
-						continue;
-					}
+					orderRow.updateStockQuantity(orderRow.getOrderQuantity());
+				}
+				else
+				{
+					continue;
 				}
 			}
 		}
