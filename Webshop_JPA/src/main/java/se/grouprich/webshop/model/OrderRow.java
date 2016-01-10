@@ -20,7 +20,7 @@ public class OrderRow implements Serializable
 	@OneToOne(cascade = { CascadeType.MERGE })
 	private Product product;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "INT(5) UNSIGNED")
 	private Integer orderQuantity;
 
 	public OrderRow()
@@ -62,7 +62,7 @@ public class OrderRow implements Serializable
 	}
 
 	public void setOrderQuantity(Integer orderQuantity) throws OrderException
-	{	
+	{
 		if (orderQuantity > product.getStockQuantity())
 		{
 			throw new OrderException(product.getProductName() + ": order quantity is " + orderQuantity + " but stock quantity is " + product.getStockQuantity());

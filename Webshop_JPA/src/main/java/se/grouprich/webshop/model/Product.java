@@ -1,6 +1,8 @@
 package se.grouprich.webshop.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,10 +27,10 @@ public class Product extends AbstractEntity implements Serializable
 	@Column(nullable = false)
 	private String productName;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "DECIMAL(10,2) UNSIGNED")
 	private Double price;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "INT(5) UNSIGNED")
 	private Integer stockQuantity;
 
 	@Enumerated(EnumType.STRING)
@@ -39,10 +41,10 @@ public class Product extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Product(String productName, Double price, int stockQuantity) throws StorageException
+	public Product(String productName, Double price, Integer stockQuantity) throws StorageException
 	{
 		this.productName = productName;
-		this.price = price;
+		roundPrice(price);
 		this.stockQuantity = stockQuantity;
 		if (stockQuantity > 0)
 		{
@@ -92,6 +94,13 @@ public class Product extends AbstractEntity implements Serializable
 	public void setStatus(ProductStatus status)
 	{
 		this.status = status;
+	}
+
+	public void roundPrice(Double price)
+	{
+		BigDecimal bd = new BigDecimal(price);
+		bd = bd.setScale(2, RoundingMode.HALF_UP);
+		this.price = bd.doubleValue();
 	}
 
 	@Override
