@@ -65,13 +65,6 @@ public class Order extends AbstractEntity implements Serializable
 	{
 		this.customer = customer;
 		this.orderRows = new ArrayList<>();
-		for (OrderRow orderRow : orderRows)
-		{
-			if (orderRow.getProduct().getId() == null)
-			{
-				throw new PermissionException("No permissioin to create product");
-			}
-		}
 		addOrderRows(orderRows);
 	}
 

@@ -46,14 +46,7 @@ public class Product extends AbstractEntity implements Serializable
 		this.productName = productName;
 		roundPrice(price);
 		this.stockQuantity = stockQuantity;
-		if (stockQuantity > 0)
-		{
-			status = ProductStatus.IN_STOCK;
-		}
-		else
-		{
-			status = ProductStatus.OUT_OF_STOCK;
-		}
+		status = ProductStatus.NOT_PUBLISHED;
 	}
 
 	public String getProductName()
