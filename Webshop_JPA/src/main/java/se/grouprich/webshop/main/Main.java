@@ -71,9 +71,18 @@ public final class Main
 		
 		Product availableProduct = eCommerceService.changeProductStatus(admin, product1, ProductStatus.AVAILABLE);
 		System.out.println("availableProduct is: " + availableProduct);
+		System.out.println();
+		
+		Product availableProduct2 = eCommerceService.changeProductStatus(admin, product2, ProductStatus.AVAILABLE);
+		System.out.println("availableProduct2 is: " + availableProduct2);
+		System.out.println();
 		
 		Order order = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product1, 4)));
 		System.out.println("order is: " + order);
+		System.out.println();
+		
+		Order order2 = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product2, 5)));
+		System.out.println("order2 is: " + order2);
 		System.out.println();
 		
 		User deactivatedUser = eCommerceService.changeUserStatus(admin, customer, UserStatus.DEACTIVATED);
@@ -82,5 +91,9 @@ public final class Main
 		
 		Order payedOrder = eCommerceService.changeOrderStatus(admin, order, OrderStatus.PAYED);
 		System.out.println("payedOrder is: " + payedOrder);
+		System.out.println();
+		
+		List<Order> ordersMinim100 = eCommerceService.fetchOrdersByMinimumValue(admin, 100.0);
+		System.out.println("ordersMinim100 are: " + ordersMinim100);
 	}
 }
