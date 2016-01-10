@@ -218,6 +218,26 @@ public final class ECommerceService
 		return productRepository.saveOrUpdate(product);
 	}
 
+	public User changeUserStatus(User admin, User user, UserStatus status) throws PermissionException
+	{
+		if (!userValidator.isActiveAdmin(admin))
+		{
+			throw new PermissionException("No permission to change user status");
+		}
+		user.setStatus(status);
+		return userRepository.saveOrUpdate(user);
+	}
+
+	public Order changeOrderStatus(User admin, Order order, OrderStatus status) throws PermissionException
+	{
+		if (!userValidator.isActiveAdmin(admin))
+		{
+			throw new PermissionException("No permission to change order status");
+		}
+		order.setStatus(status);
+		return orderRepository.saveOrUpdate(order);
+	}
+
 	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
 	{
 		if (!userValidator.isActiveAdmin(user) && !userValidator.hasPermission(user, customer))

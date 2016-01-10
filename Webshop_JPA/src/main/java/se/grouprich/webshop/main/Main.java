@@ -14,6 +14,8 @@ import se.grouprich.webshop.model.Product;
 import se.grouprich.webshop.model.Role;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.OrderStatus;
+import se.grouprich.webshop.model.status.ProductStatus;
+import se.grouprich.webshop.model.status.UserStatus;
 import se.grouprich.webshop.repository.JpaOrderRepository;
 import se.grouprich.webshop.repository.JpaProductRepository;
 import se.grouprich.webshop.repository.JpaUserRepository;
@@ -67,34 +69,18 @@ public final class Main
 		System.out.println("productsFood are: " + productsFood);	
 		System.out.println();
 		
-		User userFetchedByUsername = eCommerceService.fetchUserByUsername(admin, "Kinoko");
-		System.out.println("userFetchedByUsername is: " + userFetchedByUsername);
-		System.out.println();
+		Product availableProduct = eCommerceService.changeProductStatus(admin, product1, ProductStatus.AVAILABLE);
+		System.out.println("availableProduct is: " + availableProduct);
 		
 		Order order = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product1, 4)));
 		System.out.println("order is: " + order);
 		System.out.println();
 		
-		eCommerceService.addOrderRows(customer2, order, new OrderRow(product2, 2), new OrderRow(product3, 2));
-		Order updatedOrder = eCommerceService.updateOrder(admin, order);
-		System.out.println("updatedOrder is: " + updatedOrder);
+		User deactivatedUser = eCommerceService.changeUserStatus(admin, customer, UserStatus.DEACTIVATED);
+		System.out.println("deactivatedUser is: " + deactivatedUser);
 		System.out.println();
 		
-		Order fetchedOrder = eCommerceService.fetchOrderById(admin, 7L);
-		fetchedOrder.setStatus(OrderStatus.SHIPPED);
-		Order updatedOrder2 = eCommerceService.updateOrder(admin, fetchedOrder);
-		System.out.println("updatedOrder2 is: " + updatedOrder2);
-		System.out.println();
-		
-		List<Order> ordersMadeByCustomer2 = eCommerceService.fetchOrdersByUser(admin, customer2);
-		System.out.println("ordersMadeByCustomer2 is: " + ordersMadeByCustomer2);
-		System.out.println();
-		
-		List<Order> shippedOrders = eCommerceService.fetchOrdersByStatus(admin, OrderStatus.SHIPPED);
-		System.out.println("shippedOrders are: " + shippedOrders);
-		System.out.println();
-		
-		List<Order> placedOrders = eCommerceService.fetchOrdersByStatus(admin, OrderStatus.PLACED);
-		System.out.println("placedOrders is: " + placedOrders);
+		Order payedOrder = eCommerceService.changeOrderStatus(admin, order, OrderStatus.PAYED);
+		System.out.println("payedOrder is: " + payedOrder);
 	}
 }
