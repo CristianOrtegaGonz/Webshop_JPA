@@ -65,6 +65,7 @@ public final class Main
 		
 		List<Product> productsFood = eCommerceService.searchProductsBasedOnProductName("food");
 		System.out.println("productsFood are: " + productsFood);	
+		System.out.println();
 		
 		User userFetchedByUsername = eCommerceService.fetchUserByUsername(admin, "Kinoko");
 		System.out.println("userFetchedByUsername is: " + userFetchedByUsername);
@@ -83,5 +84,17 @@ public final class Main
 		fetchedOrder.setStatus(OrderStatus.SHIPPED);
 		Order updatedOrder2 = eCommerceService.updateOrder(admin, fetchedOrder);
 		System.out.println("updatedOrder2 is: " + updatedOrder2);
+		System.out.println();
+		
+		List<Order> ordersMadeByCustomer2 = eCommerceService.fetchOrdersByUser(admin, customer2);
+		System.out.println("ordersMadeByCustomer2 is: " + ordersMadeByCustomer2);
+		System.out.println();
+		
+		List<Order> shippedOrders = eCommerceService.fetchOrdersByStatus(admin, OrderStatus.SHIPPED);
+		System.out.println("shippedOrders are: " + shippedOrders);
+		System.out.println();
+		
+		List<Order> placedOrders = eCommerceService.fetchOrdersByStatus(admin, OrderStatus.PLACED);
+		System.out.println("placedOrders is: " + placedOrders);
 	}
 }

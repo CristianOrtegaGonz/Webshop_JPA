@@ -41,7 +41,7 @@ public class Order extends AbstractEntity implements Serializable
 	@Transient
 	private static final long serialVersionUID = 3380539865925002167L;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST })
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	private User customer;
 
 	@ElementCollection(fetch = FetchType.EAGER)
@@ -152,19 +152,22 @@ public class Order extends AbstractEntity implements Serializable
 
 	public void updateStockQuantities(List<OrderRow> orderRows)
 	{
-		for (OrderRow orderRow : orderRows)
+		if (addedOrderRows != null)
 		{
-			for (OrderRow addedOrderRow : addedOrderRows)
+			for (OrderRow orderRow : orderRows)
 			{
-				if (orderRow.getProduct().equals(
-						addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
-								addedOrderRow.getProduct().getId()))
+				for (OrderRow addedOrderRow : addedOrderRows)
 				{
-					orderRow.updateStockQuantity(orderRow.getOrderQuantity());
-				}
-				else
-				{
-					continue;
+					if (orderRow.getProduct().equals(
+							addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
+									addedOrderRow.getProduct().getId()))
+					{
+						orderRow.updateStockQuantity(orderRow.getOrderQuantity());
+					}
+					else
+					{
+						continue;
+					}
 				}
 			}
 		}
