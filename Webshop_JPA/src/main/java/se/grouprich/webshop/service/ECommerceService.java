@@ -220,7 +220,7 @@ public final class ECommerceService
 		return null;
 	}
 
-	public Product changeProductStatus(User admin, Product product, ProductStatus status) throws PermissionException
+	public Product changeProductStatus(User admin, Product product, ProductStatus status) throws PermissionException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -230,7 +230,7 @@ public final class ECommerceService
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User changeUserStatus(User admin, User user, UserStatus status) throws PermissionException
+	public User changeUserStatus(User admin, User user, UserStatus status) throws PermissionException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -240,7 +240,7 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order changeOrderStatus(User user, Order order, OrderStatus status) throws PermissionException, OrderException
+	public Order changeOrderStatus(User user, Order order, OrderStatus status) throws PermissionException, OrderException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, order.getCustomer()))
 		{
@@ -248,13 +248,13 @@ public final class ECommerceService
 		}
 		if (eCommerceValidator.hasPermission(user, order.getCustomer()) && status.equals(OrderStatus.CANCELED))
 		{
-			if (order.getStatus().equals(OrderStatus.SHIPPED))
+			if (order.getStatus() != null && order.getStatus().equals(OrderStatus.SHIPPED))
 			{
 				throw new OrderException("Cannot cancel order. Order already shipped");
 			}
 		}
 		order.setStatus(status);
-		return orderRepository.saveOrUpdate(order);
+		return orderRepository.merge(order);
 	}
 
 	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
