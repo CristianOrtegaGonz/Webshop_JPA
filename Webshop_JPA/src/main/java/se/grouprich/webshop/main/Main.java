@@ -183,5 +183,16 @@ public final class Main
 		Order order3 = new Order(customer2, new OrderRow(product2, 2));
 		Order orderRowsAdded = eCommerceService.addOrderRows(customer2, order3, new OrderRow(product2, 3));
 		System.out.println("orderRowsAdded is: " + orderRowsAdded);
+		System.out.println();
+		
+		customer.setPassword("39P!", "39P%");
+		eCommerceService.changeUserStatus(admin, customer, UserStatus.ACTIVE);
+		User customerWithNewPassword = eCommerceService.updateUser(admin, customer);
+		User updatedCustomer = eCommerceService.fetchUserById(customerWithNewPassword, 2L);
+		System.out.println("updatedCustomer is: " + updatedCustomer);
+		System.out.println();
+		
+		User updatedCustomer2 = eCommerceService.updateUser(admin, customerWithNewPassword);
+		System.out.println("updatedCustomer2 is: " + updatedCustomer2);
 	}
 }

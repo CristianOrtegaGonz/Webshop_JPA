@@ -10,6 +10,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
+
 import se.grouprich.webshop.model.status.UserStatus;
 
 @Entity
@@ -95,12 +97,14 @@ public class User extends AbstractEntity implements Serializable
 		return this;
 	}
 
-	public void setPassword(final String oldPassword, final String newPassword)
+	public User setPassword(final String oldPassword, final String newPassword)
 	{
-		if (oldPassword.equals(this.password))
+		if (!oldPassword.equals(this.password))
 		{
-			this.password = newPassword;
+			throw new IllegalIdentifierException("Invalid password");
 		}
+		this.password = newPassword;
+		return this;
 	}
 	
 	public User setRole(Role role)
