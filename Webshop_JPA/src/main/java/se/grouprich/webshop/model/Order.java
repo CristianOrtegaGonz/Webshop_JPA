@@ -88,9 +88,10 @@ public class Order extends AbstractEntity implements Serializable
 		return status;
 	}
 
-	public void setStatus(OrderStatus status)
+	public Order setStatus(OrderStatus status)
 	{
 		this.status = status;
+		return this;
 	}
 
 	public void setOrderRows(List<OrderRow> orderRows)

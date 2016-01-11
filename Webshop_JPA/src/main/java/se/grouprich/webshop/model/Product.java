@@ -84,9 +84,10 @@ public class Product extends AbstractEntity implements Serializable
 		this.price = price;
 	}
 
-	public void setStatus(ProductStatus status)
+	public Product setStatus(ProductStatus status)
 	{
 		this.status = status;
+		return this;
 	}
 
 	public void roundPrice(Double price)

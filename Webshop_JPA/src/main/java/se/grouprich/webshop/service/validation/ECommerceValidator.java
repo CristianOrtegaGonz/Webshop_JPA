@@ -1,17 +1,24 @@
 package se.grouprich.webshop.service.validation;
 
+import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.Role;
 import se.grouprich.webshop.model.User;
 import se.grouprich.webshop.model.status.UserStatus;
+import se.grouprich.webshop.repository.OrderRepository;
+import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
 
-public final class UserValidator
+public final class ECommerceValidator
 {
 	private final UserRepository userRepository;
+	private final OrderRepository orderRepository;
+	private final ProductRepository productRepository;
 
-	public UserValidator(UserRepository userRepository)
+	public ECommerceValidator(UserRepository userRepository, OrderRepository orderRepository, ProductRepository productRepository)
 	{
 		this.userRepository = userRepository;
+		this.orderRepository = orderRepository;
+		this.productRepository = productRepository;
 	}
 
 	public boolean isValidPassword(final String password)
@@ -54,7 +61,7 @@ public final class UserValidator
 		return (digits && versal && specialCharacter);
 	}
 
-	public boolean alreadyExists(final String username)
+	public boolean usernameAlreadyExists(final String username)
 	{
 		if (!userRepository.fetchUsersByUsername(username).isEmpty())
 		{
@@ -113,7 +120,7 @@ public final class UserValidator
 		return false;
 	}
 
-	public boolean roleOrUserStatusAreChanged(User user)
+	public boolean changedRoleOrUserStatus(User user)
 	{
 		User fetchedUser = userRepository.findById(user.getId());
 		if (fetchedUser.getRole().equals(user.getRole()) && fetchedUser.getStatus().equals(user.getStatus()))
@@ -121,5 +128,24 @@ public final class UserValidator
 			return false;
 		}
 		return true;
+	}
+
+	public boolean changedOrderStatus(Order order)
+	{
+		Order fetchedOrder = orderRepository.findById(order.getId());
+		if (fetchedOrder.getStatus().equals(order.getStatus()))
+		{
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean productNameAlreadyExists(final String productName)
+	{
+		if (!productRepository.fetchProductsByProductName(productName).isEmpty())
+		{
+			return true;
+		}
+		return false;
 	}
 }
