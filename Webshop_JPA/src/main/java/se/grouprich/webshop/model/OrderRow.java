@@ -43,7 +43,7 @@ public class OrderRow implements Serializable
 		if (product.getStatus().equals(ProductStatus.NOT_AVAILABLE) || product.getStatus().equals(ProductStatus.NOT_PUBLISHED)
 				|| product.getId() == null)
 		{
-			throw new OrderException("Product is not available");
+			throw new OrderException("Product is currently not available");
 		}
 		if (orderQuantity < 1)
 		{

@@ -95,6 +95,14 @@ public class User extends AbstractEntity implements Serializable
 		return this;
 	}
 
+	public void setPassword(final String oldPassword, final String newPassword)
+	{
+		if (oldPassword.equals(this.password))
+		{
+			this.password = newPassword;
+		}
+	}
+	
 	public User setRole(Role role)
 	{
 		this.role = role;
@@ -105,14 +113,6 @@ public class User extends AbstractEntity implements Serializable
 	{
 		this.status = status;
 		return this;
-	}
-
-	public void changePassword(final String oldPassword, final String newPassword)
-	{
-		if (oldPassword.equals(this.password))
-		{
-			this.password = newPassword;
-		}
 	}
 
 	@Override
