@@ -194,5 +194,9 @@ public final class Main
 		
 		User updatedCustomer2 = eCommerceService.updateUser(admin, customerWithNewPassword);
 		System.out.println("updatedCustomer2 is: " + updatedCustomer2);
+		System.out.println();
+		
+		Order orderChangedStatus = eCommerceService.changeOrderStatus(customer2, orderRowsAdded, OrderStatus.CANCELED);
+		System.out.println("orderChangedStatus is: " + orderChangedStatus);
 	}
 }
