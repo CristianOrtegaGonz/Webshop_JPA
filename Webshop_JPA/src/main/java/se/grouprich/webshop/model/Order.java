@@ -31,11 +31,6 @@ import se.grouprich.webshop.model.status.OrderStatus;
 		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
 		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o WHERE o.totalPrice >= :totalPrice") })
 
-// Behöver vi implementera Serializable? Jag läste att det är "best practice"
-// att ha den enligt den här sidan.
-// https://bvaisakh.wordpress.com/2015/03/04/do-jpa-entities-have-to-be-serializable/
-// Men just nu behöver vi kanske inte den så jag vet inte vad vi ska göra. Vi
-// kan fråga Anders.
 public class Order extends AbstractEntity implements Serializable
 {
 	@Transient
@@ -61,7 +56,7 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(User customer, OrderRow... orderRows) throws OrderException, PermissionException
+	public Order(final User customer, final OrderRow... orderRows) throws OrderException, PermissionException
 	{
 		this.customer = customer;
 		this.orderRows = new ArrayList<>();
@@ -88,24 +83,23 @@ public class Order extends AbstractEntity implements Serializable
 		return status;
 	}
 
-	public Order setStatus(OrderStatus status)
+	public Order setStatus(final OrderStatus status)
 	{
 		this.status = status;
 		return this;
 	}
 
-	public void setOrderRows(List<OrderRow> orderRows)
+	public void setOrderRows(final List<OrderRow> orderRows)
 	{
 		this.orderRows = orderRows;
 	}
 
-	public Order addOrderRows(OrderRow... orderRows) throws OrderException
+	public Order addOrderRows(final OrderRow... orderRows) throws OrderException
 	{
 		addedOrderRows.addAll(Arrays.asList(orderRows));
 		for (OrderRow orderRow : orderRows)
 		{
 			OrderRow orderRowAlreadyHasProduct = searchProductInOrder(orderRow);
-
 			Integer stockQuantity = orderRow.getProduct().getStockQuantity();
 			Integer addedOrderQuantity = orderRow.getOrderQuantity();
 			if (orderRowAlreadyHasProduct == null && stockQuantity >= addedOrderQuantity)
@@ -144,35 +138,29 @@ public class Order extends AbstractEntity implements Serializable
 		this.totalPrice = bd.doubleValue();
 	}
 
-	public void updateStockQuantities(List<OrderRow> orderRows)
+	public void updateStockQuantities(final List<OrderRow> orderRows)
 	{
-		if (addedOrderRows != null)
+		if (addedOrderRows.isEmpty())
 		{
-			for (OrderRow orderRow : orderRows)
+			return;
+		}
+		for (OrderRow orderRow : orderRows)
+		{
+			for (OrderRow addedOrderRow : addedOrderRows)
 			{
-				for (OrderRow addedOrderRow : addedOrderRows)
+				if (orderRow.getProduct().getId().equals(addedOrderRow.getProduct().getId()))
 				{
-					if (orderRow.getProduct().equals(
-							addedOrderRow.getProduct()) || orderRow.getProduct().getId().equals(
-									addedOrderRow.getProduct().getId()))
-					{
-						orderRow.updateStockQuantity(orderRow.getOrderQuantity());
-					}
-					else
-					{
-						continue;
-					}
+					orderRow.updateStockQuantity(orderRow.getOrderQuantity());
 				}
 			}
 		}
 	}
 
-	public OrderRow searchProductInOrder(OrderRow orderRow)
+	private OrderRow searchProductInOrder(final OrderRow orderRow)
 	{
 		for (OrderRow orderRowInList : orderRows)
 		{
-			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId())
-					|| orderRowInList.getProduct().equals(orderRow.getProduct()))
+			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()))
 			{
 				return orderRowInList;
 			}
