@@ -140,10 +140,6 @@ public class Order extends AbstractEntity implements Serializable
 
 	public void updateStockQuantities(final List<OrderRow> orderRows)
 	{
-		if (addedOrderRows.isEmpty())
-		{
-			return;
-		}
 		for (OrderRow orderRow : orderRows)
 		{
 			for (OrderRow addedOrderRow : addedOrderRows)
@@ -169,7 +165,7 @@ public class Order extends AbstractEntity implements Serializable
 	}
 
 	@Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
 	{
 		if (this == other)
 		{
