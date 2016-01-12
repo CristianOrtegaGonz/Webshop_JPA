@@ -181,7 +181,8 @@ public final class Main
 		System.out.println();
 		
 		Order order3 = new Order(customer2, new OrderRow(product2, 2));
-		Order orderRowsAdded = eCommerceService.addOrderRows(customer2, order3, new OrderRow(product2, 3));
+		Order order3created = eCommerceService.createOrder(customer2, order3);
+		Order orderRowsAdded = eCommerceService.addOrderRows(customer2, order3created, new OrderRow(product2, 3));
 		System.out.println("orderRowsAdded is: " + orderRowsAdded);
 		System.out.println();
 		

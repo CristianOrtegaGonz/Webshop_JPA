@@ -53,7 +53,6 @@ public final class ECommerceService
 		return eCommerceValidator;
 	}
 
-	// behöver vi validation här? Fråga Anders
 	public Product fetchProductById(User user, Long id) throws PermissionException
 	{
 		return productRepository.findById(id);
@@ -78,7 +77,6 @@ public final class ECommerceService
 		return orderFoundById;
 	}
 
-	// behöver vi validation här? Fråga Anders
 	public List<Product> fetchAllProducts(User user) throws PermissionException
 	{
 		return productRepository.fetchAll();
@@ -290,8 +288,12 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order addOrderRows(User customer, Order order, OrderRow... orderRows) throws PermissionException, OrderException
+	public Order addOrderRows(User customer, Order order, OrderRow... orderRows) throws PermissionException, OrderException, StorageException
 	{
+		if (order.getId() == null)
+		{
+			throw new StorageException("Cannot add items. Order does not exists");
+		}
 		if (!eCommerceValidator.hasPermission(customer, order.getCustomer()))
 		{
 			throw new PermissionException("No permission to add items");
@@ -301,6 +303,7 @@ public final class ECommerceService
 			throw new OrderException("Cannot add items. Order is already payed or canceled");
 		}
 		order.addOrderRows(orderRows);
+		order.updateStockQuantities(order.getOrderRows());
 		return order;
 	}
 }
