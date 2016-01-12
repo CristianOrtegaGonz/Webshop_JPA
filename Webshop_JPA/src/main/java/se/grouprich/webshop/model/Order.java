@@ -50,7 +50,7 @@ public class Order extends AbstractEntity implements Serializable
 	private OrderStatus status;
 
 	@Transient
-	private List<OrderRow> addedOrderRows = new ArrayList<>();
+	private final List<OrderRow> addedOrderRows = new ArrayList<>();
 
 	public Order()
 	{
