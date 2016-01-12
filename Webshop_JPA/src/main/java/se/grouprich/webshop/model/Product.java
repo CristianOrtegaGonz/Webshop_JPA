@@ -41,7 +41,7 @@ public class Product extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Product(String productName, Double price, Integer stockQuantity) throws StorageException
+	public Product(final String productName, final Double price, final Integer stockQuantity) throws StorageException
 	{
 		this.productName = productName;
 		roundPrice(price);
@@ -69,7 +69,7 @@ public class Product extends AbstractEntity implements Serializable
 		return status;
 	}
 
-	public void setProductName(String productName)
+	public void setProductName(final String productName)
 	{
 		this.productName = productName;
 	}
@@ -84,13 +84,13 @@ public class Product extends AbstractEntity implements Serializable
 		this.price = price;
 	}
 
-	public Product setStatus(ProductStatus status)
+	public Product setStatus(final ProductStatus status)
 	{
 		this.status = status;
 		return this;
 	}
 
-	public void roundPrice(Double price)
+	public void roundPrice(final Double price)
 	{
 		BigDecimal bd = new BigDecimal(price);
 		bd = bd.setScale(2, RoundingMode.HALF_UP);
@@ -98,7 +98,7 @@ public class Product extends AbstractEntity implements Serializable
 	}
 
 	@Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
 	{
 		if (this == other)
 		{
