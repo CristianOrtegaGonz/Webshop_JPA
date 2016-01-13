@@ -7,6 +7,6 @@ import se.grouprich.webshop.model.Product;
 public interface ProductRepository extends CrudRepository<Product>
 {
 	List<Product> fetchAll();
-	List<Product> searchProductsBasedOnProductName(String productName);
-	List<Product> fetchProductsByProductName(String productName);
+	List<Product> searchProductsBasedOnProductName(final String productName);
+	List<Product> fetchProductsByProductName(final String productName);
 }

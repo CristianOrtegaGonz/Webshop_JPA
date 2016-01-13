@@ -9,7 +9,7 @@ import se.grouprich.webshop.model.status.OrderStatus;
 public interface OrderRepository extends CrudRepository<Order>
 {
 	List<Order> fetchAll();
-	List<Order> fetchOrdersByUser(User user);
-	List<Order> fetchOrdersByStatus(OrderStatus status);
-	List<Order> fetchOrdersByMinimumValue(Double minimumValue);
+	List<Order> fetchOrdersByUser(final User user);
+	List<Order> fetchOrdersByStatus(final OrderStatus status);
+	List<Order> fetchOrdersByMinimumValue(final Double minimumValue);
 }
