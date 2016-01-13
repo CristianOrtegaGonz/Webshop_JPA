@@ -1,6 +1,5 @@
 package se.grouprich.webshop.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -10,7 +9,6 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.StorageException;
 import se.grouprich.webshop.model.status.ProductStatus;
@@ -19,11 +17,8 @@ import se.grouprich.webshop.model.status.ProductStatus;
 @NamedQueries(value = { @NamedQuery(name = "Product.FetchAll", query = "SELECT p FROM Product p"),
 		@NamedQuery(name = "Product.SearchProductsBasedOnProductName", query = "SELECT p FROM Product p WHERE p.productName LIKE ?1 ORDER BY p.productName ASC"),
 		@NamedQuery(name = "Product.FetchProductsByProductName", query = "SELECT p FROM Product p WHERE p.productName = :productName") })
-public class Product extends AbstractEntity implements Serializable
+public class Product extends AbstractEntity
 {
-	@Transient
-	private static final long serialVersionUID = 5072511887999675702L;
-
 	@Column(nullable = false)
 	private String productName;
 

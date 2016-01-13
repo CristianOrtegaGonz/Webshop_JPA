@@ -6,7 +6,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 import se.grouprich.webshop.exception.OrderException;
-import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.StorageException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
@@ -29,7 +28,7 @@ public final class Main
 {
 	private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("PersistenceUnit");
 
-	public static final void main(String[] args) throws StorageException, IllegalArgumentException, PermissionException, OrderException
+	public static final void main(String[] args) throws StorageException, IllegalArgumentException, OrderException
 	{
 		ProductRepository productRepository = new JpaProductRepository(factory);
 		OrderRepository orderRepository = new JpaOrderRepository(factory);
@@ -51,9 +50,9 @@ public final class Main
 		System.out.println("customer is: " + customer2);
 		System.out.println();
 
-		Product product1 = eCommerceService.createProduct(admin, new Product("cat food", 33.657, 10));
-		Product product2 = eCommerceService.createProduct(admin, new Product("dog food", 27.83, 10));
-		Product product3 = eCommerceService.createProduct(admin, new Product("cat godis", 25.48, 10));
+		Product product1 = eCommerceService.createProduct(new Product("cat food", 33.657, 10));
+		Product product2 = eCommerceService.createProduct(new Product("dog food", 27.83, 10));
+		Product product3 = eCommerceService.createProduct(new Product("cat godis", 25.48, 10));
 		System.out.println("product1 is: " + product1);
 		System.out.println("product2 is: " + product2);
 		System.out.println("product3 is: " + product3);
@@ -61,7 +60,7 @@ public final class Main
 
 		product2.setStatus(ProductStatus.NOT_AVAILABLE);
 
-		Product product2Updated = eCommerceService.updateProduct(admin, product2);
+		Product product2Updated = eCommerceService.updateProduct(product2);
 		System.out.println("product2Updated is: " + product2Updated);
 		System.out.println();
 
@@ -73,27 +72,27 @@ public final class Main
 		System.out.println("productsFood are: " + productsFood);
 		System.out.println();
 
-		Product availableProduct = eCommerceService.changeProductStatus(admin, product1, ProductStatus.AVAILABLE);
+		Product availableProduct = eCommerceService.changeProductStatus(product1, ProductStatus.AVAILABLE);
 		System.out.println("availableProduct is: " + availableProduct);
 		System.out.println();
 
-		Product availableProduct2 = eCommerceService.changeProductStatus(admin, product2, ProductStatus.AVAILABLE);
+		Product availableProduct2 = eCommerceService.changeProductStatus(product2, ProductStatus.AVAILABLE);
 		System.out.println("availableProduct2 is: " + availableProduct2);
 		System.out.println();
 
-		Order order = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product1, 4)));
+		Order order = eCommerceService.createOrder(new Order(customer2, new OrderRow(product1, 4)));
 		System.out.println("order is: " + order);
 		System.out.println();
 
-		Order order2 = eCommerceService.createOrder(customer2, new Order(customer2, new OrderRow(product2, 5)));
+		Order order2 = eCommerceService.createOrder(new Order(customer2, new OrderRow(product2, 5)));
 		System.out.println("order2 is: " + order2);
 		System.out.println();
 
-		User deactivatedUser = eCommerceService.changeUserStatus(admin, customer, UserStatus.DEACTIVATED);
+		User deactivatedUser = eCommerceService.changeUserStatus(customer, UserStatus.DEACTIVATED);
 		System.out.println("deactivatedUser is: " + deactivatedUser);
 		System.out.println();
 
-		Order payedOrder = eCommerceService.changeOrderStatus(admin, order, OrderStatus.PAYED);
+		Order payedOrder = eCommerceService.changeOrderStatus(order, OrderStatus.PAYED);
 		System.out.println("payedOrder is: " + payedOrder);
 		System.out.println();
 
@@ -101,27 +100,27 @@ public final class Main
 		System.out.println("ordersMinim100 are: " + ordersMinim100);
 		System.out.println();
 
-		Product productFetchedById = eCommerceService.fetchProductById(admin, 3L);
+		Product productFetchedById = eCommerceService.fetchProductById(3L);
 		System.out.println("productFetchedById is: " + productFetchedById);
 		System.out.println();
 
-		User userFethedById = eCommerceService.fetchUserById(customer, 2L);
+		User userFethedById = eCommerceService.fetchUserById(2L);
 		System.out.println("userFetchedById is: " + userFethedById);
 		System.out.println();
 
-		Order orderFetchedById = eCommerceService.fetchOrderById(customer2, 7L);
+		Order orderFetchedById = eCommerceService.fetchOrderById(7L);
 		System.out.println("orderFetchedById is: " + orderFetchedById);
 		System.out.println();
 
-		List<User> allUsers = eCommerceService.fetchAllUsers(admin);
+		List<User> allUsers = eCommerceService.fetchAllUsers();
 		System.out.println("allUsers are: " + allUsers);
 		System.out.println();
 
-		List<Order> allOrders = eCommerceService.fetchAllOrders(admin);
+		List<Order> allOrders = eCommerceService.fetchAllOrders();
 		System.out.println("allOrders are: " + allOrders);
 		System.out.println();
 
-		Product newProduct = eCommerceService.createProduct(admin, new Product("cat tunnel", 10.00, 4)).setStatus(ProductStatus.AVAILABLE);
+		Product newProduct = eCommerceService.createProduct(new Product("cat tunnel", 10.00, 4)).setStatus(ProductStatus.AVAILABLE);
 		;
 		System.out.println("newProduct is: " + newProduct);
 		System.out.println();
@@ -130,41 +129,41 @@ public final class Main
 		System.out.println("newUser is: " + newUser);
 		System.out.println();
 
-		User fetchedUser = eCommerceService.fetchUserByUsername(admin, "Marimo");
+		User fetchedUser = eCommerceService.fetchUserByUsername("Marimo");
 		System.out.println("fetchedUser is: " + fetchedUser);
 		System.out.println();
 
 		User panda = newUser.setUsername("Panda").setStatus(UserStatus.ACTIVE);
 
-		eCommerceService.updateUser(admin, panda);
+		eCommerceService.updateUser(panda);
 
-		User pandaUpdated = eCommerceService.updateUser(admin, panda);
+		User pandaUpdated = eCommerceService.updateUser(panda);
 		System.out.println("userUpdated is: " + pandaUpdated);
 		System.out.println();
 
 		Order shippedOrder = order.setStatus(OrderStatus.SHIPPED);
 
-		Order updatedOrder = eCommerceService.updateOrder(admin, shippedOrder);
+		Order updatedOrder = eCommerceService.updateOrder(shippedOrder);
 		System.out.println("updatedOrder is: " + updatedOrder);
 		System.out.println();
 
-		User userFetchedByUsername = eCommerceService.fetchUserByUsername(customer2, "Kinoko");
+		User userFetchedByUsername = eCommerceService.fetchUserByUsername("Kinoko");
 		System.out.println("userFetchedByUsername is: " + userFetchedByUsername);
 		System.out.println();
 
-		Product notPublishedProduct = eCommerceService.changeProductStatus(admin, product1, ProductStatus.NOT_PUBLISHED);
+		Product notPublishedProduct = eCommerceService.changeProductStatus(product1, ProductStatus.NOT_PUBLISHED);
 		System.out.println("notPublishedProduct is: " + notPublishedProduct);
 		System.out.println();
 
 		Product product4 = new Product("mugg", 30.00, 5);
-		Product productStatusChanged = eCommerceService.changeProductStatus(admin, product4, ProductStatus.AVAILABLE);
+		Product productStatusChanged = eCommerceService.changeProductStatus(product4, ProductStatus.AVAILABLE);
 		System.out.println("productStatusChanged is: " + productStatusChanged);
 
-		User lockedUser = eCommerceService.changeUserStatus(admin, panda, UserStatus.LOCKED);
+		User lockedUser = eCommerceService.changeUserStatus(panda, UserStatus.LOCKED);
 		System.out.println("lockedUser is:" + lockedUser);
 		System.out.println();
 
-		Order canceledOrder = eCommerceService.changeOrderStatus(admin, updatedOrder, OrderStatus.PLACED);
+		Order canceledOrder = eCommerceService.changeOrderStatus(updatedOrder, OrderStatus.PLACED);
 		System.out.println("canceledOrder is: " + canceledOrder);
 		System.out.println();
 
@@ -181,23 +180,23 @@ public final class Main
 		System.out.println();
 		
 		Order order3 = new Order(customer2, new OrderRow(product2, 2));
-		Order order3created = eCommerceService.createOrder(customer2, order3);
+		Order order3created = eCommerceService.createOrder(order3);
 		Order orderRowsAdded = eCommerceService.addOrderRows(customer2, order3created, new OrderRow(product2, 3));
 		System.out.println("orderRowsAdded is: " + orderRowsAdded);
 		System.out.println();
 		
 		customer.setPassword("39P!", "39P%");
-		eCommerceService.changeUserStatus(admin, customer, UserStatus.ACTIVE);
-		User customerWithNewPassword = eCommerceService.updateUser(admin, customer);
-		User updatedCustomer = eCommerceService.fetchUserById(customerWithNewPassword, 2L);
+		eCommerceService.changeUserStatus(customer, UserStatus.ACTIVE);
+		User customerWithNewPassword = eCommerceService.updateUser(customer);
+		User updatedCustomer = eCommerceService.fetchUserById(2L);
 		System.out.println("updatedCustomer is: " + updatedCustomer);
 		System.out.println();
 		
-		User updatedCustomer2 = eCommerceService.updateUser(admin, customerWithNewPassword);
+		User updatedCustomer2 = eCommerceService.updateUser(customerWithNewPassword);
 		System.out.println("updatedCustomer2 is: " + updatedCustomer2);
 		System.out.println();
 		
-		Order orderChangedStatus = eCommerceService.changeOrderStatus(customer2, orderRowsAdded, OrderStatus.CANCELED);
+		Order orderChangedStatus = eCommerceService.changeOrderStatus(orderRowsAdded, OrderStatus.CANCELED);
 		System.out.println("orderChangedStatus is: " + orderChangedStatus);
 	}
 }

@@ -5,9 +5,9 @@ import java.util.function.Function;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
 
+import se.grouprich.webshop.exception.RepositoryException;
 import se.grouprich.webshop.model.AbstractEntity;
 
 public abstract class AbstractJpaRepository<E extends AbstractEntity> implements CrudRepository<E>
@@ -29,7 +29,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		{
 			return manager.find(entityClass, id);
 		}
-		catch (PersistenceException e)
+		catch (RepositoryException e)
 		{
 			throw new RuntimeException(e);
 		}
@@ -48,7 +48,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 			TypedQuery<E> typedQuery = manager.createNamedQuery(queryName, entityClass);
 			return queryFunction.apply(typedQuery).getResultList();
 		}
-		catch (PersistenceException e)
+		catch (RepositoryException e)
 		{
 			throw new RuntimeException(e);
 		}
@@ -83,7 +83,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 
 			return result;
 		}
-		catch (PersistenceException e)
+		catch (RepositoryException e)
 		{
 			throw new RuntimeException(e);
 		}

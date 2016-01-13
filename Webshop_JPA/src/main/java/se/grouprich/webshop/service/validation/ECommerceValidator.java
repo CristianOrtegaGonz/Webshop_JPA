@@ -1,9 +1,5 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.model.Order;
-import se.grouprich.webshop.model.Role;
-import se.grouprich.webshop.model.User;
-import se.grouprich.webshop.model.status.UserStatus;
 import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
@@ -80,64 +76,6 @@ public final class ECommerceValidator
 			}
 		}
 		return false;
-	}
-
-	public boolean isActiveAdmin(final User admin)
-	{
-		User fetchedUser = userRepository.findById(admin.getId());
-		if (fetchedUser.getRole().equals(Role.ADMIN) && isActiveUser(fetchedUser))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	public boolean hasPermission(final User user1, final User user2)
-	{
-		User fetchedUser = userRepository.findById(user1.getId());
-		if (areSameUsers(fetchedUser, user2) && isActiveUser(fetchedUser))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean areSameUsers(final User user1, final User user2)
-	{
-		if (user1.getId().equals(user2.getId()))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	private boolean isActiveUser(final User user)
-	{
-		if (user.getStatus().equals(UserStatus.ACTIVE))
-		{
-			return true;
-		}
-		return false;
-	}
-
-	public boolean hasChangedRoleOrUserStatus(final User user)
-	{
-		User fetchedUser = userRepository.findById(user.getId());
-		if (fetchedUser.getRole().equals(user.getRole()) && fetchedUser.getStatus().equals(user.getStatus()))
-		{
-			return false;
-		}
-		return true;
-	}
-
-	public boolean hasChangedOrderStatus(final Order order)
-	{
-		Order fetchedOrder = orderRepository.findById(order.getId());
-		if (fetchedOrder.getStatus().equals(order.getStatus()))
-		{
-			return false;
-		}
-		return true;
 	}
 	
 	public boolean productNameAlreadyExists(final String productName)

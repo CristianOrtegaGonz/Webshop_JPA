@@ -1,6 +1,5 @@
 package se.grouprich.webshop.model;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -21,25 +20,22 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import se.grouprich.webshop.exception.OrderException;
-import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
 @Table(name = "`Order`")
-@NamedQueries(value = { @NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o"),
-		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o WHERE o.customer.id = :id"),
-		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status = :status"),
-		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o WHERE o.totalPrice >= :totalPrice") })
+@NamedQueries(value = { @NamedQuery(name = "Order.FetchById", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.id = :id"),
+		@NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o JOIN FETCH o.orderRows"),
+		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.customer.id = :id"),
+		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.status = :status"),
+		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.totalPrice >= :totalPrice") })
 
-public class Order extends AbstractEntity implements Serializable
+public class Order extends AbstractEntity
 {
-	@Transient
-	private static final long serialVersionUID = 3380539865925002167L;
-
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	private User customer;
 
-	@ElementCollection(fetch = FetchType.EAGER)
+	@ElementCollection(fetch = FetchType.LAZY)
 	private List<OrderRow> orderRows;
 
 	@Column(nullable = false, columnDefinition = "DECIMAL(10,2) UNSIGNED")
@@ -56,7 +52,7 @@ public class Order extends AbstractEntity implements Serializable
 	{
 	}
 
-	public Order(final User customer, final OrderRow... orderRows) throws OrderException, PermissionException
+	public Order(final User customer, final OrderRow... orderRows) throws OrderException
 	{
 		this.customer = customer;
 		this.orderRows = new ArrayList<>();

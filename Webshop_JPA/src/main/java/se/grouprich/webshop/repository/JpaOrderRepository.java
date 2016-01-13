@@ -12,10 +12,15 @@ import se.grouprich.webshop.model.status.OrderStatus;
 
 public final class JpaOrderRepository extends AbstractJpaRepository<Order> implements OrderRepository
 {
-
 	public JpaOrderRepository(final EntityManagerFactory factory)
 	{
 		super(factory, Order.class);
+	}
+
+	@Override
+	public List<Order> fetchById(Long id)
+	{
+		return fetchMany("Order.FetchById", queryFunction -> queryFunction.setParameter("id", id));
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package se.grouprich.webshop.service;
 import java.util.List;
 
 import se.grouprich.webshop.exception.OrderException;
-import se.grouprich.webshop.exception.PermissionException;
 import se.grouprich.webshop.exception.StorageException;
 import se.grouprich.webshop.model.Order;
 import se.grouprich.webshop.model.OrderRow;
@@ -53,59 +52,39 @@ public final class ECommerceService
 		return eCommerceValidator;
 	}
 
-	public Product fetchProductById(final User user, final Long id) throws PermissionException
+	public Product fetchProductById(final Long id)
 	{
 		return productRepository.findById(id);
 	}
 
-	public User fetchUserById(final User user, final Long id) throws PermissionException
+	public User fetchUserById(final Long id)
 	{
-		if (!eCommerceValidator.isActiveAdmin(user) && !user.getId().equals(id))
-		{
-			throw new PermissionException("No permission to fetch user by ID");
-		}
 		return userRepository.findById(id);
 	}
 
-	public Order fetchOrderById(final User user, final Long id) throws PermissionException
+	public Order fetchOrderById(final Long id)
 	{
-		Order orderFoundById = orderRepository.findById(id);
-		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, orderFoundById.getCustomer()))
-		{
-			throw new PermissionException("No permission to fetch order by ID");
-		}
-		return orderFoundById;
+		List<Order> ordersFoundById = orderRepository.fetchById(id);
+		return ordersFoundById.get(0);
 	}
 
-	public List<Product> fetchAllProducts(final User user) throws PermissionException
+	public List<Product> fetchAllProducts(final User user)
 	{
 		return productRepository.fetchAll();
 	}
 
-	public List<User> fetchAllUsers(final User admin) throws PermissionException
+	public List<User> fetchAllUsers()
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to fetch all users");
-		}
 		return userRepository.fetchAll();
 	}
 
-	public List<Order> fetchAllOrders(final User admin) throws PermissionException
+	public List<Order> fetchAllOrders()
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to feth all orders");
-		}
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(final User admin, final Product product) throws StorageException, PermissionException
+	public Product createProduct(final Product product) throws StorageException
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to create products");
-		}
 		if (eCommerceValidator.productNameAlreadyExists(product.getProductName()))
 		{
 			throw new StorageException("Product with name: " + product.getProductName() + " already exists");
@@ -130,12 +109,8 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order createOrder(final User customer, final Order order) throws OrderException, PermissionException
+	public Order createOrder(final Order order) throws OrderException
 	{
-		if (!eCommerceValidator.hasPermission(customer, order.getCustomer()))
-		{
-			throw new PermissionException("No permission to create orders");
-		}
 		if (order.getTotalPrice() > 50000.00)
 		{
 			throw new OrderException("Total price exceeding SEK 50,000 is not allowed");
@@ -145,56 +120,29 @@ public final class ECommerceService
 		return orderRepository.merge(order);
 	}
 
-	public Product updateProduct(final User admin, final Product product) throws PermissionException, StorageException
+	public Product updateProduct(final Product product) throws StorageException
 	{
 		if (product.getId() == null)
 		{
 			throw new StorageException("Cannot update product. Product does not exists");
 		}
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to update products");
-		}
 		return productRepository.merge(product);
 	}
 
-	public User updateUser(final User user, final User userToUpdate) throws PermissionException, StorageException
+	public User updateUser(final User user) throws StorageException
 	{
-		if (userToUpdate.getId() == null)
+		if (user.getId() == null)
 		{
 			throw new StorageException("Cannot update user. User does not exists");
 		}
-		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, userToUpdate))
-		{
-			throw new PermissionException("No permission to update user");
-		}
-		if (eCommerceValidator.hasPermission(user, userToUpdate) && eCommerceValidator.hasChangedRoleOrUserStatus(userToUpdate))
-		{
-			throw new PermissionException("No permission to update role and user status");
-		}
-		return userRepository.merge(userToUpdate);
+		return userRepository.merge(user);
 	}
 
-	public Order updateOrder(final User user, final Order order) throws PermissionException, OrderException, StorageException
+	public Order updateOrder(final Order order) throws OrderException, StorageException
 	{
 		if (order.getId() == null)
 		{
 			throw new StorageException("Cannot update order. Order does not exists");
-		}
-		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, order.getCustomer()))
-		{
-			throw new PermissionException("No permission to update order");
-		}
-		if (eCommerceValidator.hasPermission(user, order.getCustomer()))
-		{
-			if (eCommerceValidator.hasChangedOrderStatus(order))
-			{
-				throw new PermissionException("No permission to change order status");
-			}
-			if (order.getStatus().equals(OrderStatus.SHIPPED))
-			{
-				throw new OrderException("Cannot update order. Order already shipped");
-			}
 		}
 		order.updateStockQuantities(order.getOrderRows());
 		return orderRepository.merge(order);
@@ -205,12 +153,8 @@ public final class ECommerceService
 		return productRepository.searchProductsBasedOnProductName(keyword);
 	}
 
-	public User fetchUserByUsername(final User user, final String username) throws PermissionException
+	public User fetchUserByUsername(final String username)
 	{
-		if (!eCommerceValidator.isActiveAdmin(user) && !user.getUsername().equals(username))
-		{
-			throw new PermissionException("No permission to fetch user by username");
-		}
 		if (userRepository.fetchUsersByUsername(username).size() > 0)
 		{
 			return userRepository.fetchUsersByUsername(username).get(0);
@@ -218,67 +162,36 @@ public final class ECommerceService
 		return null;
 	}
 
-	public Product changeProductStatus(final User admin, final Product product, final ProductStatus status) throws PermissionException, StorageException
+	public Product changeProductStatus(final Product product, final ProductStatus status) throws StorageException
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to change product status");
-		}
 		product.setStatus(status);
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User changeUserStatus(final User admin, final User user, final UserStatus status) throws PermissionException, StorageException
+	public User changeUserStatus(final User user, final UserStatus status) throws StorageException
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to change user status");
-		}
 		user.setStatus(status);
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order changeOrderStatus(final User user, final Order order, final OrderStatus status) throws PermissionException, OrderException, StorageException
+	public Order changeOrderStatus(final Order order, final OrderStatus status) throws OrderException, StorageException
 	{
-		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, order.getCustomer()))
-		{
-			throw new PermissionException("No permission to change order status");
-		}
-		if (eCommerceValidator.hasPermission(user, order.getCustomer()) && status.equals(OrderStatus.CANCELED))
-		{
-			if (order.getStatus() != null && order.getStatus().equals(OrderStatus.SHIPPED))
-			{
-				throw new OrderException("Cannot cancel order. Order already shipped");
-			}
-		}
 		order.setStatus(status);
 		return orderRepository.merge(order);
 	}
 
-	public List<Order> fetchOrdersByUser(final User user, final User customer) throws PermissionException
+	public List<Order> fetchOrdersByUser(final User user, final User customer)
 	{
-		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, customer))
-		{
-			throw new PermissionException("No permission to fetch orders by user");
-		}
 		return orderRepository.fetchOrdersByUser(customer);
 	}
 
-	public List<Order> fetchOrdersByStatus(final User admin, final OrderStatus orderStatus) throws PermissionException
+	public List<Order> fetchOrdersByStatus(final User admin, final OrderStatus orderStatus)
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to fetch orders by status");
-		}
 		return orderRepository.fetchOrdersByStatus(orderStatus);
 	}
 
-	public List<Order> fetchOrdersByMinimumValue(final User admin, final Double minimumValue) throws PermissionException
+	public List<Order> fetchOrdersByMinimumValue(final User admin, final Double minimumValue)
 	{
-		if (!eCommerceValidator.isActiveAdmin(admin))
-		{
-			throw new PermissionException("No permission to fetch orders by minimum value");
-		}
 		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
 	}
 
@@ -288,19 +201,11 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order addOrderRows(final User customer, final Order order, final OrderRow... orderRows) throws PermissionException, OrderException, StorageException
+	public Order addOrderRows(final User customer, final Order order, final OrderRow... orderRows) throws OrderException, StorageException
 	{
 		if (order.getId() == null)
 		{
 			throw new StorageException("Cannot add items. Order does not exists");
-		}
-		if (!eCommerceValidator.hasPermission(customer, order.getCustomer()))
-		{
-			throw new PermissionException("No permission to add items");
-		}
-		if (order.getStatus() != null && !order.getStatus().equals(OrderStatus.PLACED))
-		{
-			throw new OrderException("Cannot add items. Order is already payed or canceled");
 		}
 		order.addOrderRows(orderRows);
 		order.updateStockQuantities(order.getOrderRows());

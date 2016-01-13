@@ -1,7 +1,5 @@
 package se.grouprich.webshop.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,7 +15,7 @@ import se.grouprich.webshop.model.status.UserStatus;
 @Entity
 @NamedQueries(value = { @NamedQuery(name = "User.FetchAll", query = "SELECT u FROM User u"),
 		@NamedQuery(name = "User.FetchUserByUsername", query = "SELECT u FROM User u WHERE u.username = :username") })
-public class User extends AbstractEntity implements Serializable
+public class User extends AbstractEntity
 {
 	@Transient
 	private static final long serialVersionUID = 8550124813033398565L;
