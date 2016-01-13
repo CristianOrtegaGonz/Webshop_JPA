@@ -10,7 +10,7 @@ import se.grouprich.webshop.model.Product;
 
 public final class JpaProductRepository extends AbstractJpaRepository<Product> implements ProductRepository
 {
-	public JpaProductRepository(EntityManagerFactory factory)
+	public JpaProductRepository(final EntityManagerFactory factory)
 	{
 		super(factory, Product.class);
 	}
@@ -22,13 +22,13 @@ public final class JpaProductRepository extends AbstractJpaRepository<Product> i
 	}
 
 	@Override
-	public List<Product> searchProductsBasedOnProductName(String keyword)
+	public List<Product> searchProductsBasedOnProductName(final String keyword)
 	{
 		return fetchMany("Product.SearchProductsBasedOnProductName", queryFunction -> queryFunction.setParameter(1, "%" + keyword + "%"));
 	}
 
 	@Override
-	public List<Product> fetchProductsByProductName(String productName)
+	public List<Product> fetchProductsByProductName(final String productName)
 	{
 		return fetchMany("Product.FetchProductsByProductName", queryFunction -> queryFunction.setParameter("productName", productName));
 	}
