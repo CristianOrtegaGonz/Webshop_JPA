@@ -24,8 +24,8 @@ public final class ECommerceService
 	private final UserRepository userRepository;
 	private final ECommerceValidator eCommerceValidator;
 
-	public ECommerceService(OrderRepository orderRepository, UserRepository userRepository, ProductRepository productRepository,
-			ECommerceValidator userValidator)
+	public ECommerceService(final OrderRepository orderRepository, final UserRepository userRepository, final ProductRepository productRepository,
+			final ECommerceValidator userValidator)
 	{
 		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
@@ -53,12 +53,12 @@ public final class ECommerceService
 		return eCommerceValidator;
 	}
 
-	public Product fetchProductById(User user, Long id) throws PermissionException
+	public Product fetchProductById(final User user, final Long id) throws PermissionException
 	{
 		return productRepository.findById(id);
 	}
 
-	public User fetchUserById(User user, Long id) throws PermissionException
+	public User fetchUserById(final User user, final Long id) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(user) && !user.getId().equals(id))
 		{
@@ -67,7 +67,7 @@ public final class ECommerceService
 		return userRepository.findById(id);
 	}
 
-	public Order fetchOrderById(User user, Long id) throws PermissionException
+	public Order fetchOrderById(final User user, final Long id) throws PermissionException
 	{
 		Order orderFoundById = orderRepository.findById(id);
 		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, orderFoundById.getCustomer()))
@@ -77,12 +77,12 @@ public final class ECommerceService
 		return orderFoundById;
 	}
 
-	public List<Product> fetchAllProducts(User user) throws PermissionException
+	public List<Product> fetchAllProducts(final User user) throws PermissionException
 	{
 		return productRepository.fetchAll();
 	}
 
-	public List<User> fetchAllUsers(User admin) throws PermissionException
+	public List<User> fetchAllUsers(final User admin) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -91,7 +91,7 @@ public final class ECommerceService
 		return userRepository.fetchAll();
 	}
 
-	public List<Order> fetchAllOrders(User admin) throws PermissionException
+	public List<Order> fetchAllOrders(final User admin) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -100,7 +100,7 @@ public final class ECommerceService
 		return orderRepository.fetchAll();
 	}
 
-	public Product createProduct(User admin, Product product) throws StorageException, PermissionException
+	public Product createProduct(final User admin, final Product product) throws StorageException, PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -113,7 +113,7 @@ public final class ECommerceService
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User createUser(User user) throws StorageException
+	public User createUser(final User user) throws StorageException
 	{
 		if (eCommerceValidator.usernameAlreadyExists(user.getUsername()))
 		{
@@ -130,7 +130,7 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order createOrder(User customer, Order order) throws OrderException, PermissionException
+	public Order createOrder(final User customer, final Order order) throws OrderException, PermissionException
 	{
 		if (!eCommerceValidator.hasPermission(customer, order.getCustomer()))
 		{
@@ -145,7 +145,7 @@ public final class ECommerceService
 		return orderRepository.merge(order);
 	}
 
-	public Product updateProduct(User admin, Product product) throws PermissionException, StorageException
+	public Product updateProduct(final User admin, final Product product) throws PermissionException, StorageException
 	{
 		if (product.getId() == null)
 		{
@@ -158,7 +158,7 @@ public final class ECommerceService
 		return productRepository.merge(product);
 	}
 
-	public User updateUser(User user, User userToUpdate) throws PermissionException, StorageException
+	public User updateUser(final User user, final User userToUpdate) throws PermissionException, StorageException
 	{
 		if (userToUpdate.getId() == null)
 		{
@@ -168,14 +168,14 @@ public final class ECommerceService
 		{
 			throw new PermissionException("No permission to update user");
 		}
-		if (eCommerceValidator.hasPermission(user, userToUpdate) && eCommerceValidator.changedRoleOrUserStatus(userToUpdate))
+		if (eCommerceValidator.hasPermission(user, userToUpdate) && eCommerceValidator.hasChangedRoleOrUserStatus(userToUpdate))
 		{
 			throw new PermissionException("No permission to update role and user status");
 		}
 		return userRepository.merge(userToUpdate);
 	}
 
-	public Order updateOrder(User user, Order order) throws PermissionException, OrderException, StorageException
+	public Order updateOrder(final User user, final Order order) throws PermissionException, OrderException, StorageException
 	{
 		if (order.getId() == null)
 		{
@@ -187,7 +187,7 @@ public final class ECommerceService
 		}
 		if (eCommerceValidator.hasPermission(user, order.getCustomer()))
 		{
-			if (eCommerceValidator.changedOrderStatus(order))
+			if (eCommerceValidator.hasChangedOrderStatus(order))
 			{
 				throw new PermissionException("No permission to change order status");
 			}
@@ -200,12 +200,12 @@ public final class ECommerceService
 		return orderRepository.merge(order);
 	}
 
-	public List<Product> searchProductsBasedOnProductName(String keyword)
+	public List<Product> searchProductsBasedOnProductName(final String keyword)
 	{
 		return productRepository.searchProductsBasedOnProductName(keyword);
 	}
 
-	public User fetchUserByUsername(User user, String username) throws PermissionException
+	public User fetchUserByUsername(final User user, final String username) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(user) && !user.getUsername().equals(username))
 		{
@@ -218,7 +218,7 @@ public final class ECommerceService
 		return null;
 	}
 
-	public Product changeProductStatus(User admin, Product product, ProductStatus status) throws PermissionException, StorageException
+	public Product changeProductStatus(final User admin, final Product product, final ProductStatus status) throws PermissionException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -228,7 +228,7 @@ public final class ECommerceService
 		return productRepository.saveOrUpdate(product);
 	}
 
-	public User changeUserStatus(User admin, User user, UserStatus status) throws PermissionException, StorageException
+	public User changeUserStatus(final User admin, final User user, final UserStatus status) throws PermissionException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -238,7 +238,7 @@ public final class ECommerceService
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order changeOrderStatus(User user, Order order, OrderStatus status) throws PermissionException, OrderException, StorageException
+	public Order changeOrderStatus(final User user, final Order order, final OrderStatus status) throws PermissionException, OrderException, StorageException
 	{
 		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, order.getCustomer()))
 		{
@@ -255,7 +255,7 @@ public final class ECommerceService
 		return orderRepository.merge(order);
 	}
 
-	public List<Order> fetchOrdersByUser(User user, User customer) throws PermissionException
+	public List<Order> fetchOrdersByUser(final User user, final User customer) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(user) && !eCommerceValidator.hasPermission(user, customer))
 		{
@@ -264,7 +264,7 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByUser(customer);
 	}
 
-	public List<Order> fetchOrdersByStatus(User admin, OrderStatus orderStatus) throws PermissionException
+	public List<Order> fetchOrdersByStatus(final User admin, final OrderStatus orderStatus) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -273,7 +273,7 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByStatus(orderStatus);
 	}
 
-	public List<Order> fetchOrdersByMinimumValue(User admin, Double minimumValue) throws PermissionException
+	public List<Order> fetchOrdersByMinimumValue(final User admin, final Double minimumValue) throws PermissionException
 	{
 		if (!eCommerceValidator.isActiveAdmin(admin))
 		{
@@ -282,13 +282,13 @@ public final class ECommerceService
 		return orderRepository.fetchOrdersByMinimumValue(minimumValue);
 	}
 
-	public User activateUser(User user)
+	public User activateUser(final User user)
 	{
 		user.setStatus(UserStatus.ACTIVE);
 		return userRepository.saveOrUpdate(user);
 	}
 
-	public Order addOrderRows(User customer, Order order, OrderRow... orderRows) throws PermissionException, OrderException, StorageException
+	public Order addOrderRows(final User customer, final Order order, final OrderRow... orderRows) throws PermissionException, OrderException, StorageException
 	{
 		if (order.getId() == null)
 		{

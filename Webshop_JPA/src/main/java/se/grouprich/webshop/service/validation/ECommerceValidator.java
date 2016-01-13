@@ -14,7 +14,7 @@ public final class ECommerceValidator
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 
-	public ECommerceValidator(UserRepository userRepository, OrderRepository orderRepository, ProductRepository productRepository)
+	public ECommerceValidator(final UserRepository userRepository, final OrderRepository orderRepository, final ProductRepository productRepository)
 	{
 		this.userRepository = userRepository;
 		this.orderRepository = orderRepository;
@@ -82,7 +82,7 @@ public final class ECommerceValidator
 		return false;
 	}
 
-	public boolean isActiveAdmin(User admin)
+	public boolean isActiveAdmin(final User admin)
 	{
 		User fetchedUser = userRepository.findById(admin.getId());
 		if (fetchedUser.getRole().equals(Role.ADMIN) && isActiveUser(fetchedUser))
@@ -92,7 +92,7 @@ public final class ECommerceValidator
 		return false;
 	}
 
-	public boolean hasPermission(User user1, User user2)
+	public boolean hasPermission(final User user1, final User user2)
 	{
 		User fetchedUser = userRepository.findById(user1.getId());
 		if (areSameUsers(fetchedUser, user2) && isActiveUser(fetchedUser))
@@ -102,7 +102,7 @@ public final class ECommerceValidator
 		return false;
 	}
 
-	private boolean areSameUsers(User user1, User user2)
+	private boolean areSameUsers(final User user1, final User user2)
 	{
 		if (user1.getId().equals(user2.getId()))
 		{
@@ -111,7 +111,7 @@ public final class ECommerceValidator
 		return false;
 	}
 
-	private boolean isActiveUser(User user)
+	private boolean isActiveUser(final User user)
 	{
 		if (user.getStatus().equals(UserStatus.ACTIVE))
 		{
@@ -120,7 +120,7 @@ public final class ECommerceValidator
 		return false;
 	}
 
-	public boolean changedRoleOrUserStatus(User user)
+	public boolean hasChangedRoleOrUserStatus(final User user)
 	{
 		User fetchedUser = userRepository.findById(user.getId());
 		if (fetchedUser.getRole().equals(user.getRole()) && fetchedUser.getStatus().equals(user.getStatus()))
@@ -130,7 +130,7 @@ public final class ECommerceValidator
 		return true;
 	}
 
-	public boolean changedOrderStatus(Order order)
+	public boolean hasChangedOrderStatus(final Order order)
 	{
 		Order fetchedOrder = orderRepository.findById(order.getId());
 		if (fetchedOrder.getStatus().equals(order.getStatus()))
