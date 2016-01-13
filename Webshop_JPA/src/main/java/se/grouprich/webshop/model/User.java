@@ -46,7 +46,7 @@ public class User extends AbstractEntity implements Serializable
 	{
 	}
 
-	public User(String username, String password, String firstName, String lastName)
+	public User(final String username, final String password, final String firstName, final String lastName)
 	{
 		this.username = username;
 		this.password = password;
@@ -56,7 +56,7 @@ public class User extends AbstractEntity implements Serializable
 		status = UserStatus.PENDING_ACTIVATION;
 	}
 
-	public User(String username, String password, String firstName, String lastName, Role role)
+	public User(final String username, final String password, final String firstName, final String lastName, final Role role)
 	{
 		this.username = username;
 		this.password = password;
@@ -106,21 +106,21 @@ public class User extends AbstractEntity implements Serializable
 		this.password = newPassword;
 		return this;
 	}
-	
-	public User setRole(Role role)
+
+	public User setRole(final Role role)
 	{
 		this.role = role;
 		return this;
 	}
 
-	public User setStatus(UserStatus status)
+	public User setStatus(final UserStatus status)
 	{
 		this.status = status;
 		return this;
 	}
 
 	@Override
-	public boolean equals(Object other)
+	public boolean equals(final Object other)
 	{
 		if (this == other)
 		{
