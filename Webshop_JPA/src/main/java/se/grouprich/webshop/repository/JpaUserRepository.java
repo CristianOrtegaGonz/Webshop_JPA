@@ -10,7 +10,7 @@ import se.grouprich.webshop.model.User;
 
 public final class JpaUserRepository extends AbstractJpaRepository<User> implements UserRepository
 {
-	public JpaUserRepository(EntityManagerFactory factory)
+	public JpaUserRepository(final EntityManagerFactory factory)
 	{
 		super(factory, User.class);
 	}
@@ -22,7 +22,7 @@ public final class JpaUserRepository extends AbstractJpaRepository<User> impleme
 	}
 
 	@Override
-	public List<User> fetchUsersByUsername(String username)
+	public List<User> fetchUsersByUsername(final String username)
 	{
 		return fetchMany("User.FetchUserByUsername", queryFunction -> queryFunction.setParameter("username", username));	
 	}
