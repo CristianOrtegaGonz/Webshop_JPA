@@ -64,7 +64,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		return entity.getId() == null ? execute(manager -> {
 			manager.persist(entity);
 			return entity;
-		}) : execute(manager -> manager.merge(entity));
+		}) : merge(entity);
 	}
 
 	public E merge(final E entity)
