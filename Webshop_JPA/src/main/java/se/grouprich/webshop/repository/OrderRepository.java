@@ -8,7 +8,7 @@ import se.grouprich.webshop.model.status.OrderStatus;
 
 public interface OrderRepository extends CrudRepository<Order>
 {
-	List<Order> fetchById(Long id);
+	Order fetchById(Long id);
 	List<Order> fetchAll();
 	List<Order> fetchOrdersByUser(final User user);
 	List<Order> fetchOrdersByStatus(final OrderStatus status);

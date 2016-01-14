@@ -64,8 +64,7 @@ public final class ECommerceService
 
 	public Order fetchOrderById(final Long id)
 	{
-		List<Order> ordersFoundById = orderRepository.fetchById(id);
-		return ordersFoundById.get(0);
+		return orderRepository.fetchById(id);
 	}
 
 	public List<Product> fetchAllProducts(final User user)
