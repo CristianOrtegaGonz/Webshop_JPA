@@ -24,7 +24,7 @@ import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
 @Table(name = "`Order`")
-@NamedQueries(value = { @NamedQuery(name = "Order.FetchById", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.id = :id"),
+@NamedQueries(value = { @NamedQuery(name = "Order.FindById", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.id = :id"),
 		@NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o JOIN FETCH o.orderRows"),
 		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.customer.id = :id"),
 		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.status = :status"),
@@ -32,7 +32,7 @@ import se.grouprich.webshop.model.status.OrderStatus;
 
 public class Order extends AbstractEntity
 {
-	@ManyToOne(cascade = CascadeType.PERSIST)
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private User customer;
 
 	@ElementCollection(fetch = FetchType.LAZY)
@@ -152,7 +152,7 @@ public class Order extends AbstractEntity
 	{
 		for (OrderRow orderRowInList : orderRows)
 		{
-			if (orderRowInList.getProduct().getId().equals(orderRow.getProduct().getId()))
+			if (orderRowInList.getProduct().equals(orderRow.getProduct()))
 			{
 				return orderRowInList;
 			}
@@ -171,7 +171,8 @@ public class Order extends AbstractEntity
 		if (other instanceof Order)
 		{
 			Order otherOrder = (Order) other;
-			return customer.equals(otherOrder.customer) && orderRows.equals(otherOrder.orderRows) && totalPrice.equals(otherOrder.totalPrice)
+			return customer.equals(otherOrder.customer) && orderRows.containsAll(otherOrder.orderRows)
+					&& otherOrder.orderRows.containsAll(orderRows) && totalPrice.equals(otherOrder.totalPrice)
 					&& status.equals(otherOrder.status);
 		}
 		return false;
@@ -182,7 +183,6 @@ public class Order extends AbstractEntity
 	{
 		int result = 1;
 		result += customer.hashCode() * 37;
-		result += orderRows.hashCode() * 37;
 		result += totalPrice.hashCode() * 37;
 		result += status.hashCode() * 37;
 

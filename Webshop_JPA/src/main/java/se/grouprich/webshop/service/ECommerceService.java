@@ -64,7 +64,7 @@ public final class ECommerceService
 
 	public Order fetchOrderById(final Long id)
 	{
-		return orderRepository.fetchById(id);
+		return orderRepository.findById(id);
 	}
 
 	public List<Product> fetchAllProducts(final User user)
@@ -116,7 +116,7 @@ public final class ECommerceService
 		}
 		order.updateStockQuantities(order.getOrderRows());
 		order.setStatus(OrderStatus.PLACED);
-		return orderRepository.merge(order);
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public Product updateProduct(final Product product) throws StorageException
@@ -125,7 +125,7 @@ public final class ECommerceService
 		{
 			throw new StorageException("Cannot update product. Product does not exists");
 		}
-		return productRepository.merge(product);
+		return productRepository.saveOrUpdate(product);
 	}
 
 	public User updateUser(final User user) throws StorageException
@@ -134,7 +134,7 @@ public final class ECommerceService
 		{
 			throw new StorageException("Cannot update user. User does not exists");
 		}
-		return userRepository.merge(user);
+		return userRepository.saveOrUpdate(user);
 	}
 
 	public Order updateOrder(final Order order) throws OrderException, StorageException
@@ -144,7 +144,7 @@ public final class ECommerceService
 			throw new StorageException("Cannot update order. Order does not exists");
 		}
 		order.updateStockQuantities(order.getOrderRows());
-		return orderRepository.merge(order);
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public List<Product> searchProductsBasedOnProductName(final String keyword)
@@ -176,7 +176,7 @@ public final class ECommerceService
 	public Order changeOrderStatus(final Order order, final OrderStatus status) throws OrderException, StorageException
 	{
 		order.setStatus(status);
-		return orderRepository.merge(order);
+		return orderRepository.saveOrUpdate(order);
 	}
 
 	public List<Order> fetchOrdersByUser(final User user, final User customer)

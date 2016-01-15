@@ -39,8 +39,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}
 	}
 
-	@Override
-	public List<E> fetchMany(final String queryName, final Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
+	protected List<E> fetchMany(final String queryName, final Function<TypedQuery<E>, TypedQuery<E>> queryFunction)
 	{
 		EntityManager manager = factory.createEntityManager();
 		try
@@ -67,7 +66,7 @@ public abstract class AbstractJpaRepository<E extends AbstractEntity> implements
 		}) : merge(entity);
 	}
 
-	public E merge(final E entity)
+	protected E merge(final E entity)
 	{
 		return execute(manager -> manager.merge(entity));
 	}

@@ -80,7 +80,7 @@ public class OrderRow
 		if (other instanceof OrderRow)
 		{
 			OrderRow otherOrderRow = (OrderRow) other;
-			return product.equals(otherOrderRow.product) && orderQuantity == otherOrderRow.orderQuantity;
+			return product.equals(otherOrderRow.product) && orderQuantity.equals(otherOrderRow.orderQuantity);
 		}
 		return false;
 	}

@@ -18,10 +18,20 @@ public final class JpaOrderRepository extends AbstractJpaRepository<Order> imple
 	}
 
 	@Override
-	public Order fetchById(Long id)
+	public Order findById(final Long id)
 	{
-		List<Order> ordersFetchedById = fetchMany("Order.FetchById", queryFunction -> queryFunction.setParameter("id", id));
+		List<Order> ordersFetchedById = fetchMany("Order.FindById", queryFunction -> queryFunction.setParameter("id", id));
+		if (ordersFetchedById == null)
+		{
+			return null;
+		}	
 		return ordersFetchedById.get(0);
+	}
+
+	@Override
+	public Order saveOrUpdate(final Order order)
+	{
+		return merge(order);
 	}
 
 	@Override
