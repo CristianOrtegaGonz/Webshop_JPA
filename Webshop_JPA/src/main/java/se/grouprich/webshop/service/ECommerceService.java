@@ -154,11 +154,7 @@ public final class ECommerceService
 
 	public User fetchUserByUsername(final String username)
 	{
-		if (userRepository.fetchUsersByUsername(username).size() > 0)
-		{
-			return userRepository.fetchUsersByUsername(username).get(0);
-		}
-		return null;
+		return userRepository.fetchUserByUsername(username);
 	}
 
 	public Product changeProductStatus(final Product product, final ProductStatus status) throws StorageException

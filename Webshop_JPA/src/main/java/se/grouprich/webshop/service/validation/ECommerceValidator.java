@@ -1,19 +1,16 @@
 package se.grouprich.webshop.service.validation;
 
-import se.grouprich.webshop.repository.OrderRepository;
 import se.grouprich.webshop.repository.ProductRepository;
 import se.grouprich.webshop.repository.UserRepository;
 
 public final class ECommerceValidator
 {
 	private final UserRepository userRepository;
-	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
 
-	public ECommerceValidator(final UserRepository userRepository, final OrderRepository orderRepository, final ProductRepository productRepository)
+	public ECommerceValidator(final UserRepository userRepository, final ProductRepository productRepository)
 	{
 		this.userRepository = userRepository;
-		this.orderRepository = orderRepository;
 		this.productRepository = productRepository;
 	}
 
@@ -59,7 +56,7 @@ public final class ECommerceValidator
 
 	public boolean usernameAlreadyExists(final String username)
 	{
-		if (!userRepository.fetchUsersByUsername(username).isEmpty())
+		if (userRepository.fetchUserByUsername(username) != null)
 		{
 			return true;
 		}

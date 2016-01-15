@@ -33,7 +33,7 @@ public final class Main
 		ProductRepository productRepository = new JpaProductRepository(factory);
 		OrderRepository orderRepository = new JpaOrderRepository(factory);
 		UserRepository userRepository = new JpaUserRepository(factory);
-		ECommerceValidator eCommerceValidator = new ECommerceValidator(userRepository, orderRepository, productRepository);
+		ECommerceValidator eCommerceValidator = new ECommerceValidator(userRepository, productRepository);
 		ECommerceService eCommerceService = new ECommerceService(orderRepository, userRepository, productRepository, eCommerceValidator);
 		User admin = eCommerceService.createUser(new User("Eskimooo", "55I!", "Eski", "Mooo", Role.ADMIN));
 		eCommerceService.activateUser(admin);
@@ -198,5 +198,7 @@ public final class Main
 		
 		Order orderChangedStatus = eCommerceService.changeOrderStatus(orderRowsAdded, OrderStatus.CANCELED);
 		System.out.println("orderChangedStatus is: " + orderChangedStatus);
+		
+		System.out.println(orderChangedStatus.getOrderRows() == orderRowsAdded.getOrderRows());
 	}
 }

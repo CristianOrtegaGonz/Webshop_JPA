@@ -21,7 +21,7 @@ public final class JpaOrderRepository extends AbstractJpaRepository<Order> imple
 	public Order findById(final Long id)
 	{
 		List<Order> ordersFetchedById = fetchMany("Order.FindById", queryFunction -> queryFunction.setParameter("id", id));
-		if (ordersFetchedById == null)
+		if (ordersFetchedById.isEmpty())
 		{
 			return null;
 		}	
