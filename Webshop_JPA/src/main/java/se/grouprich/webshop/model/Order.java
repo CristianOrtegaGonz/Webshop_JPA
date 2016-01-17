@@ -24,11 +24,11 @@ import se.grouprich.webshop.model.status.OrderStatus;
 
 @Entity
 @Table(name = "`Order`")
-@NamedQueries(value = { @NamedQuery(name = "Order.FindById", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.id = :id"),
-		@NamedQuery(name = "Order.FetchAll", query = "SELECT o FROM Order o JOIN FETCH o.orderRows"),
-		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.customer.id = :id"),
-		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.status = :status"),
-		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT o FROM Order o JOIN FETCH o.orderRows WHERE o.totalPrice >= :totalPrice") })
+@NamedQueries(value = { @NamedQuery(name = "Order.FindById", query = "SELECT distinct o FROM Order o JOIN FETCH o.orderRows WHERE o.id = :id"),
+		@NamedQuery(name = "Order.FetchAll", query = "SELECT distinct o FROM Order o JOIN FETCH o.orderRows"),
+		@NamedQuery(name = "Order.FetchOrdersByUser", query = "SELECT distinct o FROM Order o JOIN FETCH o.orderRows WHERE o.customer.id = :id"),
+		@NamedQuery(name = "Order.FetchOrdersByStatus", query = "SELECT distinct o FROM Order o JOIN FETCH o.orderRows WHERE o.status = :status"),
+		@NamedQuery(name = "Order.FetchOrdersByMinimumValue", query = "SELECT distinct o FROM Order o JOIN FETCH o.orderRows WHERE o.totalPrice >= :totalPrice") })
 
 public class Order extends AbstractEntity
 {
